@@ -1,15 +1,31 @@
 import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import PinnedScrollFeatures from "@/components/PinnedScrollFeatures";
+import Features from "@/components/Features";
+import DynamicMetrics from "@/components/DynamicMetrics";
+import HowItWorks from "@/components/HowItWorks";
+import CardGrid from "@/components/CardGrid";
+import Industries from "@/components/Industries";
+import Testimonials from "@/components/Testimonials";
+import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <Navbar />
       <main>
-        {/* Placeholder for Hero and other sections */}
-        <div className="h-[200vh] w-full pt-32 px-12 text-center text-white/50">
-          Scroll down to see the custom cursor and lenis scrolling effect in action.
-        </div>
+        <Hero />
+        <PinnedScrollFeatures />
+        <Features />
+        <DynamicMetrics />
+        <HowItWorks />
+        <CardGrid />
+        <Industries />
+        <Testimonials />
+        <CTASection />
       </main>
+      <Footer />
     </>
   );
 }

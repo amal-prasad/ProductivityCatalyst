@@ -26,7 +26,10 @@ body {
 }
 
 @media (pointer: fine) {
-  body, a, button {
+
+  body,
+  a,
+  button {
     cursor: none;
   }
 }
@@ -51,4 +54,256 @@ body {
   #cursor {
     display: block;
   }
+}
+
+/* ─────────────────────────────────────────────
+   3D Feature Card Carousel
+   ───────────────────────────────────────────── */
+
+/* Radius: how far each card is pushed away from the ring centre.
+   Tune this if you have more/fewer cards or different card widths. */
+:root {
+  --carousel-radius: 320px;
+  --carousel-card-w: 300px;
+  --carousel-card-h: 340px;
+  --carousel-duration: 22s;
+}
+
+/* Perspective wrapper — gives the 3D depth */
+.carousel-track {
+  width: 100%;
+  height: calc(var(--carousel-card-h) + 80px);
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+/* The rotating ring itself */
+.carousel-ring {
+  position: relative;
+  width: var(--carousel-card-w);
+  height: var(--carousel-card-h);
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  animation: carousel-spin var(--carousel-duration) linear infinite;
+  /* Pause when the user hovers anywhere over the ring */
+}
+
+.carousel-track:hover .carousel-ring {
+  animation-play-state: paused;
+}
+
+@keyframes carousel-spin {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(-360deg); }
+}
+
+/* Individual card — absolutely placed then rotated out to the ring.
+   --card-rotate-y is set per-card via inline style in Features.tsx */
+.carousel-card {
+  position: absolute;
+  inset: 0;
+  width: var(--carousel-card-w);
+  height: var(--carousel-card-h);
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transform: rotateY(var(--card-rotate-y, 0deg)) translateZ(var(--carousel-radius));
+  /* Glass-dark surface */
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 2px;
+  /* Depth cue: only show faces pointing toward the viewer */
+  backface-visibility: hidden;
+  /* Smooth glow on the visible face */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04) inset,
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(0, 229, 204, 0.04);
+  /* Smooth transitions when ring pauses/resumes */
+  transition: box-shadow 0.3s ease;
+}
+
+/* Subtle highlight when the ring is paused (cursor hovering) */
+.carousel-track:hover .carousel-card {
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08) inset,
+    0 24px 70px rgba(0, 0, 0, 0.7),
+    0 0 60px rgba(0, 229, 204, 0.08);
+}
+
+.carousel-card__num {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-family: var(--font-sans), sans-serif;
+}
+
+.carousel-card__title {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.carousel-card__body {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  font-family: var(--font-sans), sans-serif;
+  flex: 1;
+}
+
+/* Decorative bottom accent — thin teal line, grows in on hover */
+.carousel-card__accent {
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.35;
+  margin-top: auto;
+  transform-origin: left;
+  transition: opacity 0.4s ease;
+}
+
+.carousel-track:hover .carousel-card__accent {
+  opacity: 0.7;
+}
+
+/* ── Mobile: flatten ring into a vertical stack ─────────────────── */
+@media (max-width: 767px) {
+  .carousel-track {
+    height: auto;
+    perspective: none;
+  }
+
+  .carousel-ring {
+    width: 100%;
+    height: auto;
+    transform-style: flat;
+    animation: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .carousel-card {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    transform: none !important;
+    backface-visibility: visible;
+    box-shadow: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .carousel-card:first-child {
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .carousel-track:hover .carousel-card {
+    box-shadow: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Pinned Scroll Features — accent glow text
+   ───────────────────────────────────────────── */
+
+.pinned-accent-text {
+  color: var(--accent);
+  text-shadow: 0 0 40px rgba(0, 229, 204, 0.25), 0 0 80px rgba(0, 229, 204, 0.08);
+}
+
+/* ─────────────────────────────────────────────
+   Dynamic Metrics — responsive grid borders
+   ───────────────────────────────────────────── */
+
+@media (max-width: 1023px) {
+  .metrics-cell {
+    border-right: none !important;
+  }
+  .metrics-cell:nth-child(odd) {
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+  .metrics-cell:nth-child(-n+2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+@media (min-width: 1024px) {
+  .metrics-cell:last-child {
+    border-right: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Card Grid — hover glow overlay
+   ───────────────────────────────────────────── */
+
+.grid-card {
+  background: rgba(255, 255, 255, 0.02);
+  will-change: transform;
+}
+
+.grid-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 0 0 1px rgba(0, 229, 204, 0.15),
+    0 0 40px rgba(0, 229, 204, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.grid-card-glow {
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(0, 229, 204, 0.06) 0%,
+    transparent 70%
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Footer — link hover underline animation
+   ───────────────────────────────────────────── */
+
+.footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.footer-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* ─────────────────────────────────────────────
+   Text Reveal animations
+   ───────────────────────────────────────────── */
+
+.text-reveal-mask {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.text-reveal-word {
+  display: inline-block;
+  /* GPU acceleration for smoother transform */
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }

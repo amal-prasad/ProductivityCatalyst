@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { gsap } from "@/lib/gsap";
 
 const NAV_LINKS = [
   { name: "Features", href: "#features" },
@@ -26,6 +27,17 @@ const CloseIcon = () => (
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const targets = headerRef.current.querySelectorAll(".nav-anim-target");
+    gsap.fromTo(
+      targets,
+      { y: -20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 }
+    );
+  }, []);
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
@@ -41,12 +53,12 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]">
+      <header ref={headerRef} className="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">
           {/* Logo */}
           <Link
             href="/"
-            className="text-white font-bold text-xl tracking-tight relative z-50"
+            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0"
           >
             Productivity Catalyst
           </Link>
@@ -57,14 +69,14 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-[0.75rem] font-medium tracking-[0.15em] uppercase text-white/80 hover:text-white transition-colors"
+                className="nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase text-white/80 hover:text-white transition-colors opacity-0"
               >
                 {link.name}
               </Link>
             ))}
             <Link
               href="#contact"
-              className="text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
+              className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 opacity-0"
             >
               Request a Demo
             </Link>
@@ -72,7 +84,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden text-white relative z-50 p-2"
+            className="nav-anim-target md:hidden text-white relative z-50 p-2 opacity-0"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >

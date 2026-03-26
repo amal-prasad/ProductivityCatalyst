@@ -1,7 +1,19 @@
 import type { NextConfig } from "next";
 
+const isGithubActions = process.env.GITHUB_ACTIONS || false;
+
+let repoPath = '';
+if (isGithubActions && process.env.GITHUB_REPOSITORY) {
+  const repoName = process.env.GITHUB_REPOSITORY.split('/')[1];
+  repoPath = `/${repoName}`;
+}
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "export",
+  images: {
+    unoptimized: true,
+  },
+  basePath: repoPath,
 };
 
 export default nextConfig;
