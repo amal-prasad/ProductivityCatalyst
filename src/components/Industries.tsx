@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll } from "@/lib/gsap";
+import { animateOnScroll, gsap } from "@/lib/gsap";
 
 const INDUSTRIES = [
   "IT Companies",
@@ -18,15 +18,21 @@ const INDUSTRIES = [
 
 export default function Industries() {
   const sectionRef = useRef<HTMLElement>(null);
-  const pillsRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current) return;
     const headline = sectionRef.current.querySelector(".section-headline");
     animateOnScroll(headline, { y: 30, start: "top 80%" });
-    if (pillsRef.current) {
-      const pills = pillsRef.current.querySelectorAll(".industry-pill");
-      animateOnScroll(pills, { y: 20, stagger: 0.06, start: "top 75%" });
+    if (trackRef.current) {
+      const scrollWidth = trackRef.current.scrollWidth;
+      const distance = scrollWidth / 2;
+      gsap.to(trackRef.current, {
+        x: -distance,
+        duration: distance / 50,
+        ease: "none",
+        repeat: -1,
+      });
     }
   }, []);
 
@@ -47,19 +53,21 @@ export default function Industries() {
           </h2>
         </div>
 
-        {/* Desktop: horizontal scroll row | Mobile: wrapping flex */}
-        <div
-          ref={pillsRef}
-          className="flex gap-3 overflow-x-auto md:overflow-x-scroll pb-2 flex-wrap md:flex-nowrap scrollbar-hide"
-        >
-          {INDUSTRIES.map((name) => (
-            <span
-              key={name}
-              className="industry-pill shrink-0 border border-white/[0.08] text-white text-[0.8rem] tracking-[0.08em] uppercase px-5 py-2.5 whitespace-nowrap hover:border-accent hover:text-accent transition-colors duration-300"
-            >
-              {name}
-            </span>
-          ))}
+        {/* Infinite Marquee */}
+        <div className="relative w-full overflow-hidden mask-image-[linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+          <div
+            ref={trackRef}
+            className="flex gap-3 w-max pb-4"
+          >
+            {[...INDUSTRIES, ...INDUSTRIES].map((name, idx) => (
+              <span
+                key={`${name}-${idx}`}
+                className="industry-pill shrink-0 border border-white/[0.08] text-white text-[0.8rem] tracking-[0.08em] uppercase px-5 py-2.5 whitespace-nowrap hover:border-accent hover:text-accent transition-colors duration-300"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
         </div>
 
       </div>

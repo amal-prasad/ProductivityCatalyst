@@ -12,7 +12,7 @@ test.describe("Navbar Component", () => {
       await expect(desktopNav.getByRole("link", { name: "Features" })).toBeVisible();
       await expect(desktopNav.getByRole("link", { name: "How It Works" })).toBeVisible();
       await expect(desktopNav.getByRole("link", { name: "Industries" })).toBeVisible();
-      await expect(desktopNav.getByRole("link", { name: "Request a Demo" })).toBeVisible();
+      await expect(desktopNav.getByRole("link", { name: "Book a Call", exact: false })).toBeVisible();
     } else {
       await expect(page.getByLabel("Toggle menu")).toBeVisible();
     }
@@ -33,6 +33,6 @@ test.describe("Navbar Component", () => {
     // We select the nav that is a child of the flex-col mobile overlay
     const mobileNav = page.locator("div.fixed.inset-0.bg-background nav");
     await expect(mobileNav.getByRole("link", { name: "Features" })).toBeVisible();
-    await expect(mobileNav.getByRole("link", { name: "Request a Demo" })).toBeVisible();
+    await expect(mobileNav.getByRole("link", { name: "Book a Call", exact: false })).toBeVisible();
   });
 });

@@ -6,23 +6,43 @@ import { animateOnScroll } from "@/lib/gsap";
 const FEATURES = [
   {
     num: "01",
-    title: "Real-Time Team Visibility",
-    body: "Fragmented teams breed blind spots. Get a live view of every team's priorities, blockers, and output — updated continuously, not monthly.",
+    title: "CXO Productivity",
+    body: "Reclaim time from transactional work and focus on strategy.",
   },
   {
     num: "02",
-    title: "Zero Blind Spots",
-    body: "Cross-functional dependencies become visible before they become problems. Catch conflicts between Dev, QA, and Product before they derail a sprint.",
+    title: "Business Assessment",
+    body: "Audit operations to find and fix bottlenecks effectively.",
   },
   {
     num: "03",
-    title: "Dependency Radar",
-    body: "Know the moment another team's work is blocking yours. Automated dependency mapping keeps every team informed without a single status meeting.",
+    title: "Workflow Solutions",
+    body: "Eliminate repetitive manual tasks and reduce errors.",
   },
   {
     num: "04",
-    title: "Unified Dashboard",
-    body: "One pane of glass for your entire organization. Custom-built trackers adapted to your org's structure — not generic Kanban boards.",
+    title: "Business Insights",
+    body: "Turn scattered data into clear dashboards and alerts.",
+  },
+  {
+    num: "05",
+    title: "Project Delivery",
+    body: "Bring structure and accountability to key initiatives.",
+  },
+  {
+    num: "06",
+    title: "Team Building",
+    body: "Build high-performing teams through role clarity.",
+  },
+  {
+    num: "07",
+    title: "Smart Engagement",
+    body: "Respond faster and serve better with AI-assisted tools.",
+  },
+  {
+    num: "08",
+    title: "Tailored Solutions",
+    body: "Design custom solutions combining automation and tech.",
   },
 ];
 
@@ -50,10 +70,10 @@ export default function Features() {
         {/* Section label + headline */}
         <div className="mb-16 md:mb-28 section-headline">
           <p className="text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">
-            Cross-Team Tracking
+            Our Services
           </p>
           <h2 className="text-white font-bold text-[clamp(2rem,5vw,4rem)] leading-[0.95] tracking-[-0.02em]">
-            No Team Works Alone.
+            Consulting, Automation & AI.
           </h2>
         </div>
 

@@ -51,7 +51,7 @@ export default function Footer() {
         {/* Bottom row — copyright + legal */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-6 border-t border-white/[0.08]">
           <span className="text-[0.75rem] text-[#666666]">
-            &copy; {year} Productivity Catalyst. All rights reserved.
+            &copy; {year} Productivity Catalyst. ✉ info@productivitycatalyst.com | ☎ +91 92321 36211
           </span>
           <div className="flex gap-6">
             {LEGAL_LINKS.map((l) => (

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animateOnScroll } from "@/lib/gsap";
-import ParallaxBackground from "./ParallaxBackground";
+import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 
 const TESTIMONIALS = [
@@ -48,7 +48,7 @@ export default function Testimonials() {
       ref={sectionRef}
       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
     >
-      <ParallaxBackground src="/images/bg-testimonials.png" alt="Testimonials Background" overlayOpacity={0.8} />
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.8} />
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         <div className="mb-16 section-headline">

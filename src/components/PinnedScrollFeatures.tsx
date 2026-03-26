@@ -2,27 +2,38 @@
 
 import { useEffect, useRef } from "react";
 import { animatePinnedScroll, animateOnScroll } from "@/lib/gsap";
+import VideoBackground from "./VideoBackground";
 
 const STATEMENTS = [
   {
-    headline: "One platform. Every team.",
-    accent: "Complete transparency.",
-    sub: "Gain complete visibility across departments, time zones, and workflows — without a single status meeting.",
+    headline: "CXO-Focused.",
+    accent: "Cut through noise.",
+    sub: "Help senior leaders cut through operational noise and focus energy on growth and strategy.",
   },
   {
-    headline: "Surface hidden risks",
-    accent: "before they escalate.",
-    sub: "Automated cross-team dependency mapping catches conflicts weeks before they derail a sprint.",
+    headline: "Automation-First.",
+    accent: "Save time, cut costs.",
+    sub: "Identify and automate the right processes — saving time, reducing errors, and cutting costs.",
   },
   {
-    headline: "Custom-built trackers",
-    accent: "that match your org.",
-    sub: "Not generic Kanban boards. Trackers adapted to your structure — from trading desks to dev squads.",
+    headline: "AI Where It Counts.",
+    accent: "Not a buzzword.",
+    sub: "Apply AI-enabled tools where they genuinely add value as a reliable business lever.",
   },
   {
-    headline: "Real-time visibility.",
-    accent: "Not weekly status reports.",
-    sub: "Every team's priorities, blockers, and output updated continuously. Leadership sees the truth — live.",
+    headline: "Delivery Experience.",
+    accent: "Get things done.",
+    sub: "Backed by rich experience in project and delivery management — we know how to execute.",
+  },
+  {
+    headline: "SME-First.",
+    accent: "Free of enterprise bloat.",
+    sub: "Built specifically for growing businesses — practical, affordable, and highly effective.",
+  },
+  {
+    headline: "Fast Results.",
+    accent: "Paced for speed.",
+    sub: "Engagements structured for speed. Most clients see tangible outcomes within 4–8 weeks.",
   },
 ];
 
@@ -53,10 +64,11 @@ export default function PinnedScrollFeatures() {
     <section
       id="pinned-features"
       ref={containerRef}
-      className="w-full border-t border-white/[0.08]"
+      className="relative w-full border-t border-white/[0.08]"
     >
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} isSticky={true} />
       {/* Section label */}
-      <div className="max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)] pt-[clamp(4rem,8vw,8rem)]">
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)] pt-[clamp(4rem,8vw,8rem)]">
         <p className="text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">
           Why Productivity Catalyst
         </p>

@@ -31,17 +31,12 @@ export default function Hero() {
         {/* Headline — fully left aligned, clamp keeps it in bounds */}
         <div ref={headlineRef} className="flex flex-col gap-0">
           <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)] whitespace-nowrap">
-            <span className="hero-word inline-block">CLARITY</span>{" "}
-            <span className="hero-word inline-block">ACROSS</span>
+            <span className="hero-word inline-block">LESS</span>{" "}
+            <span className="hero-word inline-block">CHAOS.</span>
           </h1>
           <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)] whitespace-nowrap">
-            <span className="hero-word inline-block">EVERY</span>{" "}
-            <span className="hero-word inline-block">TEAM.</span>
-          </h1>
-          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)] whitespace-nowrap">
-            <span className="hero-word inline-block">FROM</span>{" "}
-            <span className="hero-word inline-block">DAY</span>{" "}
-            <span className="hero-word inline-block">ONE.</span>
+            <span className="hero-word inline-block">MORE</span>{" "}
+            <span className="hero-word inline-block">GROWTH.</span>
           </h1>
         </div>
 
@@ -49,14 +44,14 @@ export default function Hero() {
         {/* Sub-copy + CTA */}
         <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[640px]">
           <p className="max-w-sm text-secondary text-[1rem] leading-[1.7]">
-            Real-time cross-team visibility for IT firms, banks, and consultancies. Every team, always in sync.
+            Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
           </p>
           <MagneticWrapper strength={30} elasticity={0.3}>
             <Link
               href="#contact"
               className="inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
             >
-              Request a Demo →
+              Book structured call →
             </Link>
           </MagneticWrapper>
         </div>

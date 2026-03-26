@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animateCounter, animateOnScroll } from "@/lib/gsap";
+import VideoBackground from "./VideoBackground";
 
 const METRICS = [
   { value: 200, suffix: "+", label: "Enterprise Teams Onboarded" },
@@ -52,9 +53,10 @@ export default function DynamicMetrics() {
     <section
       id="metrics"
       ref={sectionRef}
-      className="w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
+      className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
     >
-      <div className="max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+      <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.88} />
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         {/* Section label + headline */}
         <div className="mb-16 md:mb-24 section-headline">

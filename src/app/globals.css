@@ -63,10 +63,10 @@ body {
 /* Radius: how far each card is pushed away from the ring centre.
    Tune this if you have more/fewer cards or different card widths. */
 :root {
-  --carousel-radius: 320px;
-  --carousel-card-w: 300px;
-  --carousel-card-h: 340px;
-  --carousel-duration: 22s;
+  --carousel-radius: 420px;
+  --carousel-card-w: 280px;
+  --carousel-card-h: 300px;
+  --carousel-duration: 40s;
 }
 
 /* Perspective wrapper — gives the 3D depth */

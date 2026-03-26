@@ -78,7 +78,7 @@ export default function Navbar() {
               href="#contact"
               className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 opacity-0"
             >
-              Request a Demo
+              Book a Call 
             </Link>
           </nav>
 
@@ -115,7 +115,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
             className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
           >
-            Request a Demo
+            Book a Call
           </Link>
         </nav>
       </div>
