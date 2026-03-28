@@ -4,9 +4,13 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 // Build a fibonacci sphere for even particle distribution
-function createSphereParticles(count: number, radius: number): Float32Array {
+function createSphereParticles(count: number, radius: number): { positions: Float32Array, colors: Float32Array } {
   const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
   const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle
+
+  const baseColor = new THREE.Color(0x888888);
+  const cyanColor = new THREE.Color(0x00e5cc);
 
   for (let i = 0; i < count; i++) {
     const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
@@ -18,8 +22,14 @@ function createSphereParticles(count: number, radius: number): Float32Array {
     positions[i * 3] = (r * Math.cos(theta) * radius) + (Math.random() - 0.5) * noise;
     positions[i * 3 + 1] = (y * radius) + (Math.random() - 0.5) * noise;
     positions[i * 3 + 2] = (r * Math.sin(theta) * radius) + (Math.random() - 0.5) * noise;
+
+    const isCyan = Math.random() < 0.15;
+    const color = isCyan ? cyanColor : baseColor;
+    colors[i * 3] = color.r;
+    colors[i * 3 + 1] = color.g;
+    colors[i * 3 + 2] = color.b;
   }
-  return positions;
+  return { positions, colors };
 }
 
 export default function ParticleVortex() {
@@ -44,10 +54,12 @@ export default function ParticleVortex() {
     const COUNT = 3000;
     const RADIUS = 110;
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute("position", new THREE.BufferAttribute(createSphereParticles(COUNT, RADIUS), 3));
+    const { positions, colors } = createSphereParticles(COUNT, RADIUS);
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      color: 0x888888,
+      vertexColors: true,
       size: 1.8,
       sizeAttenuation: true,
       transparent: true,
