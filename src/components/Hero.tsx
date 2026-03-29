@@ -5,17 +5,19 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { animateHeroWords } from "@/lib/gsap";
 import MagneticWrapper from "./MagneticWrapper";
+import { useLoading } from "@/context/LoadingContext";
 
 const ParticleVortex = dynamic(() => import("./ParticleVortex"), { ssr: false });
 
 export default function Hero() {
   const headlineRef = useRef<HTMLDivElement>(null);
+  const { isTransitionComplete } = useLoading();
 
   useEffect(() => {
-    if (headlineRef.current) {
+    if (headlineRef.current && isTransitionComplete) {
       animateHeroWords(headlineRef.current);
     }
-  }, []);
+  }, [isTransitionComplete]);
 
   return (
     <section

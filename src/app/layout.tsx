@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Cursor from "@/components/Cursor";
+import { LoadingProvider } from "@/context/LoadingContext";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +31,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-screen flex flex-col bg-background text-secondary font-sans">
-        <SmoothScroll>
-          <Cursor />
-          {children}
-        </SmoothScroll>
+      <body className="min-h-screen flex flex-col bg-background text-secondary font-sans group">
+        <LoadingProvider>
+          <LoadingScreen />
+          <SmoothScroll>
+            <Cursor />
+            {children}
+          </SmoothScroll>
+        </LoadingProvider>
       </body>
     </html>
   );

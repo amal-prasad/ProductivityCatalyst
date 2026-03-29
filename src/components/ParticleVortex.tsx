@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useLoading } from "@/context/LoadingContext";
 
 // Build a fibonacci sphere for even particle distribution
 function createSphereParticles(count: number, radius: number): { positions: Float32Array, colors: Float32Array } {
@@ -34,12 +35,14 @@ function createSphereParticles(count: number, radius: number): { positions: Floa
 
 export default function ParticleVortex() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { setLoading } = useLoading();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // ── Renderer ─────────────────────────────────────────
+    try {
+      // ── Renderer ─────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -69,6 +72,9 @@ export default function ParticleVortex() {
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
 
+    // Pre-compile scene to ensure shaders are ready
+    renderer.compile(scene, camera);
+
     // ── Mouse Parallax ────────────────────────────────────
     const mouse = { x: 0, y: 0 };
     const targetRotation = { x: 0, y: 0 };
@@ -94,6 +100,7 @@ export default function ParticleVortex() {
     // ── Animation Loop ────────────────────────────────────
     let rafId: number;
     const clock = new THREE.Clock();
+    let framesRendered = 0;
 
     const animate = () => {
       rafId = requestAnimationFrame(animate);
@@ -111,6 +118,12 @@ export default function ParticleVortex() {
       particles.rotation.y += targetRotation.y * 0.01;
 
       renderer.render(scene, camera);
+
+      // Wait for ~5 frames to ensure stable render before resolving load state
+      framesRendered++;
+      if (framesRendered === 5) {
+        setLoading(false);
+      }
     };
     animate();
 
@@ -123,7 +136,12 @@ export default function ParticleVortex() {
       material.dispose();
       renderer.dispose();
     };
-  }, []);
+    } catch (err) {
+      console.error("Failed to initialize Three.js Particle Vortex:", err);
+      // Ensure we don't block the UI if WebGL fails
+      setLoading(false);
+    }
+  }, [setLoading]);
 
   return (
     <canvas
