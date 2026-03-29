@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { animateOnScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
+import gsap from "gsap";
 
 const TESTIMONIALS = [
   {
@@ -36,10 +37,13 @@ export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const cards = sectionRef.current.querySelectorAll(".testimonial-card");
-    animateOnScroll(cards, { stagger: 0.12, y: 40, start: "top 70%" });
-    // TextReveal handles the headline animation now
+    let ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
+      const cards = sectionRef.current.querySelectorAll(".testimonial-card");
+      animateOnScroll(cards, { stagger: 0.12, y: 40, start: "top 70%" });
+      // TextReveal handles the headline animation now
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

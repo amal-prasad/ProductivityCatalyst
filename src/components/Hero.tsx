@@ -19,18 +19,21 @@ export default function Hero() {
   const { isTransitionComplete } = useLoading();
 
   useEffect(() => {
-    if (headlineRef.current && isTransitionComplete) {
-      animateHeroWords(headlineRef.current);
-      // Fade in sub-content after hero words animate
-      if (subContentRef.current) {
-        gsap.to(subContentRef.current, {
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          delay: 1.0, // start after hero words are mostly done
-        });
+    let ctx = gsap.context(() => {
+      if (headlineRef.current && isTransitionComplete) {
+        animateHeroWords(headlineRef.current);
+        // Fade in sub-content after hero words animate
+        if (subContentRef.current) {
+          gsap.to(subContentRef.current, {
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            delay: 1.0, // start after hero words are mostly done
+          });
+        }
       }
-    }
+    });
+    return () => ctx.revert();
   }, [isTransitionComplete]);
 
   return (

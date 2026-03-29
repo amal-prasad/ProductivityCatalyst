@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { animateLineDraw } from "@/lib/gsap";
+import { animateLineDraw, gsap } from "@/lib/gsap";
 
 const NAV_LINKS = ["Features", "How It Works", "Industries", "Testimonials"];
 const LEGAL_LINKS = ["Privacy Policy", "Terms of Service"];
@@ -12,9 +12,12 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   useEffect(() => {
-    if (lineRef.current) {
-      animateLineDraw(lineRef.current);
-    }
+    let ctx = gsap.context(() => {
+      if (lineRef.current) {
+        animateLineDraw(lineRef.current);
+      }
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

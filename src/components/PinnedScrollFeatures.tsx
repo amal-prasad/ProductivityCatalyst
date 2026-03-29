@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { animatePinnedScroll, animateOnScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
+import gsap from "gsap";
 
 const STATEMENTS = [
   {
@@ -43,21 +44,24 @@ export default function PinnedScrollFeatures() {
   const itemRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    const inner = innerRef.current;
-    if (!container || !inner) return;
+    let ctx = gsap.context(() => {
+      const container = containerRef.current;
+      const inner = innerRef.current;
+      if (!container || !inner) return;
 
-    // Mobile: skip pinning, use simple fade-ins instead
-    const mq = window.matchMedia("(max-width: 767px)");
-    if (mq.matches) {
-      const items = container.querySelectorAll(".pinned-item");
-      animateOnScroll(items, { y: 40, stagger: 0.2, start: "top 80%" });
-      return;
-    }
+      // Mobile: skip pinning, use simple fade-ins instead
+      const mq = window.matchMedia("(max-width: 767px)");
+      if (mq.matches) {
+        const items = container.querySelectorAll(".pinned-item");
+        animateOnScroll(items, { y: 40, stagger: 0.2, start: "top 80%" });
+        return;
+      }
 
-    // Desktop: pinned crossfade
-    const items = itemRefs.current.filter(Boolean);
-    animatePinnedScroll(inner, items, { scrollLength: 400 });
+      // Desktop: pinned crossfade
+      const items = itemRefs.current.filter(Boolean);
+      animatePinnedScroll(inner, items, { scrollLength: 400 });
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

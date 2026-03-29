@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { animateCounter, animateOnScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
+import gsap from "gsap";
 
 const METRICS = [
   { value: 200, suffix: "+", label: "Enterprise Teams Onboarded" },
@@ -17,36 +18,39 @@ export default function DynamicMetrics() {
   const labelRefs = useRef<HTMLParagraphElement[]>([]);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    let ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
 
-    // Headline entrance
-    const headline = sectionRef.current.querySelector(".section-headline");
-    animateOnScroll(headline, { y: 30, start: "top 80%" });
+      // Headline entrance
+      const headline = sectionRef.current.querySelector(".section-headline");
+      animateOnScroll(headline, { y: 30, start: "top 80%" });
 
-    // Animate each counter when it enters the viewport
-    numberRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const metric = METRICS[i];
-      animateCounter(el, metric.value, {
-        suffix: metric.suffix,
-        duration: 2.2,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          once: true,
-        },
+      // Animate each counter when it enters the viewport
+      numberRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const metric = METRICS[i];
+        animateCounter(el, metric.value, {
+          suffix: metric.suffix,
+          duration: 2.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        });
+      });
+
+      // Stagger labels in after a short delay
+      const labels = labelRefs.current.filter(Boolean);
+      animateOnScroll(labels, {
+        y: 20,
+        stagger: 0.12,
+        start: "top 82%",
+        duration: 0.7,
       });
     });
-
-    // Stagger labels in after a short delay
-    const labels = labelRefs.current.filter(Boolean);
-    animateOnScroll(labels, {
-      y: 20,
-      stagger: 0.12,
-      start: "top 82%",
-      duration: 0.7,
-    });
+    return () => ctx.revert();
   }, []);
 
   return (

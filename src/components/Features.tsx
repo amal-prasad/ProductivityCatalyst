@@ -5,6 +5,7 @@ import { animateOnScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import { servicesData } from "@/lib/servicesData";
 import Link from "next/link";
+import gsap from "gsap";
 
 const ANGLE_STEP = 360 / servicesData.length;
 
@@ -12,11 +13,14 @@ export default function Features() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const carousel = sectionRef.current.querySelector(".carousel-track");
-    animateOnScroll(carousel, { y: 60, start: "top 72%" });
-    const headline = sectionRef.current.querySelector(".section-headline");
-    animateOnScroll(headline, { y: 30, start: "top 80%" });
+    let ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
+      const carousel = sectionRef.current.querySelector(".carousel-track");
+      animateOnScroll(carousel, { y: 60, start: "top 72%" });
+      const headline = sectionRef.current.querySelector(".section-headline");
+      animateOnScroll(headline, { y: 30, start: "top 80%" });
+    });
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -57,7 +61,17 @@ export default function Features() {
                 >
                   <span className="carousel-card__num">{f.num}</span>
                   <h3 className="carousel-card__title">{f.title}</h3>
-                  <p className="carousel-card__body">{f.shortBody}</p>
+                  <p className="carousel-card__body mb-6">{f.shortBody}</p>
+                  
+                  <div className="mt-auto pt-4 border-t border-white/[0.08] flex items-center justify-between group-hover:border-white/[0.15] transition-colors duration-300">
+                    <span className="text-xs uppercase tracking-widest text-secondary group-hover:text-white transition-colors">
+                      Explore Service
+                    </span>
+                    <span className="text-secondary group-hover:text-accent group-hover:translate-x-1 transition-all duration-300 transform">
+                      →
+                    </span>
+                  </div>
+
                   <div className="carousel-card__accent" aria-hidden="true" />
                 </Link>
               );

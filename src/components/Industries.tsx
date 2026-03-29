@@ -22,19 +22,22 @@ export default function Industries() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const headline = sectionRef.current.querySelector(".section-headline");
-    animateOnScroll(headline, { y: 30, start: "top 80%" });
-    if (trackRef.current) {
-      const scrollWidth = trackRef.current.scrollWidth;
-      const distance = scrollWidth / 2;
-      gsap.to(trackRef.current, {
-        x: -distance,
-        duration: distance / 50,
-        ease: "none",
-        repeat: -1,
-      });
-    }
+    let ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
+      const headline = sectionRef.current.querySelector(".section-headline");
+      animateOnScroll(headline, { y: 30, start: "top 80%" });
+      if (trackRef.current) {
+        const scrollWidth = trackRef.current.scrollWidth;
+        const distance = scrollWidth / 2;
+        gsap.to(trackRef.current, {
+          x: -distance,
+          duration: distance / 50,
+          ease: "none",
+          repeat: -1,
+        });
+      }
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

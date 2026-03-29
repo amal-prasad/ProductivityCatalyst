@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { animateOnScroll, animatePinnedScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
+import gsap from "gsap";
 
 const STEPS = [
   {
@@ -39,18 +40,21 @@ export default function HowItWorks() {
   const itemRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-    
-    const mq = window.matchMedia("(max-width: 767px)");
-    if (mq.matches) {
-      const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-      animateOnScroll(steps, { x: -40, y: 0, stagger: 0.18, start: "top 75%" });
-      return;
-    }
+    let ctx = gsap.context(() => {
+      if (!sectionRef.current) return;
+      
+      const mq = window.matchMedia("(max-width: 767px)");
+      if (mq.matches) {
+        const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
+        animateOnScroll(steps, { x: -40, y: 0, stagger: 0.18, start: "top 75%" });
+        return;
+      }
 
-    if (desktopContainerRef.current && itemRefs.current.length > 0) {
-      animatePinnedScroll(desktopContainerRef.current, itemRefs.current.filter(Boolean), { scrollLength: 400 });
-    }
+      if (desktopContainerRef.current && itemRefs.current.length > 0) {
+        animatePinnedScroll(desktopContainerRef.current, itemRefs.current.filter(Boolean), { scrollLength: 400 });
+      }
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

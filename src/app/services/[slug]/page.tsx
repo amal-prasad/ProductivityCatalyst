@@ -27,11 +27,15 @@ export default async function ServicePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = servicesData.find((s) => s.slug === slug);
+  const currentIndex = servicesData.findIndex((s) => s.slug === slug);
+  const service = servicesData[currentIndex];
 
   if (!service) {
     notFound();
   }
+
+  const prevService = currentIndex > 0 ? servicesData[currentIndex - 1] : null;
+  const nextService = currentIndex < servicesData.length - 1 ? servicesData[currentIndex + 1] : null;
 
   return (
     <>
@@ -74,6 +78,41 @@ export default async function ServicePage({
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Pagination Navigation */}
+          <div className="flex flex-col md:flex-row justify-between items-stretch gap-6 mt-10 mb-20">
+            {prevService ? (
+              <Link
+                href={`/services/${prevService.slug}`}
+                className="group flex flex-col items-start w-full md:w-1/2 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all backdrop-blur-sm"
+              >
+                <span className="text-secondary/60 text-xs uppercase tracking-widest mb-3 group-hover:text-accent transition-colors flex items-center gap-2">
+                  <span>←</span> Previous Service
+                </span>
+                <span className="text-white font-medium text-lg leading-tight group-hover:text-white/90">
+                  {prevService.title}
+                </span>
+              </Link>
+            ) : (
+              <div className="w-full md:w-1/2 hidden md:block" />
+            )}
+
+            {nextService ? (
+              <Link
+                href={`/services/${nextService.slug}`}
+                className="group flex flex-col items-end text-right w-full md:w-1/2 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all backdrop-blur-sm"
+              >
+                <span className="text-secondary/60 text-xs uppercase tracking-widest mb-3 group-hover:text-accent transition-colors flex items-center gap-2">
+                  Next Service <span>→</span>
+                </span>
+                <span className="text-white font-medium text-lg leading-tight group-hover:text-white/90">
+                  {nextService.title}
+                </span>
+              </Link>
+            ) : (
+              <div className="w-full md:w-1/2 hidden md:block" />
+            )}
           </div>
         </div>
 

@@ -20,13 +20,18 @@ export default function MagneticWrapper({
     const element = magneticRef.current;
     if (!element) return;
 
-    const xTo = gsap.quickTo(element, "x", {
-      duration: 1,
-      ease: "elastic.out(1, 0.3)",
-    });
-    const yTo = gsap.quickTo(element, "y", {
-      duration: 1,
-      ease: "elastic.out(1, 0.3)",
+    let xTo: any;
+    let yTo: any;
+    
+    let ctx = gsap.context(() => {
+      xTo = gsap.quickTo(element, "x", {
+        duration: 1,
+        ease: "elastic.out(1, 0.3)",
+      });
+      yTo = gsap.quickTo(element, "y", {
+        duration: 1,
+        ease: "elastic.out(1, 0.3)",
+      });
     });
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -53,6 +58,7 @@ export default function MagneticWrapper({
     return () => {
       element.removeEventListener("mousemove", handleMouseMove);
       element.removeEventListener("mouseleave", handleMouseLeave);
+      ctx.revert();
     };
   }, [strength, elasticity]);
 

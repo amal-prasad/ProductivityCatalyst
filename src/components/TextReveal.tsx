@@ -21,30 +21,33 @@ export default function TextReveal({
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    let ctx = gsap.context(() => {
+      const container = containerRef.current;
+      if (!container) return;
 
-    // The span wrappers holding the actual words
-    const targets = container.querySelectorAll(".text-reveal-word");
+      // The span wrappers holding the actual words
+      const targets = container.querySelectorAll(".text-reveal-word");
 
-    gsap.fromTo(
-      targets,
-      { yPercent: 120, rotationZ: 2, opacity: 0 },
-      {
-        yPercent: 0,
-        rotationZ: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power4.out",
-        stagger: stagger,
-        delay: delay,
-        scrollTrigger: {
-          trigger: container,
-          start: "top 85%", // Trigger when the top of container hits 85% of viewport
-          once: true,
-        },
-      }
-    );
+      gsap.fromTo(
+        targets,
+        { yPercent: 120, rotationZ: 2, opacity: 0 },
+        {
+          yPercent: 0,
+          rotationZ: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power4.out",
+          stagger: stagger,
+          delay: delay,
+          scrollTrigger: {
+            trigger: container,
+            start: "top 85%", // Trigger when the top of container hits 85% of viewport
+            once: true,
+          },
+        }
+      );
+    });
+    return () => ctx.revert();
   }, [delay, stagger]);
 
   // Split the text into words

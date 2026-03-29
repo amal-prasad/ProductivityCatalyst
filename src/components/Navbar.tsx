@@ -31,13 +31,16 @@ export default function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (!headerRef.current) return;
-    const targets = headerRef.current.querySelectorAll(".nav-anim-target");
-    gsap.fromTo(
-      targets,
-      { y: -20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 }
-    );
+    let ctx = gsap.context(() => {
+      if (!headerRef.current) return;
+      const targets = headerRef.current.querySelectorAll(".nav-anim-target");
+      gsap.fromTo(
+        targets,
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 }
+      );
+    });
+    return () => ctx.revert();
   }, []);
 
   // Prevent scrolling when mobile menu is open
