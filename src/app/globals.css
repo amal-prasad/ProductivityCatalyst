@@ -307,3 +307,172 @@ body {
   will-change: transform, opacity;
   transform: translateZ(0);
 }
+
+/* ─────────────────────────────────────────────
+   Hero — prevent FOUC (Flash of Unstyled Content)
+   ───────────────────────────────────────────── */
+
+.hero-word {
+  opacity: 0;
+  transform: translateY(40px);
+  will-change: transform, opacity;
+}
+
+.hero-sub-content {
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* ─────────────────────────────────────────────
+   Loading Screen — Premium Corporate
+   ───────────────────────────────────────────── */
+
+@keyframes loading-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50%      { transform: scale(1.15); opacity: 0.85; }
+}
+
+@keyframes loading-grid-drift {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+@keyframes loading-bar-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(77, 124, 254, 0.4), 0 0 20px rgba(77, 124, 254, 0.15); }
+  50%      { box-shadow: 0 0 16px rgba(77, 124, 254, 0.7), 0 0 40px rgba(77, 124, 254, 0.3); }
+}
+
+@keyframes loading-logo-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+@keyframes loading-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Container */
+.loading-screen {
+  background: #0a0e1a;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease-in-out;
+  outline: none;
+}
+
+.loading-screen--fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Geometric grid overlay */
+.loading-grid {
+  position: absolute;
+  inset: -40px;
+  background-image:
+    linear-gradient(rgba(77, 124, 254, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77, 124, 254, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: loading-grid-drift 20s linear infinite;
+  pointer-events: none;
+}
+
+/* Radial blue glow behind the logo */
+.loading-glow {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(77, 124, 254, 0.18) 0%, rgba(77, 124, 254, 0.04) 50%, transparent 70%);
+  animation: loading-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Logo block container */
+.loading-logo-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  animation: loading-logo-breathe 3s ease-in-out infinite, loading-fade-up 0.8s ease-out both;
+  z-index: 1;
+}
+
+.loading-logo-block svg {
+  filter: drop-shadow(0 0 20px rgba(77, 124, 254, 0.3));
+}
+
+/* Wordmark */
+.loading-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  animation: loading-fade-up 0.8s ease-out 0.3s both;
+}
+
+.loading-wordmark__productivity {
+  font-family: var(--font-geist-sans), 'Segoe UI', Arial, sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: #8a93a6;
+  font-weight: 400;
+}
+
+.loading-wordmark__catalyst {
+  font-family: var(--font-geist-sans), 'Segoe UI', Arial, sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #4d7cfe;
+  font-weight: 700;
+}
+
+/* Percentage counter */
+.loading-percent {
+  font-family: var(--font-geist-mono), 'Consolas', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2.5rem;
+  animation: loading-fade-up 0.8s ease-out 0.6s both;
+  z-index: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Progress bar container */
+.loading-bar-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(77, 124, 254, 0.08);
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4d7cfe, #6fa0ff);
+  border-radius: 0 2px 2px 0;
+  animation: loading-bar-glow 2s ease-in-out infinite;
+  transition: width 0.15s linear;
+  will-change: width;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .loading-grid       { animation: none; }
+  .loading-glow       { animation: none; opacity: 0.5; }
+  .loading-logo-block { animation: none; }
+  .loading-bar-fill   { animation: none; }
+  .loading-screen     { transition-duration: 0.01ms; }
+}

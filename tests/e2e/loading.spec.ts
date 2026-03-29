@@ -6,13 +6,13 @@ test.describe('Loading Screen Flow', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // 1. Loading screen should be visible initially
-    const loadingScreen = page.locator('text=Initializing Environment');
+    const loadingScreen = page.locator('[data-testid="loading-screen"]');
     await expect(loadingScreen).toBeVisible();
 
     // 2. Check accessibility attribute on body
     await expect(page.locator('body')).toHaveAttribute('aria-busy', 'true');
 
-    // 3. Wait for loading screen to vanish. The WebGL initialization and CSS transition takes some time.
+    // 3. Wait for loading screen to vanish. The WebGL initialization, minimum display, and CSS transition take some time.
     await expect(loadingScreen).toBeHidden({ timeout: 15000 });
     
     // The body should no longer have aria-busy="true"
