@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animateOnScroll, animatePinnedScroll } from "@/lib/gsap";
+import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 
 const STEPS = [
@@ -58,10 +59,12 @@ export default function HowItWorks() {
       ref={sectionRef}
       className="relative w-full border-t border-white/[0.08]"
     >
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} isSticky={true} />
+      
       {/* Desktop view */}
       <div
         ref={desktopContainerRef}
-        className="hidden md:flex w-full min-h-[100dvh] flex-col justify-center relative bg-background"
+        className="hidden md:flex w-full min-h-[100dvh] flex-col justify-center relative"
       >
         <div className="w-full max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)] mb-12">
           {/* Label + headline */}
@@ -84,7 +87,7 @@ export default function HowItWorks() {
               ref={(el) => {
                 if (el) itemRefs.current[i] = el;
               }}
-              className="absolute inset-0 flex flex-row items-center gap-16 px-6 md:px-[clamp(1.5rem,5vw,5rem)] bg-background"
+              className="absolute inset-0 flex flex-row items-center gap-16 px-6 md:px-[clamp(1.5rem,5vw,5rem)]"
             >
               <span
                 className="absolute left-6 top-1/2 -translate-y-1/2 text-[14rem] md:text-[18rem] font-bold leading-none select-none pointer-events-none"

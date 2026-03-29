@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animateOnScroll, gsap } from "@/lib/gsap";
+import VideoBackground from "./VideoBackground";
 
 const INDUSTRIES = [
   "IT Companies",
@@ -40,9 +41,11 @@ export default function Industries() {
     <section
       id="industries"
       ref={sectionRef}
-      className="w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
+      className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
     >
-      <div className="max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
+      
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         <div className="mb-12 section-headline">
           <p className="text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">

@@ -2,51 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import { animateOnScroll } from "@/lib/gsap";
+import VideoBackground from "./VideoBackground";
+import { servicesData } from "@/lib/servicesData";
+import Link from "next/link";
 
-const FEATURES = [
-  {
-    num: "01",
-    title: "CXO Productivity",
-    body: "Reclaim time from transactional work and focus on strategy.",
-  },
-  {
-    num: "02",
-    title: "Business Assessment",
-    body: "Audit operations to find and fix bottlenecks effectively.",
-  },
-  {
-    num: "03",
-    title: "Workflow Solutions",
-    body: "Eliminate repetitive manual tasks and reduce errors.",
-  },
-  {
-    num: "04",
-    title: "Business Insights",
-    body: "Turn scattered data into clear dashboards and alerts.",
-  },
-  {
-    num: "05",
-    title: "Project Delivery",
-    body: "Bring structure and accountability to key initiatives.",
-  },
-  {
-    num: "06",
-    title: "Team Building",
-    body: "Build high-performing teams through role clarity.",
-  },
-  {
-    num: "07",
-    title: "Smart Engagement",
-    body: "Respond faster and serve better with AI-assisted tools.",
-  },
-  {
-    num: "08",
-    title: "Tailored Solutions",
-    body: "Design custom solutions combining automation and tech.",
-  },
-];
-
-const ANGLE_STEP = 360 / FEATURES.length; // 90°
+const ANGLE_STEP = 360 / servicesData.length;
 
 export default function Features() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -63,9 +23,10 @@ export default function Features() {
     <section
       id="features"
       ref={sectionRef}
-      className="w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
+      className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
     >
-      <div className="max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         {/* Section label + headline */}
         <div className="mb-16 md:mb-28 section-headline">
@@ -83,21 +44,22 @@ export default function Features() {
         */}
         <div className="carousel-track" aria-label="Feature cards">
           <div className="carousel-ring">
-            {FEATURES.map((f, i) => {
+            {servicesData.map((f, i) => {
               const rotateY = ANGLE_STEP * i;
               return (
-                <div
+                <Link
+                  href={`/services/${f.slug}`}
                   key={f.num}
-                  className="carousel-card"
+                  className="carousel-card block hover:bg-white/[0.05] transition-colors duration-300"
                   style={
                     { "--card-rotate-y": `${rotateY}deg` } as React.CSSProperties
                   }
                 >
                   <span className="carousel-card__num">{f.num}</span>
                   <h3 className="carousel-card__title">{f.title}</h3>
-                  <p className="carousel-card__body">{f.body}</p>
+                  <p className="carousel-card__body">{f.shortBody}</p>
                   <div className="carousel-card__accent" aria-hidden="true" />
-                </div>
+                </Link>
               );
             })}
           </div>

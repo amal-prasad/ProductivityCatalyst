@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import LogoMark from "./LogoMark";
 import { gsap } from "@/lib/gsap";
 
 const NAV_LINKS = [
@@ -58,9 +59,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0"
+            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0 flex items-center gap-3"
           >
-            Productivity Catalyst
+            <LogoMark size={32} />
+            <span>Productivity Catalyst</span>
           </Link>
 
           {/* Desktop Nav */}

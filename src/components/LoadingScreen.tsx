@@ -3,40 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useLoading } from "@/context/LoadingContext";
 
-/* ─────────────────────────────────────────────────────────────────
-   Inline SVG — Productivity Catalyst flag/rocket logo
-   Dark navy (#0b1437) vertical bar + electric blue (#4d7cfe) stripes
-   ───────────────────────────────────────────────────────────────── */
-function LogoMark({ size = 80 }: { size?: number }) {
-  const scale = size / 100;
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      {/* Vertical bar */}
-      <rect x="22" y="12" width="8" height="72" rx="1" fill="#0b1437" />
-      {/* Top bracket */}
-      <rect x="22" y="12" width="22" height="6" rx="1" fill="#0b1437" />
-      {/* Three horizontal speed stripes */}
-      <rect x="38" y="22" width="28" height="7" rx="3.5" fill="#4d7cfe" />
-      <rect x="38" y="38" width="32" height="7" rx="3.5" fill="#4d7cfe" />
-      <rect x="38" y="54" width="26" height="7" rx="3.5" fill="#4d7cfe" />
-      {/* Curved bottom connector */}
-      <path
-        d="M30 64 Q30 78, 44 78 Q56 78, 62 70"
-        stroke="#4d7cfe"
-        strokeWidth="7"
-        strokeLinecap="round"
-        fill="none"
-      />
-    </svg>
-  );
-}
+import LogoMark from "./LogoMark";
 
 /* ──────────────────────────────────────────────────────────────── */
 
