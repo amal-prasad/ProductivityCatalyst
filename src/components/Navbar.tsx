@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import LogoMark from "./LogoMark";
-import { gsap } from "@/lib/gsap";
+import { gsap, TIMING } from "@/lib/gsap";
 
 const NAV_LINKS = [
   { name: "Features", href: "#features" },
@@ -26,18 +26,38 @@ const CloseIcon = () => (
   </svg>
 );
 
+// Module-level guard: only animate on true first load, not SPA route changes
+let hasNavAnimated = false;
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    if (hasNavAnimated) {
+      // Already animated in this session — instantly show everything
+      if (headerRef.current) {
+        const targets = headerRef.current.querySelectorAll(".nav-anim-target");
+        gsap.set(targets, { opacity: 1, y: 0 });
+      }
+      return;
+    }
+    hasNavAnimated = true;
+
     let ctx = gsap.context(() => {
       if (!headerRef.current) return;
       const targets = headerRef.current.querySelectorAll(".nav-anim-target");
       gsap.fromTo(
         targets,
         { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 }
+        {
+          y: 0,
+          opacity: 1,
+          duration: TIMING.structuralLoad.duration,
+          stagger: 0.08,
+          ease: TIMING.structuralLoad.ease,
+          delay: 0.15,
+        }
       );
     });
     return () => ctx.revert();

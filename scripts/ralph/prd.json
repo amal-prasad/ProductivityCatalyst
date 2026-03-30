@@ -1,0 +1,125 @@
+{
+  "project": "ProductivityCatalyst",
+  "branchName": "ralph/polish-launch",
+  "description": "Polish and launch the Productivity Catalyst marketing website. All main sections exist. These stories cover remaining UX, performance, SEO, testing, and deployment work.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Functional demo request / contact form",
+      "description": "As a prospective enterprise client, I want to fill out a real form to book a discovery call, so I can get in touch with the Productivity Catalyst team.",
+      "acceptanceCriteria": [
+        "CTASection renders a form with fields: Name, Company, Email, and a Message/Use-case textarea",
+        "Form has client-side validation — empty required fields show inline error messages",
+        "On submit, POST to a /api/contact Next.js route handler that returns 200 and sends data to a configured email or saves to a JSON log in /data/leads.json",
+        "Success and error states are visually displayed to the user without page reload",
+        "Form is keyboard-accessible (tab order correct, Enter submits)",
+        "Typecheck passes (npm run lint && npx tsc --noEmit)",
+        "Verify in browser: fill and submit the form and see success state"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": "Currently CTASection only has a Link href='#contact'. Replace or augment with a real form. Use Next.js App Router route handler at src/app/api/contact/route.ts."
+    },
+    {
+      "id": "US-002",
+      "title": "Mobile responsiveness audit and fixes",
+      "description": "As a mobile user visiting on a phone, I want every section to render correctly and usably at 375px–767px viewport width, so the site works on all devices.",
+      "acceptanceCriteria": [
+        "All sections (Hero, Features, PinnedScrollFeatures, HowItWorks, Industries, Testimonials, CTASection, Footer) render without horizontal overflow at 375px viewport",
+        "ParticleVortex (Three.js) is disabled on viewports < 768px and replaced with a static gradient background for performance",
+        "PinnedScrollFeatures pinning/scroll animation degrades gracefully on mobile (either works or disables without layout break)",
+        "Navbar mobile menu opens and closes correctly",
+        "Touch targets (buttons, links) are at least 44x44px on mobile",
+        "Typecheck passes",
+        "Playwright Mobile Chrome test confirms no horizontal scroll on all sections"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": "Check src/components/ParticleVortex.tsx for a window.innerWidth guard. Check PinnedScrollFeatures for ScrollTrigger pin — add ScrollTrigger.matchMedia or useMediaQuery guard."
+    },
+    {
+      "id": "US-003",
+      "title": "SEO meta tags and Open Graph",
+      "description": "As a marketing stakeholder, I want the site to have complete SEO metadata so it ranks well and renders rich previews when shared on social media.",
+      "acceptanceCriteria": [
+        "src/app/layout.tsx metadata object includes: title, description, openGraph (title, description, url, siteName, images with width/height/alt), twitter (card: summary_large_image, title, description, images)",
+        "Add a /public/og-image.png (1200x630px) — generate a simple dark branded image using sharp or canvas in a Node script, OR use a static placeholder",
+        "Add src/app/sitemap.ts returning a Next.js Metadata sitemap with the root URL",
+        "Add src/app/robots.ts returning allow all with sitemap URL",
+        "Canonical URL is set in metadata",
+        "Typecheck passes",
+        "Run: curl -s http://localhost:3000 | grep -i 'og:title' — must return the og:title tag"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": "Use Next.js 13+ App Router Metadata API (export const metadata or generateMetadata). Do not use next/head. Site URL is https://productivitycatalyst.com (placeholder — use env var NEXT_PUBLIC_SITE_URL with fallback)."
+    },
+    {
+      "id": "US-004",
+      "title": "Performance optimization — Core Web Vitals",
+      "description": "As a site visitor on a mid-range device, I want the page to load quickly and feel fast, so I get a good first impression of the product.",
+      "acceptanceCriteria": [
+        "Three.js (ParticleVortex) is dynamically imported with next/dynamic and ssr:false — already done, verify no regression",
+        "All images in /public/images use Next.js <Image> component with explicit width/height and proper sizes prop",
+        "GSAP and ScrollTrigger are imported only in client components (no server-side import)",
+        "Lenis smooth scroll is initialized only after DOMContentLoaded — verify SmoothScroll.tsx uses useEffect",
+        "next.config.ts has images.formats: ['image/avif', 'image/webp'] configured",
+        "npm run build completes with zero errors",
+        "npm run lint returns zero errors"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": "Run: npm run build. Fix any build errors. Check all <img> tags that should be <Image>. Check next.config.ts for image optimization settings."
+    },
+    {
+      "id": "US-005",
+      "title": "Expanded Playwright E2E test coverage",
+      "description": "As a developer, I want comprehensive E2E tests covering all interactive elements so regressions are caught automatically.",
+      "acceptanceCriteria": [
+        "tests/e2e/contact-form.spec.ts: tests form validation (empty submit shows errors), successful submission (mock or real), and error state",
+        "tests/e2e/navigation.spec.ts: tests all navbar anchor links scroll to correct sections, sticky navbar is visible after scroll",
+        "tests/e2e/responsive.spec.ts: tests layout at 375px, 768px, 1280px — no horizontal overflow at any breakpoint",
+        "tests/e2e/sections.spec.ts: extended to verify all 9 sections (hero, features, metrics, how-it-works, industries, testimonials, cta, footer) are visible",
+        "All tests pass on both Desktop Chrome and Mobile Chrome projects",
+        "npx playwright test exits with code 0"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": "Dev server must be running (npm run dev) for Playwright. playwright.config.ts already has webServer config. Use page.goto('/'), page.locator(), page.getByRole()."
+    },
+    {
+      "id": "US-006",
+      "title": "Vercel deployment configuration",
+      "description": "As the site owner, I want a production-ready Vercel deployment configuration so the site can be deployed with a single push.",
+      "acceptanceCriteria": [
+        "vercel.json is created at project root with: framework: nextjs, buildCommand: npm run build, outputDirectory: .next, and headers block adding Cache-Control: public, max-age=31536000, immutable for /static/* paths",
+        "A .env.example file is created listing all expected environment variables with placeholder values: NEXT_PUBLIC_SITE_URL, CONTACT_EMAIL (for the contact form route)",
+        ".gitignore already excludes .env — verify and add .env.local if missing",
+        "npm run build succeeds locally without errors",
+        "next.config.ts has output unset (not 'export') to support API routes",
+        "Typecheck passes"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": "Do NOT commit real secrets. Only create .env.example with placeholder values. vercel.json headers improve static asset caching."
+    },
+    {
+      "id": "US-007",
+      "title": "Accessibility audit — WCAG 2.1 AA compliance",
+      "description": "As an enterprise client with accessibility requirements, I want the site to meet WCAG 2.1 AA standards so it is usable by all employees.",
+      "acceptanceCriteria": [
+        "All interactive elements (buttons, links, nav items) have accessible labels (aria-label or visible text)",
+        "Color contrast ratio is at least 4.5:1 for normal text and 3:1 for large text against dark background",
+        "Keyboard navigation works: Tab through all interactive elements, Enter/Space activates them, Escape closes any modal/overlay",
+        "Custom cursor (Cursor.tsx) does not interfere with browser accessibility — verify cursor: none is only applied on pointer devices via CSS @media (pointer: fine)",
+        "All section headings follow a logical h1 > h2 > h3 hierarchy",
+        "Smooth scroll (Lenis) respects prefers-reduced-motion — verify SmoothScroll.tsx checks window.matchMedia('(prefers-reduced-motion: reduce)')",
+        "Typecheck passes",
+        "Run: npx axe-core-cli http://localhost:3000 -- or check with browser dev tools axe extension and report zero critical violations"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": "For prefers-reduced-motion in Lenis: wrap Lenis initialization in an if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) check. For cursor: add @media (pointer: coarse) { cursor: auto } in globals.css."
+    }
+  ]
+}

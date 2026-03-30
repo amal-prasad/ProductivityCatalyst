@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll, animatePinnedScroll } from "@/lib/gsap";
+import { animateOnScroll, animatePinnedScroll, animateMobileScrollFocus } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import gsap from "gsap";
@@ -46,7 +46,11 @@ export default function HowItWorks() {
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-        animateOnScroll(steps, { x: -40, y: 0, stagger: 0.18, start: "top 75%" });
+        animateMobileScrollFocus(steps, {
+          start: "top 85%",
+          end: "top 25%",
+          yOffset: 24,
+        });
         return;
       }
 
@@ -117,7 +121,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Mobile view */}
-      <div className="md:hidden flex flex-col max-w-[1280px] mx-auto px-6 pb-[clamp(4rem,10vw,10rem)]">
+      <div className="md:hidden flex flex-col max-w-[1280px] mx-auto px-6 pb-[max(clamp(4rem,10vw,10rem),50vh)]">
         {STEPS.map((step, i) => (
            <div
               key={step.num}

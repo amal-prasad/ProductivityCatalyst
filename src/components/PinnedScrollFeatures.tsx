@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animatePinnedScroll, animateOnScroll } from "@/lib/gsap";
+import { animatePinnedScroll, animateOnScroll, animateMobileScrollFocus } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -49,11 +49,15 @@ export default function PinnedScrollFeatures() {
       const inner = innerRef.current;
       if (!container || !inner) return;
 
-      // Mobile: skip pinning, use simple fade-ins instead
+      // Mobile: independent scroll-focus scrub per item (no pinning)
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const items = container.querySelectorAll(".pinned-item");
-        animateOnScroll(items, { y: 40, stagger: 0.2, start: "top 80%" });
+        animateMobileScrollFocus(items, {
+          start: "top 85%",
+          end: "top 25%",
+          yOffset: 30,
+        });
         return;
       }
 

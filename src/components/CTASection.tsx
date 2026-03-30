@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { animateCTASplit } from "@/lib/gsap";
+import { animateCTASplit, gsap, TIMING } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import MagneticWrapper from "./MagneticWrapper";
@@ -12,9 +12,29 @@ export default function CTASection() {
   const line2Ref = useRef<HTMLHeadingElement>(null);
   const btnRef = useRef<HTMLAnchorElement>(null);
 
-  // We are currently replacing animateCTASplit with TextReveal, but keeping the ref just in case.
-  // Actually, we don't need animateCTASplit if we use TextReveal.
-  
+  useEffect(() => {
+    let ctx = gsap.context(() => {
+      // Animate the CTA button sliding in after text reveals
+      if (btnRef.current) {
+        gsap.fromTo(
+          btnRef.current,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: TIMING.ctaEntrance.duration,
+            ease: TIMING.ctaEntrance.ease,
+            scrollTrigger: {
+              trigger: btnRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+    });
+    return () => ctx.revert();
+  }, []);
   return (
     <section
       id="contact"
