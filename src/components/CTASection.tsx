@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { animateCTASplit, gsap, TIMING } from "@/lib/gsap";
+import { gsap, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import MagneticWrapper from "./MagneticWrapper";
@@ -13,24 +13,26 @@ export default function CTASection() {
   const btnRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      // Animate the CTA button sliding in after text reveals
-      if (btnRef.current) {
-        gsap.fromTo(
-          btnRef.current,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: TIMING.ctaEntrance.duration,
-            ease: TIMING.ctaEntrance.ease,
-            scrollTrigger: {
-              trigger: btnRef.current,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
+    const ctx = gsap.context(() => {
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#contact",
+          start: "top 75%",
+        }
+      });
+
+      if (line1Ref.current && line2Ref.current && btnRef.current) {
+        ctaTl
+          .fromTo(line1Ref.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth })
+          .fromTo(line2Ref.current,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out }, "-=0.2")
+          .fromTo(btnRef.current,
+            { opacity: 0, y: 20, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1,
+              duration: MOTION.snappy, ease: MOTION.back }, "-=0.1");
       }
     });
     return () => ctx.revert();

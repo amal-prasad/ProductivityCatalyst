@@ -21,7 +21,7 @@ export default function ParallaxBackground({
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const container = containerRef.current;
       const image = imageRef.current;
       if (!container || !image) return;

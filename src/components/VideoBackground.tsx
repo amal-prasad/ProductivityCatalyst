@@ -21,28 +21,8 @@ export default function VideoBackground({
     }
   }, []);
 
-  if (isSticky) {
-    return (
-      <div className={`absolute inset-0 pointer-events-none select-none z-0 ${className}`}>
-        <div className="sticky top-0 w-full h-[100vh] overflow-hidden">
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-          >
-            <source src={src} type={src.endsWith(".webm") ? "video/webm" : "video/mp4"} />
-          </video>
-          <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity > 0.6 ? 0.6 : overlayOpacity }} />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}>
+  const videoContent = (
+    <>
       <video
         ref={videoRef}
         autoPlay
@@ -54,6 +34,22 @@ export default function VideoBackground({
         <source src={src} type={src.endsWith(".webm") ? "video/webm" : "video/mp4"} />
       </video>
       <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity > 0.6 ? 0.6 : overlayOpacity }} />
+    </>
+  );
+
+  if (isSticky) {
+    return (
+      <div className={`absolute inset-0 pointer-events-none select-none z-0 hidden md:block ${className}`}>
+        <div className="sticky top-0 w-full h-[100vh] overflow-hidden">
+          {videoContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 hidden md:block ${className}`}>
+      {videoContent}
     </div>
   );
 }

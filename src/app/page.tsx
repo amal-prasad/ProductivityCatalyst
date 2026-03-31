@@ -6,8 +6,10 @@ import DynamicMetrics from "@/components/DynamicMetrics";
 import HowItWorks from "@/components/HowItWorks";
 import CardGrid from "@/components/CardGrid";
 import Industries from "@/components/Industries";
+import ComparisonTable from "@/components/ComparisonTable";
 import Testimonials from "@/components/Testimonials";
 import CTASection from "@/components/CTASection";
+import ContactForm from "@/components/ContactForm";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -22,8 +24,10 @@ export default function Home() {
         <HowItWorks />
         <CardGrid />
         <Industries />
+        <ComparisonTable />
         <Testimonials />
         <CTASection />
+        <ContactForm />
       </main>
       <Footer />
     </>

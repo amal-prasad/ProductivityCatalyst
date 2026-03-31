@@ -1,0 +1,9 @@
+{
+  "active_agents": [],
+  "roles": [
+    "Architect",
+    "Coder",
+    "Verifier",
+    "Planner"
+  ]
+}

@@ -11,13 +11,13 @@ You are a GSD planner orchestrator. You create executable phase plans with task 
 **Core responsibilities:**
 - Parse arguments and validate phase
 - Handle research (unless skipped or exists)
-- Create PLAN.md files with XML task structure
+- Create tasks in .swarm/board.md with XML task structure
 - Verify plans with checker logic
 - Iterate until plans pass (max 3 iterations)
 </role>
 
 <objective>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
+Create executable phase prompts (tasks in .swarm/board.md) for a roadmap phase with integrated research and verification.
 
 **Default flow:** Research (if needed) → Plan → Verify → Done
 
@@ -45,12 +45,12 @@ You are planning for ONE person (the user) and ONE implementer (Claude).
 - User is the visionary/product owner
 - Claude is the builder
 
-## Plans Are Prompts
-PLAN.md is NOT a document that gets transformed into a prompt.
-PLAN.md IS the prompt. It contains:
+## Tasks Are Prompts
+Tasks in `.swarm/board.md` are NOT just documents.
+Each task IS the prompt. It contains:
 - Objective (what and why)
 - Context (@file references)
-- Tasks (with verification criteria)
+- Sub-tasks (with verification criteria)
 - Success criteria (measurable)
 
 ## Quality Degradation Curve
@@ -231,49 +231,43 @@ For the phase goal:
 2. Break into atomic tasks (2-3 per plan)
 3. Determine dependencies between tasks
 4. Assign execution waves
+5. **Check Locks**: Verify none of the target files are currently in the `Locked Files Registry` in `.swarm/board.md`. If they are, wait or add a dependency.
 
-### 6c. Write PLAN.md Files
+### 6c. Enforce File Locks
 
-Create `$PHASE_DIR/{N}-PLAN.md`:
+Before finalizing tasks that modify specific files, you MUST read the `Locked Files Registry` in `.swarm/board.md`.
+If any required file is currently locked by another agent, you must either schedule the task for a later wave or adjust the scope.
+
+### 6d. Appending Tasks to board.md
+
+**Rule: Append-Only by GSD.** Wiping the board is forbidden.
+
+Append the generated tasks directly into `.swarm/board.md` under `## Backlog`:
 
 ```markdown
----
-phase: {N}
-plan: 1
-wave: 1
----
-
-# Plan {N}.1: {Plan Name}
-
-## Objective
-{What this plan delivers and why}
-
-## Context
-- .gsd/SPEC.md
-- .gsd/ARCHITECTURE.md
-- {relevant source files}
-
-## Tasks
-
-<task type="auto">
-  <name>{Task name}</name>
-  <files>{exact file paths}</files>
-  <action>
-    {Specific implementation instructions}
-    - What to do
-    - What to avoid and WHY
-  </action>
-  <verify>{Command to prove task complete}</verify>
-  <done>{Measurable acceptance criteria}</done>
-</task>
-
-<task type="auto">
-  ...
-</task>
-
-## Success Criteria
-- [ ] {Measurable outcome 1}
-- [ ] {Measurable outcome 2}
+- [ ] **Task {N}.{M}: {Descriptive Name}** (Phase {N}, Wave {W})
+  - **Dependencies**: {Depends on tasks}
+  - **Objective**: {What this plan delivers and why}
+  - **Context Files**: 
+    - .gsd/SPEC.md
+    - .gsd/ARCHITECTURE.md
+    - {relevant source files}
+  - **Locks Required**:
+    - {list files that MUST be locked in the registry when this task begins to prevent conflicts}
+  - **Must-haves**: 
+    - [ ] {must-have 1}
+  - **Sub-tasks**:
+    <task type="auto">
+      <name>{Task name}</name>
+      <files>{exact file paths}</files>
+      <action>
+        {Specific implementation instructions}
+        - What to do
+        - What to avoid and WHY
+      </action>
+      <verify>{Command to prove task complete}</verify>
+      <done>{Measurable acceptance criteria}</done>
+    </task>
 ```
 
 ---
@@ -311,7 +305,8 @@ Update `.gsd/STATE.md`:
 ```bash
 git add .gsd/phases/$PHASE/
 git add .gsd/STATE.md
-git commit -m "docs(phase-$PHASE): create execution plans"
+git add .swarm/board.md
+git commit -m "docs(phase-$PHASE): create execution plans in board"
 ```
 
 ---
@@ -364,7 +359,7 @@ Plans:
 | Command | Relationship |
 |---------|--------------|
 | `/map` | Run before /plan to get codebase context |
-| `/execute` | Runs PLAN.md files created by /plan |
+| `/execute` | Runs tasks from `.swarm/board.md` created by /plan |
 | `/verify` | Validates executed plans |
 
 ### Skills

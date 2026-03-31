@@ -21,7 +21,7 @@ export default function TextReveal({
   const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const container = containerRef.current;
       if (!container) return;
 

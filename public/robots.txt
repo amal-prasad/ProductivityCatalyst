@@ -1,0 +1,12 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin/private routes (none currently)
+Disallow:
+
+# Sitemap
+Sitemap: https://productivitycatalyst.co/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

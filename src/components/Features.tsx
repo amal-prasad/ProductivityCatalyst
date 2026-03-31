@@ -13,7 +13,7 @@ export default function Features() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
       const carousel = sectionRef.current.querySelector(".carousel-track");
       animateOnScroll(carousel, { y: 60, start: "top 72%" });

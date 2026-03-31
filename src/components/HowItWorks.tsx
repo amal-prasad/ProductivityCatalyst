@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll, animatePinnedScroll, animateMobileScrollFocus } from "@/lib/gsap";
+import { MOTION, animateMobileScrollFocus } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import gsap from "gsap";
@@ -36,27 +36,41 @@ const STEPS = [
 
 export default function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
-  const desktopContainerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
       
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-        animateMobileScrollFocus(steps, {
-          start: "top 70%",
-          end: "top 30%",
-          yOffset: 24,
+        animateMobileScrollFocus(steps, { scaleMin: 0.94, blurMax: 4 });
+      } else {
+        const desktopSteps = sectionRef.current.querySelectorAll(".step-row");
+        desktopSteps.forEach((row, i) => {
+          const fromLeft = i % 2 === 0;
+          gsap.fromTo(row,
+            { opacity: 0, x: fromLeft ? -50 : 50 },
+            {
+              opacity: 1, x: 0,
+              duration: MOTION.standard,
+              ease: MOTION.smooth,
+              scrollTrigger: { trigger: row, start: MOTION.triggerStart }
+            }
+          );
         });
-        return;
       }
 
-      if (desktopContainerRef.current && itemRefs.current.length > 0) {
-        animatePinnedScroll(desktopContainerRef.current, itemRefs.current.filter(Boolean), { scrollLength: 400 });
-      }
+      // Animate the "01 → 05" numerals as they scroll in
+      const stepNumbers = sectionRef.current.querySelectorAll(".step-number");
+      stepNumbers.forEach((num) => {
+        gsap.fromTo(num,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.back,
+            scrollTrigger: { trigger: num, start: "top 85%" }
+          }
+        );
+      });
     });
     return () => ctx.revert();
   }, []);
@@ -69,49 +83,43 @@ export default function HowItWorks() {
     >
       <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} isSticky={true} />
       
-      {/* Desktop view */}
-      <div
-        ref={desktopContainerRef}
-        className="hidden md:flex w-full min-h-[100dvh] flex-col justify-center relative"
-      >
-        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)] mb-12">
-          {/* Label + headline */}
-          <div className="section-headline">
+      {/* Common Header */}
+      <div className="relative z-10 w-full pt-[clamp(4rem,8vh,8rem)] pb-[clamp(2rem,6vh,6rem)] flex flex-col items-center">
+        <div className="w-full max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+          <div className="section-headline text-center md:text-left">
             <p className="text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">
               How It Works
             </p>
             <h2 className="text-white font-bold text-[clamp(2rem,5vw,4rem)] leading-[0.95] tracking-[-0.02em]">
               <TextReveal>Five Steps.</TextReveal>
-              <br />
+              <br className="hidden md:block" />
               <TextReveal delay={0.2}>To Lasting Impact.</TextReveal>
             </h2>
           </div>
         </div>
+      </div>
 
-        <div className="relative w-full h-[55vh] max-w-[1280px] mx-auto overflow-hidden">
-          {STEPS.map((step, i) => (
+      {/* Desktop view */}
+      <div className="hidden md:block relative z-10 w-full max-w-[1280px] mx-auto overflow-hidden pb-32">
+        <div className="flex flex-col gap-12">
+          {STEPS.map((step) => (
             <div
               key={step.num}
-              ref={(el) => {
-                if (el) itemRefs.current[i] = el;
-              }}
-              className="absolute inset-0 flex flex-row items-center gap-16 px-6 md:px-[clamp(1.5rem,5vw,5rem)]"
+              className="step-row relative flex flex-row items-center gap-16 px-6 md:px-[clamp(1.5rem,5vw,5rem)]"
             >
-              <span
-                className="absolute left-6 top-1/2 -translate-y-1/2 text-[14rem] md:text-[18rem] font-bold leading-none select-none pointer-events-none"
-                style={{ color: "rgba(255,255,255,0.02)" }}
-                aria-hidden="true"
-              >
-                {step.num}
-              </span>
-              <div className="relative z-10 flex flex-col gap-6 flex-1 pt-6">
-                <span className="text-[0.85rem] tracking-[0.2em] uppercase text-accent">
+              <div className="w-[120px] flex shrink-0 justify-end">
+                <span className="step-number text-[4rem] font-bold leading-none text-accent">
                   {step.num}
                 </span>
-                <h3 className="text-white font-bold text-[clamp(2rem,4vw,3.25rem)] leading-tight tracking-[-0.01em]">
+              </div>
+              <div className="flex flex-col gap-3 flex-1 px-8 py-10 bg-white/[0.02] border border-white/[0.08] rounded-xl hover:bg-white/[0.04] transition-colors duration-300">
+                <span className="text-[0.85rem] tracking-[0.2em] uppercase text-secondary">
+                  Step {step.num}
+                </span>
+                <h3 className="text-white font-bold text-[max(2rem,2.5vw)] leading-tight tracking-[-0.01em]">
                   {step.title}
                 </h3>
-                <p className="text-secondary text-[1.2rem] leading-[1.7] max-w-2xl">
+                <p className="text-secondary text-[1.1rem] leading-[1.7] max-w-xl">
                   {step.body}
                 </p>
               </div>
@@ -121,7 +129,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Mobile view */}
-      <div className="md:hidden flex flex-col max-w-[1280px] mx-auto px-6 pb-[max(clamp(4rem,10vw,10rem),50vh)]">
+      <div className="md:hidden relative z-10 flex flex-col max-w-[1280px] mx-auto px-6 pb-[max(clamp(4rem,10vw,10rem),30vh)]">
         {STEPS.map((step, i) => (
            <div
               key={step.num}
@@ -130,7 +138,7 @@ export default function HowItWorks() {
               }`}
             >
               <span
-                className="absolute left-0 top-10 text-[8rem] font-bold leading-none select-none pointer-events-none"
+                className="step-number absolute left-0 top-10 text-[8rem] font-bold leading-none select-none pointer-events-none"
                 style={{ color: "rgba(255,255,255,0.03)" }}
                 aria-hidden="true"
               >

@@ -12,37 +12,48 @@ if (typeof window !== "undefined") {
    Timing constants — split by animation type
    ───────────────────────────────────────────────────────── */
 
-export const TIMING = {
-  /** Structural load animations (navbar drop-in) */
-  structuralLoad: { duration: 0.6, ease: "power2.out" as const },
-  /** Scroll-focus micro-interactions (mobile card scrub) */
-  scrollFocus: { duration: 0.24, ease: "power2.out" as const },
-  /** CTA / button slide-in entrances */
-  ctaEntrance: { duration: 0.35, ease: "power3.out" as const },
-  /** Blur removal — matches scale duration for synchronised feel */
-  blurRemoval: { duration: 0.24, ease: "power2.out" as const },
-} as const;
+export const MOTION = {
+  // Durations
+  instant:    0.1,   // state flips, focus rings
+  micro:      0.2,   // hover, icon bounce
+  snappy:     0.3,   // card reveals, button presses
+  standard:   0.5,   // section entrances, nav load
+  deliberate: 0.75,  // hero sequence, pinned panels
+  cinematic:  1.2,   // page-load curtain, full-bleed reveals
 
-/* ─────────────────────────────────────────────────────────
-   Device capability detection — proactive, not reactive
-   ───────────────────────────────────────────────────────── */
+  // Eases
+  out:        "power2.out",
+  inOut:      "power2.inOut",
+  back:       "back.out(1.4)",    // overshoot for cards/badges
+  elastic:    "elastic.out(1, 0.4)", // icon pop
+  smooth:     "expo.out",         // premium scroll scrub
 
-function getMotionCapabilities() {
-  if (typeof window === "undefined") {
-    return { prefersReducedMotion: false, isLowEnd: false, useBlur: true };
+  // Scroll trigger defaults
+  triggerStart:        "top 82%",   // desktop
+  triggerStartMobile:  "top 88%",   // mobile — fires earlier
+  focusBand:           "top 65%",   // center-focus band for mobile cards
+};
+
+// Device detection — set once, use everywhere
+export const IS_MOBILE   = () => typeof window !== 'undefined' && window.innerWidth < 768;
+export const IS_REDUCED  = () => typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+export const IS_LOW_END  = () => typeof navigator !== 'undefined' && navigator.hardwareConcurrency <= 4;
+
+// Blur allowed only if device is capable and user hasn't opted out
+export const CAN_BLUR = () => !IS_REDUCED() && !IS_LOW_END();
+
+export function safeAnimate(fn: () => void, fallbackFn?: () => void) {
+  if (IS_REDUCED()) {
+    // Instant opacity reveal — zero movement
+    if (fallbackFn) {
+      fallbackFn();
+    } else {
+      gsap.set("[data-animate]", { opacity: 1 });
+    }
+    return;
   }
-  const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
-  ).matches;
-  const isLowEnd =
-    typeof navigator !== "undefined" &&
-    "hardwareConcurrency" in navigator &&
-    (navigator.hardwareConcurrency ?? 8) <= 4;
-  const useBlur = !prefersReducedMotion && !isLowEnd;
-  return { prefersReducedMotion, isLowEnd, useBlur };
+  fn();
 }
-
-export { getMotionCapabilities };
 
 /** Fade each word in a headline up from Y+40 on page load */
 export function animateHeroWords(container: Element | null) {
@@ -64,33 +75,22 @@ export function animateHeroWords(container: Element | null) {
 
 /** Fade + slide a batch of elements on scroll entry */
 export function animateOnScroll(
-  elements: Element | Element[] | NodeListOf<Element> | null,
-  options: {
-    trigger?: Element | string;
-    y?: number;
-    x?: number;
-    stagger?: number;
-    start?: string;
-    duration?: number;
-  } = {}
+  selector: string,
+  opts?: { stagger?: number; y?: number; delay?: number }
 ) {
-  if (!elements) return;
-  const { y = 30, x = 0, stagger = 0, start = "top 80%", duration = 0.9 } = options;
-  return gsap.fromTo(
-    elements,
-    { y, x, opacity: 0 },
+  gsap.fromTo(selector,
+    { opacity: 0, y: opts?.y ?? 40 },
     {
-      y: 0,
-      x: 0,
-      opacity: 1,
-      duration,
-      stagger,
-      ease: "power3.out",
+      opacity: 1, y: 0,
+      duration: MOTION.standard,
+      ease: MOTION.out,
+      stagger: opts?.stagger ?? 0,
+      delay: opts?.delay ?? 0,
       scrollTrigger: {
-        trigger: options.trigger ?? (elements instanceof Element ? elements : undefined),
-        start,
-        once: true,
-      },
+        trigger: selector,
+        start: MOTION.triggerStart,
+        toggleActions: "play none none none",
+      }
     }
   );
 }
@@ -223,8 +223,8 @@ export function animateLineDraw(el: HTMLElement) {
     { scaleX: 0 },
     {
       scaleX: 1,
-      duration: 1.2,
-      ease: "power3.inOut",
+      duration: MOTION.cinematic,
+      ease: MOTION.inOut,
       scrollTrigger: {
         trigger: el,
         start: "top 95%",
@@ -253,60 +253,49 @@ export function animateLineDraw(el: HTMLElement) {
  * falls back to opacity-only on constrained devices.
  */
 export function animateMobileScrollFocus(
-  items: Element[] | NodeListOf<Element>,
-  options: {
-    /** ScrollTrigger start position. Default: "top 85%" */
-    start?: string;
-    /** ScrollTrigger end position. Default: "top 15%" */
-    end?: string;
-    /** Scale range [min, max]. Default: [0.95, 1] */
-    scaleRange?: [number, number];
-    /** Additional y offset for entrance. Default: 20 */
-    yOffset?: number;
-  } = {}
+  items: NodeListOf<Element> | Element[],
+  opts?: { scaleMin?: number; blurMax?: number }
 ) {
-  if (!items || (items instanceof NodeList && items.length === 0)) return;
+  if (!IS_MOBILE()) return; // Desktop ignores this completely
 
-  const {
-    start = "top 85%",
-    end = "top 15%",
-    scaleRange = [0.95, 1],
-    yOffset = 20,
-  } = options;
+  const scaleMin  = opts?.scaleMin ?? 0.93;
+  const blurMax   = CAN_BLUR() ? (opts?.blurMax ?? 6) : 0;
 
-  const { prefersReducedMotion, useBlur } = getMotionCapabilities();
+  items.forEach((el) => {
+    // Initial state
+    gsap.set(el, {
+      opacity: 0.35,
+      scale: scaleMin,
+      filter: blurMax > 0 ? `blur(${blurMax}px)` : "none",
+    });
 
-  const elements = items instanceof NodeList ? Array.from(items) : items;
-
-  elements.forEach((item) => {
-    // Set initial state
-    const fromVars: gsap.TweenVars = {
-      opacity: 0,
-      scale: scaleRange[0],
-      y: yOffset,
-    };
-    const toVars: gsap.TweenVars = {
-      opacity: 1,
-      scale: scaleRange[1],
-      y: 0,
-      duration: TIMING.scrollFocus.duration,
-      ease: TIMING.scrollFocus.ease,
-      scrollTrigger: {
-        trigger: item,
-        start,
-        end,
-        scrub: prefersReducedMotion ? false : 0.4,
-        once: prefersReducedMotion, // instant snap if reduced motion
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 85%",      // begins entering viewport
+      end:   "top 25%",      // fully in focus zone
+      scrub: 0.6,            // slight lag = premium feel
+      onUpdate(self) {
+        const p = self.progress; // 0 → 1
+        gsap.set(el, {
+          opacity:  gsap.utils.interpolate(0.35, 1, p),
+          scale:    gsap.utils.interpolate(scaleMin, 1, p),
+          filter:   blurMax > 0
+            ? `blur(${gsap.utils.interpolate(blurMax, 0, p)}px)`
+            : "none",
+        });
       },
-    };
-
-    // Blur only on capable devices
-    if (useBlur && !prefersReducedMotion) {
-      fromVars.filter = "blur(4px)";
-      toVars.filter = "blur(0px)";
-    }
-
-    gsap.fromTo(item, fromVars, toVars);
+      onLeave() {
+        // Element scrolled past — fade it back slightly
+        gsap.to(el, {
+          opacity: 0.5, scale: 0.96,
+          duration: MOTION.micro, ease: MOTION.out
+        });
+      },
+      onEnterBack() {
+        // Re-entering from below — reset scrub
+        gsap.set(el, { opacity: 0.35, scale: scaleMin });
+      }
+    });
   });
 }
 

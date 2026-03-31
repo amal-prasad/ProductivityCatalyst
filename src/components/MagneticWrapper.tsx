@@ -20,10 +20,10 @@ export default function MagneticWrapper({
     const element = magneticRef.current;
     if (!element) return;
 
-    let xTo: any;
-    let yTo: any;
+    let xTo: (value: number) => void;
+    let yTo: (value: number) => void;
     
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       xTo = gsap.quickTo(element, "x", {
         duration: 1,
         ease: "elastic.out(1, 0.3)",

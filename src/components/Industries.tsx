@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll, gsap } from "@/lib/gsap";
+import { animateOnScroll } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 
 const INDUSTRIES = [
@@ -19,25 +19,9 @@ const INDUSTRIES = [
 
 export default function Industries() {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
-      const headline = sectionRef.current.querySelector(".section-headline");
-      animateOnScroll(headline, { y: 30, start: "top 80%" });
-      if (trackRef.current) {
-        const scrollWidth = trackRef.current.scrollWidth;
-        const distance = scrollWidth / 2;
-        gsap.to(trackRef.current, {
-          x: -distance,
-          duration: distance / 50,
-          ease: "none",
-          repeat: -1,
-        });
-      }
-    });
-    return () => ctx.revert();
+    animateOnScroll(".section-headline", { y: 30 });
   }, []);
 
   return (
@@ -59,12 +43,8 @@ export default function Industries() {
           </h2>
         </div>
 
-        {/* Infinite Marquee */}
-        <div className="relative w-full overflow-hidden mask-image-[linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
-          <div
-            ref={trackRef}
-            className="flex gap-3 w-max pb-4"
-          >
+        <div className="relative w-full overflow-hidden">
+          <div className="marquee-track flex gap-3 w-max pb-4">
             {[...INDUSTRIES, ...INDUSTRIES].map((name, idx) => (
               <span
                 key={`${name}-${idx}`}

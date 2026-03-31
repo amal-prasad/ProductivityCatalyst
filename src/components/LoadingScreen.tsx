@@ -18,7 +18,10 @@ export default function LoadingScreen() {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   // Track when the component first mounted
-  const mountTimeRef = useRef(Date.now());
+  const mountTimeRef = useRef<number | null>(null);
+  if (mountTimeRef.current === null) {
+    mountTimeRef.current = Date.now();
+  }
   // Track whether loading has resolved (from context)
   const loadResolvedRef = useRef(false);
 
@@ -32,7 +35,7 @@ export default function LoadingScreen() {
   // Animated progress counter
   useEffect(() => {
     const id = setInterval(() => {
-      const elapsed = Date.now() - mountTimeRef.current;
+      const elapsed = Date.now() - (mountTimeRef.current ?? Date.now());
       const loadDone = loadResolvedRef.current;
 
       if (loadDone && elapsed >= MIN_DISPLAY_MS) {

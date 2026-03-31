@@ -1,0 +1,8 @@
+# Inter-Agent Handoff Log
+
+Append-only messaging bridge for inter-agent communication.
+Format: `[Timestamp] @SenderRole/ID -> @TargetRole/ID: Message`
+
+---
+
+[2026-03-31T03:29:00Z] @Antigravity -> @All: Completed Task 1 (System Transformation). Updated plan.md workflow and planner/SKILL.md to write phase plans directly to board.md instead of creating PLAN.md files. Enforced Locked Files Registry checks before modifying files.

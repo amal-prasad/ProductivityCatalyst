@@ -27,15 +27,14 @@ You are planning for ONE person (the user) and ONE implementer (the AI).
 - AI is the builder
 - Estimate effort in AI execution time, not human dev time
 
-### Plans Are Prompts
-PLAN.md is NOT a document that gets transformed into a prompt.
-PLAN.md IS the prompt. It contains:
+### Tasks Are Prompts
+The `.swarm/board.md` backlog tasks ARE the prompts. They contain:
 - Objective (what and why)
 - Context (file references)
-- Tasks (with verification criteria)
+- Sub-tasks (with verification criteria)
 - Success criteria (measurable)
 
-When planning a phase, you are writing the prompt that will execute it.
+When planning a phase, you are writing the task entry that will execute it.
 
 ### Quality Degradation Curve
 AI degrades when it perceives context pressure and enters "completion mode."
@@ -204,64 +203,33 @@ If two plans need the same file:
 
 ---
 
-## PLAN.md Structure
+## .swarm/board.md Entry Structure
+
+**Rule: File Locking Check.** Before writing to the board or drafting tasks that touch specific files, check the `Locked Files Registry` in `.swarm/board.md`. Do not schedule tasks resolving immediately if the required files are currently locked by other Agent IDs.
+Instead of creating separate PLAN.md files, append new tasks to `.swarm/board.md` under `## Backlog`. **Do NOT wipe the board!**
 
 ```markdown
----
-phase: {N}
-plan: {M}
-wave: {W}
-depends_on: []
-files_modified: []
-autonomous: true
-user_setup: []
-
-must_haves:
-  truths: []
-  artifacts: []
----
-
-# Plan {N}.{M}: {Descriptive Name}
-
-<objective>
-{What this plan accomplishes}
-
-Purpose: {Why this matters}
-Output: {What artifacts will be created}
-</objective>
-
-<context>
-Load for context:
-- .gsd/SPEC.md
-- .gsd/ARCHITECTURE.md (if exists)
-- {relevant source files}
-</context>
-
-<tasks>
-
-<task type="auto">
-  <name>{Clear task name}</name>
-  <files>{exact/file/paths.ext}</files>
-  <action>
-    {Specific instructions}
-    AVOID: {common mistake} because {reason}
-  </action>
-  <verify>{command or check}</verify>
-  <done>{measurable criteria}</done>
-</task>
-
-</tasks>
-
-<verification>
-After all tasks, verify:
-- [ ] {Must-have 1}
-- [ ] {Must-have 2}
-</verification>
-
-<success_criteria>
-- [ ] All tasks verified
-- [ ] Must-haves confirmed
-</success_criteria>
+- [ ] **Task {N}.{M}: {Descriptive Name}** (Phase {N}, Wave {W})
+  - **Dependencies**: {Depends on tasks}
+  - **Objective**: {What this plan accomplishes}
+  - **Context Files**: 
+    - .gsd/SPEC.md
+    - {relevant source files}
+  - **Locks Required**:
+    - {list files that MUST be locked in the registry when this task begins to prevent conflicts}
+  - **Must-haves**: 
+    - [ ] {must-have 1}
+  - **Sub-tasks**:
+    <task type="auto">
+      <name>{Clear task name}</name>
+      <files>{exact/file/paths.ext}</files>
+      <action>
+        {Specific instructions}
+        AVOID: {common mistake} because {reason}
+      </action>
+      <verify>{command or check}</verify>
+      <done>{measurable criteria}</done>
+    </task>
 ```
 
 ### Frontmatter Fields
@@ -403,18 +371,18 @@ Gap closure plans:
 
 ### Standard Mode
 ```
-PLANS_CREATED: {N}
+TASKS_CREATED: {N}
 WAVE_STRUCTURE:
-  Wave 1: [plan-1, plan-2]
-  Wave 2: [plan-3]
-FILES: [list of PLAN.md paths]
+  Wave 1: [task-1, task-2]
+  Wave 2: [task-3]
+FILES: [.swarm/board.md appended]
 ```
 
 ### Gap Closure Mode
 ```
-GAP_PLANS_CREATED: {N}
+GAP_TASKS_CREATED: {N}
 GAPS_ADDRESSED: [gap-ids]
-FILES: [list of gap PLAN.md paths]
+FILES: [.swarm/board.md appended]
 ```
 
 ### Checkpoint Reached

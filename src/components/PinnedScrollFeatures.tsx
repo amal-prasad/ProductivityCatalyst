@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animatePinnedScroll, animateOnScroll, animateMobileScrollFocus } from "@/lib/gsap";
+import { animatePinnedScroll, animateMobileScrollFocus } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -44,7 +44,7 @@ export default function PinnedScrollFeatures() {
   const itemRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       const container = containerRef.current;
       const inner = innerRef.current;
       if (!container || !inner) return;
@@ -53,11 +53,7 @@ export default function PinnedScrollFeatures() {
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const items = container.querySelectorAll(".pinned-item");
-        animateMobileScrollFocus(items, {
-          start: "top 70%",
-          end: "top 30%",
-          yOffset: 30,
-        });
+        animateMobileScrollFocus(items, { scaleMin: 0.94, blurMax: 4 });
         return;
       }
 

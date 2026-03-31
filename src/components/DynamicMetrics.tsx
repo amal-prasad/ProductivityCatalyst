@@ -18,7 +18,7 @@ export default function DynamicMetrics() {
   const labelRefs = useRef<HTMLParagraphElement[]>([]);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
 
       // Headline entrance

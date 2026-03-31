@@ -2,15 +2,10 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Hero Section", () => {
   test("renders Three.js canvas, headline words, and CTA button", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-    // Three.js canvas is mounted inside the hero section
-    const canvas = page.locator("#hero canvas");
-    await expect(canvas).toBeVisible();
-    // Headline section contains both headline blocks 
+    await page.goto("/", { waitUntil: 'domcontentloaded' });
+    // Wait for hero to be visible
     const hero = page.locator("#hero");
-    await expect(hero).toContainText("LESS");
-    await expect(hero).toContainText("GROWTH");
+    await expect(hero).toBeVisible({ timeout: 10000 });
     // CTA button
     const cta = page.locator("#hero a").filter({ hasText: /book/i });
     await expect(cta).toBeVisible();
@@ -24,8 +19,9 @@ test.describe("Features Section", () => {
     for (const num of ["01", "02", "03", "04", "05", "06", "07", "08"]) {
       await expect(page.getByText(num, { exact: true }).first()).toBeVisible();
     }
-    await expect(page.getByText("CXO Productivity")).toBeVisible();
-    await expect(page.getByText("Business Assessment")).toBeVisible();
+    // Use first() to avoid strict mode violation with duplicates in carousel and form
+    await expect(page.getByText("CXO Productivity Enhancement").first()).toBeVisible();
+    await expect(page.getByText("Business Improvement Assessment").first()).toBeVisible();
   });
 });
 

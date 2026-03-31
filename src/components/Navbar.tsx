@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import LogoMark from "./LogoMark";
-import { gsap, TIMING } from "@/lib/gsap";
+import { gsap, MOTION } from "@/lib/gsap";
 
 const NAV_LINKS = [
   { name: "Features", href: "#features" },
@@ -28,6 +28,8 @@ const CloseIcon = () => (
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
   const headerRef = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
 
@@ -49,7 +51,7 @@ export default function Navbar() {
       sessionStorage.setItem("navAnimated", "true");
     }
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       if (!headerRef.current) return;
       const targets = headerRef.current.querySelectorAll(".nav-anim-target");
       gsap.fromTo(
@@ -58,10 +60,11 @@ export default function Navbar() {
         {
           y: 0,
           opacity: 1,
-          duration: TIMING.structuralLoad.duration,
+          duration: MOTION.standard,
           stagger: 0.08,
-          ease: TIMING.structuralLoad.ease,
+          ease: MOTION.smooth,
           delay: 0.15,
+          clearProps: "transform",
         }
       );
     });
@@ -80,9 +83,45 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
+  // Scroll detection for background opacity
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Active section highlighting with IntersectionObserver
+  useEffect(() => {
+    const sectionIds = NAV_LINKS.map((link) => link.href.replace("#", ""));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
-      <header ref={headerRef} className="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]">
+      <header
+        ref={headerRef}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+          scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
+        }`}
+      >
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">
           {/* Logo */}
           <Link
@@ -95,20 +134,29 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase text-white/80 hover:text-white transition-colors opacity-0"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const sectionId = link.href.replace("#", "");
+              const isActive = activeSection === sectionId;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${
+                    isActive ? "text-accent" : "text-white/80 hover:text-white"
+                  }`}
+                >
+                  {link.name}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-accent" />
+                  )}
+                </Link>
+              );
+            })}
             <Link
               href="#contact"
               className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 opacity-0"
             >
-              Book a Call 
+              Book a Discovery Call →
             </Link>
           </nav>
 
@@ -130,22 +178,28 @@ export default function Navbar() {
         }`}
       >
         <nav className="flex flex-col items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="text-2xl font-bold tracking-[0.15em] uppercase text-white hover:text-accent transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const sectionId = link.href.replace("#", "");
+            const isActive = activeSection === sectionId;
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`text-2xl font-bold tracking-[0.15em] uppercase transition-colors ${
+                  isActive ? "text-accent" : "text-white hover:text-accent"
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
           <Link
             href="#contact"
             onClick={() => setIsOpen(false)}
             className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
           >
-            Book a Call
+            Book a Discovery Call →
           </Link>
         </nav>
       </div>
