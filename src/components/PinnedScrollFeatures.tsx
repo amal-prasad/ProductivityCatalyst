@@ -54,8 +54,8 @@ export default function PinnedScrollFeatures() {
       if (mq.matches) {
         const items = container.querySelectorAll(".pinned-item");
         animateMobileScrollFocus(items, {
-          start: "top 85%",
-          end: "top 25%",
+          start: "top 70%",
+          end: "top 30%",
           yOffset: 30,
         });
         return;

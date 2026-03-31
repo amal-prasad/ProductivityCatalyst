@@ -47,8 +47,8 @@ export default function HowItWorks() {
       if (mq.matches) {
         const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
         animateMobileScrollFocus(steps, {
-          start: "top 85%",
-          end: "top 25%",
+          start: "top 70%",
+          end: "top 30%",
           yOffset: 24,
         });
         return;

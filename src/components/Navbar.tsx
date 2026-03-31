@@ -26,15 +26,16 @@ const CloseIcon = () => (
   </svg>
 );
 
-// Module-level guard: only animate on true first load, not SPA route changes
-let hasNavAnimated = false;
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (hasNavAnimated) {
+    // True first load check: use sessionStorage to survive soft reloads while blocking across SPA navigations
+    const sessionAnimated = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("navAnimated") : null;
+    
+    if (hasAnimated.current || sessionAnimated) {
       // Already animated in this session — instantly show everything
       if (headerRef.current) {
         const targets = headerRef.current.querySelectorAll(".nav-anim-target");
@@ -42,7 +43,11 @@ export default function Navbar() {
       }
       return;
     }
-    hasNavAnimated = true;
+    
+    hasAnimated.current = true;
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem("navAnimated", "true");
+    }
 
     let ctx = gsap.context(() => {
       if (!headerRef.current) return;
