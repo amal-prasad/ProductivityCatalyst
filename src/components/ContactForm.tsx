@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { servicesData } from "@/lib/servicesData";
-import { animateOnScroll, gsap } from "@/lib/gsap";
+import { animateOnScroll, MOTION } from "@/lib/gsap";
+import gsap from "gsap";
 
 export default function ContactForm() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,8 +21,26 @@ export default function ContactForm() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      animateOnScroll(".contact-section .section-headline", { y: 30 });
-      animateOnScroll(".contact-form-container", { y: 40, stagger: 0.1 });
+      const mq = window.matchMedia("(max-width: 767px)");
+      
+      if (mq.matches) {
+        gsap.fromTo(".contact-section .section-headline",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".contact-section .section-headline", start: MOTION.triggerStartMobile }
+          }
+        );
+        
+        gsap.fromTo(".contact-form-container",
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+            scrollTrigger: { trigger: ".contact-form-container", start: MOTION.triggerStartMobile }
+          }
+        );
+      } else {
+        animateOnScroll(".contact-section .section-headline", { y: 30 });
+        animateOnScroll(".contact-form-container", { y: 40, stagger: 0.1 });
+      }
     });
     return () => ctx.revert();
   }, []);

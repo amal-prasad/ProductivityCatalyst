@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, IS_MOBILE, MOTION } from "@/lib/gsap";
 
 interface TextRevealProps {
   children: string;
@@ -25,27 +25,47 @@ export default function TextReveal({
       const container = containerRef.current;
       if (!container) return;
 
-      // The span wrappers holding the actual words
       const targets = container.querySelectorAll(".text-reveal-word");
+      const isMobile = IS_MOBILE();
 
-      gsap.fromTo(
-        targets,
-        { yPercent: 120, rotationZ: 2, opacity: 0 },
-        {
-          yPercent: 0,
-          rotationZ: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power4.out",
-          stagger: stagger,
-          delay: delay,
-          scrollTrigger: {
-            trigger: container,
-            start: "top 85%", // Trigger when the top of container hits 85% of viewport
-            once: true,
-          },
-        }
-      );
+      if (isMobile) {
+        gsap.fromTo(
+          targets,
+          { yPercent: 80, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: MOTION.out,
+            stagger: stagger * 0.7,
+            delay: delay,
+            scrollTrigger: {
+              trigger: container,
+              start: MOTION.triggerStartMobile,
+              once: true,
+            },
+          }
+        );
+      } else {
+        gsap.fromTo(
+          targets,
+          { yPercent: 120, rotationZ: 2, opacity: 0 },
+          {
+            yPercent: 0,
+            rotationZ: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power4.out",
+            stagger: stagger,
+            delay: delay,
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
     });
     return () => ctx.revert();
   }, [delay, stagger]);

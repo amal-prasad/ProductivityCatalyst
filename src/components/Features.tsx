@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll } from "@/lib/gsap";
+import { animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import { servicesData } from "@/lib/servicesData";
 import Link from "next/link";
@@ -15,10 +15,28 @@ export default function Features() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
-      const carousel = sectionRef.current.querySelector(".carousel-track");
-      animateOnScroll(carousel, { y: 60, start: "top 72%" });
-      const headline = sectionRef.current.querySelector(".section-headline");
-      animateOnScroll(headline, { y: 30, start: "top 80%" });
+
+      const mq = window.matchMedia("(max-width: 767px)");
+      
+      if (mq.matches) {
+        const cards = sectionRef.current.querySelectorAll(".carousel-card");
+        animateMobileScrollFocus(cards, { scaleMin: 0.94, blurMax: 4 });
+        
+        gsap.fromTo(".section-headline",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          }
+        );
+      } else {
+        gsap.fromTo(".carousel-track",
+          { opacity: 0, y: 60 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".carousel-track", start: "top 72%" }
+          }
+        );
+        animateOnScroll(".section-headline", { y: 30 });
+      }
     });
     return () => ctx.revert();
   }, []);

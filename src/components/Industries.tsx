@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll } from "@/lib/gsap";
+import { animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
+import gsap from "gsap";
 
 const INDUSTRIES = [
   "IT Companies",
@@ -21,7 +22,24 @@ export default function Industries() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    animateOnScroll(".section-headline", { y: 30 });
+    const ctx = gsap.context(() => {
+      const mq = window.matchMedia("(max-width: 767px)");
+      
+      if (mq.matches) {
+        const pills = document.querySelectorAll(".industry-pill");
+        animateMobileScrollFocus(pills, { scaleMin: 0.94, blurMax: 4 });
+        
+        gsap.fromTo(".section-headline",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          }
+        );
+      } else {
+        animateOnScroll(".section-headline", { y: 30 });
+      }
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

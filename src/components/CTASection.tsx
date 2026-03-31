@@ -14,25 +14,29 @@ export default function CTASection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const mq = window.matchMedia("(max-width: 767px)");
+      const startTrigger = mq.matches ? "top 80%" : "top 75%";
+      const yOffset = mq.matches ? 16 : 30;
+      const duration = mq.matches ? MOTION.snappy : MOTION.standard;
+
       const ctaTl = gsap.timeline({
         scrollTrigger: {
           trigger: "#contact",
-          start: "top 75%",
+          start: startTrigger,
         }
       });
 
       if (line1Ref.current && line2Ref.current && btnRef.current) {
         ctaTl
           .fromTo(line1Ref.current,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth })
+            { opacity: 0, y: yOffset },
+            { opacity: 1, y: 0, duration: duration, ease: MOTION.out })
           .fromTo(line2Ref.current,
-            { opacity: 0, y: 16 },
-            { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out }, "-=0.2")
+            { opacity: 0, y: yOffset * 0.5 },
+            { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15")
           .fromTo(btnRef.current,
-            { opacity: 0, y: 20, scale: 0.95 },
-            { opacity: 1, y: 0, scale: 1,
-              duration: MOTION.snappy, ease: MOTION.back }, "-=0.1");
+            { opacity: 0, y: yOffset * 0.6 },
+            { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.1");
       }
     });
     return () => ctx.revert();

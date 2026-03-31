@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll } from "@/lib/gsap";
+import { animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
+import gsap from "gsap";
 
 const CARDS = [
   {
@@ -31,11 +32,25 @@ export default function CardGrid() {
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    const headline = sectionRef.current.querySelector(".section-headline");
-    animateOnScroll(headline, { y: 30, start: "top 80%" });
-
-    const cards = sectionRef.current.querySelectorAll(".grid-card");
-    animateOnScroll(cards, { y: 50, stagger: 0.15, start: "top 75%", duration: 0.85 });
+    const ctx = gsap.context(() => {
+      const mq = window.matchMedia("(max-width: 767px)");
+      
+      if (mq.matches) {
+        const cards = sectionRef.current!.querySelectorAll(".grid-card");
+        animateMobileScrollFocus(cards, { scaleMin: 0.94, blurMax: 4 });
+        
+        gsap.fromTo(".section-headline",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          }
+        );
+      } else {
+        animateOnScroll(".section-headline", { y: 30 });
+        animateOnScroll(".grid-card", { y: 50, stagger: 0.15 });
+      }
+    });
+    return () => ctx.revert();
   }, []);
 
   return (

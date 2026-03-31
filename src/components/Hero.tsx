@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { MOTION } from "@/lib/gsap";
+import { MOTION, IS_MOBILE } from "@/lib/gsap";
 import MagneticWrapper from "./MagneticWrapper";
 import { useLoading } from "@/context/LoadingContext";
 
@@ -21,24 +21,38 @@ export default function Hero() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (headlineRef.current && isTransitionComplete) {
+        const isMobile = IS_MOBILE();
+        const mobileStagger = 0.08;
+        const desktopStagger = 0.1;
+
         const heroTl = gsap.timeline({ delay: 0.1 });
 
-        heroTl
-          .fromTo(".hero-headline",
-            { opacity: 0, y: 24 },
-            { opacity: 1, y: 0, duration: MOTION.deliberate, ease: MOTION.smooth })
-
-          .fromTo(".hero-subtext",
-            { opacity: 0, y: 16 },
-            { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out }, "-=0.3")
-
-          .fromTo(".hero-cta-primary",
-            { opacity: 0, scale: 0.96, y: 12 },
-            { opacity: 1, scale: 1, y: 0, duration: MOTION.snappy, ease: MOTION.back }, "-=0.2")
-            
-          .fromTo(".hero-scroll-cue",
-            { opacity: 0, x: -8 },
-            { opacity: 1, x: 0, duration: MOTION.micro, ease: MOTION.out }, "-=0.15");
+        if (isMobile) {
+          heroTl
+            .fromTo(".hero-headline",
+              { opacity: 0, y: 16 },
+              { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out })
+            .fromTo(".hero-subtext",
+              { opacity: 0, y: 12 },
+              { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`)
+            .fromTo(".hero-cta-primary",
+              { opacity: 0, y: 8 },
+              { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`);
+        } else {
+          heroTl
+            .fromTo(".hero-headline",
+              { opacity: 0, y: 24 },
+              { opacity: 1, y: 0, duration: MOTION.deliberate, ease: MOTION.smooth })
+            .fromTo(".hero-subtext",
+              { opacity: 0, y: 16 },
+              { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out }, `-=${desktopStagger}`)
+            .fromTo(".hero-cta-primary",
+              { opacity: 0, scale: 0.96, y: 12 },
+              { opacity: 1, scale: 1, y: 0, duration: MOTION.snappy, ease: MOTION.back }, `-=${desktopStagger}`)
+            .fromTo(".hero-scroll-cue",
+              { opacity: 0, x: -8 },
+              { opacity: 1, x: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`);
+        }
       }
     });
     return () => ctx.revert();

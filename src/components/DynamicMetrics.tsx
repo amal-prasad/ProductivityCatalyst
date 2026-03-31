@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateCounter, animateOnScroll } from "@/lib/gsap";
+import { animateCounter, animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -21,34 +21,56 @@ export default function DynamicMetrics() {
     const ctx = gsap.context(() => {
       if (!sectionRef.current) return;
 
-      // Headline entrance
-      const headline = sectionRef.current.querySelector(".section-headline");
-      animateOnScroll(headline, { y: 30, start: "top 80%" });
-
-      // Animate each counter when it enters the viewport
-      numberRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const metric = METRICS[i];
-        animateCounter(el, metric.value, {
-          suffix: metric.suffix,
-          duration: 2.2,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-            once: true,
-          },
+      const mq = window.matchMedia("(max-width: 767px)");
+      
+      if (mq.matches) {
+        const metricsCells = sectionRef.current.querySelectorAll(".metrics-cell");
+        animateMobileScrollFocus(metricsCells, { scaleMin: 0.94, blurMax: 4 });
+        
+        gsap.fromTo(".section-headline",
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          }
+        );
+        
+        numberRefs.current.forEach((el, i) => {
+          if (!el) return;
+          const metric = METRICS[i];
+          animateCounter(el, metric.value, {
+            suffix: metric.suffix,
+            duration: 1.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              once: true,
+            },
+          });
         });
-      });
+      } else {
+        animateOnScroll(".section-headline", { y: 30 });
 
-      // Stagger labels in after a short delay
-      const labels = labelRefs.current.filter(Boolean);
-      animateOnScroll(labels, {
-        y: 20,
-        stagger: 0.12,
-        start: "top 82%",
-        duration: 0.7,
-      });
+        numberRefs.current.forEach((el, i) => {
+          if (!el) return;
+          const metric = METRICS[i];
+          animateCounter(el, metric.value, {
+            suffix: metric.suffix,
+            duration: 2.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              once: true,
+            },
+          });
+        });
+
+        animateOnScroll(".metric-label", {
+          y: 20,
+          stagger: 0.12,
+        });
+      }
     });
     return () => ctx.revert();
   }, []);
@@ -98,7 +120,7 @@ export default function DynamicMetrics() {
                 ref={(el) => {
                   if (el) labelRefs.current[i] = el;
                 }}
-                className="text-secondary text-[0.8rem] tracking-[0.05em] uppercase leading-[1.5] max-w-[200px]"
+                className="metric-label text-secondary text-[0.8rem] tracking-[0.05em] uppercase leading-[1.5] max-w-[200px]"
               >
                 {m.label}
               </p>
