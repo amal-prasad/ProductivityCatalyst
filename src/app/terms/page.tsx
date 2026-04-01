@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
+import PageAnimations from "@/components/PageAnimations";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,18 +14,19 @@ export default function TermsPage() {
   return (
     <>
       <Navbar />
+      <PageAnimations />
       <main className="relative min-h-screen">
         <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.85} />
 
         <div className="relative z-10 max-w-[800px] mx-auto px-6 md:px-12 py-32">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-secondary mb-12">
+          <nav data-animate className="flex items-center gap-2 text-sm text-secondary mb-12">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <span className="text-white">Terms of Service</span>
           </nav>
 
-          <h1 className="text-white font-bold text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] tracking-tight mb-4">
+          <h1 data-animate className="text-white font-bold text-[clamp(2.5rem,5vw,4rem)] leading-[1.05] tracking-tight mb-4">
             Terms of Service
           </h1>
           <p className="text-secondary text-sm mb-12">Last updated: March 2026</p>

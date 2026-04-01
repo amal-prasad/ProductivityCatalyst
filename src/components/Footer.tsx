@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { animateLineDraw, gsap } from "@/lib/gsap";
+import { animateLineDraw, gsap, MOTION, IS_MOBILE } from "@/lib/gsap";
 
 const SERVICES = [
   { name: "CXO Productivity", href: "/services/cxo-productivity" },
@@ -21,6 +21,7 @@ const LEGAL_LINKS = [
 
 export default function Footer() {
   const lineRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
   const year = new Date().getFullYear();
 
   useEffect(() => {
@@ -28,12 +29,27 @@ export default function Footer() {
       if (lineRef.current) {
         animateLineDraw(lineRef.current);
       }
+
+      if (footerRef.current) {
+        const columns = footerRef.current.querySelectorAll(".footer-col");
+        const isMobile = IS_MOBILE();
+        const duration = isMobile ? MOTION.snappy : MOTION.standard;
+
+        columns.forEach((col) => {
+          gsap.fromTo(col,
+            { opacity: 0, y: isMobile ? 16 : 24 },
+            { opacity: 1, y: 0, duration, ease: MOTION.out,
+              scrollTrigger: { trigger: col, start: isMobile ? MOTION.triggerStartMobile : "top 90%", once: true }
+            }
+          );
+        });
+      }
     });
     return () => ctx.revert();
   }, []);
 
   return (
-    <footer className="w-full relative">
+    <footer ref={footerRef} className="w-full relative">
       {/* Animated top border — draws left-to-right on scroll entry */}
       <div
         ref={lineRef}
@@ -48,7 +64,7 @@ export default function Footer() {
         {/* 4-column footer grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 pb-8 border-b border-white/[0.08]">
           {/* Column 1: Logo & tagline */}
-          <div className="md:col-span-1">
+          <div className="footer-col md:col-span-1">
             <span className="text-white font-bold tracking-tight text-sm block mb-4">
               Productivity Catalyst
             </span>
@@ -82,7 +98,7 @@ export default function Footer() {
           </div>
 
           {/* Column 2: Navigation */}
-          <div>
+          <div className="footer-col">
             <h4 className="text-white text-xs font-semibold tracking-[0.1em] uppercase mb-4">Navigation</h4>
             <nav className="flex flex-col gap-3">
               <Link href="/" className="footer-link relative text-[#666666] text-sm hover:text-white transition-colors">
@@ -101,7 +117,7 @@ export default function Footer() {
           </div>
 
           {/* Column 3: Services */}
-          <div>
+          <div className="footer-col">
             <h4 className="text-white text-xs font-semibold tracking-[0.1em] uppercase mb-4">Services</h4>
             <nav className="flex flex-col gap-3">
               {SERVICES.map((s) => (
@@ -117,7 +133,7 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Contact */}
-          <div>
+          <div className="footer-col">
             <h4 className="text-white text-xs font-semibold tracking-[0.1em] uppercase mb-4">Contact</h4>
             <div className="flex flex-col gap-3 text-sm text-[#666666]">
               <p>info@productivitycatalyst.com</p>

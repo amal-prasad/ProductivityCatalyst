@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -12,16 +13,17 @@ interface LoadingContextType {
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [isLoading, setLoading] = useState(true);
-  const [isTransitionComplete, setTransitionComplete] = useState(false);
+  const pathname = usePathname();
+  const [isLoading, setLoading] = useState(pathname === "/");
+  const [isTransitionComplete, setTransitionComplete] = useState(pathname !== "/");
 
   // Fallback timeout to prevent infinite loading if 3D context fails entirely
   useEffect(() => {
     if (isLoading) {
       const timer = setTimeout(() => {
-        console.warn("Loading state timed out (6s), forcing load complete to unblock UI.");
+        console.warn("Loading state timed out, forcing load complete to unblock UI.");
         setLoading(false);
-      }, 6000);
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, [isLoading]);

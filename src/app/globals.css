@@ -25,6 +25,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Elements with data-animate start hidden; GSAP reveals them on scroll */
+[data-animate] {
+  opacity: 0;
+}
+
 @media (pointer: fine) {
 
   body,
@@ -362,7 +367,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 0.6s ease-in-out;
   outline: none;
 }
 

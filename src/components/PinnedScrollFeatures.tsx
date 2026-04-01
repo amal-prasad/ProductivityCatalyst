@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animatePinnedScroll, animateMobileScrollFocus } from "@/lib/gsap";
+import { animatePinnedScroll, animateEntrance, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -49,11 +49,11 @@ export default function PinnedScrollFeatures() {
       const inner = innerRef.current;
       if (!container || !inner) return;
 
-      // Mobile: independent scroll-focus scrub per item (no pinning)
+      // Mobile: clean entrance animations per item (no pinning)
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const items = container.querySelectorAll(".pinned-item");
-        animateMobileScrollFocus(items, { scaleMin: 0.94, blurMax: 4 });
+        animateEntrance(items, { y: 24, duration: MOTION.snappy });
         return;
       }
 

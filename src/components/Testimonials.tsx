@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MOTION, animateMobileScrollFocus } from "@/lib/gsap";
+import { MOTION, animateEntrance } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import gsap from "gsap";
@@ -58,7 +58,17 @@ export default function Testimonials() {
       const cards = sectionRef.current.querySelectorAll(".testimonial-card");
       
       if (mq.matches) {
-        animateMobileScrollFocus(cards, { scaleMin: 0.94, blurMax: 4 });
+        animateEntrance(cards, { y: 24, duration: MOTION.snappy });
+
+        const headline = sectionRef.current.querySelector(".section-headline");
+        if (headline) {
+          gsap.fromTo(headline,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+              scrollTrigger: { trigger: headline, start: MOTION.triggerStartMobile, once: true }
+            }
+          );
+        }
       } else {
         gsap.fromTo(cards,
           { opacity: 0, y: 32 },

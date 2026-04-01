@@ -6,6 +6,7 @@ import Cursor from "@/components/Cursor";
 import { LoadingProvider } from "@/context/LoadingContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -90,6 +91,7 @@ export default function RootLayout({
         <LoadingProvider>
           <LoadingScreen />
           <ScrollProgress />
+          <ScrollToTop />
           <SmoothScroll>
             <Cursor />
             {children}

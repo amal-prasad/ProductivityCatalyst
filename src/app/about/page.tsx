@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
 import CTASection from "@/components/CTASection";
+import PageAnimations from "@/components/PageAnimations";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -56,19 +57,20 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
+      <PageAnimations />
       <main className="relative min-h-screen">
         <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.8} />
 
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-12 py-32">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-secondary mb-12">
+          <nav data-animate className="flex items-center gap-2 text-sm text-secondary mb-12">
             <Link href="/" className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
             <span className="text-white">About</span>
           </nav>
 
           {/* Hero */}
-          <div className="max-w-3xl mb-24">
+          <div data-animate className="max-w-3xl mb-24">
             <h1 className="text-white font-bold text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-tight mb-8">
               We Help Businesses Stop Firefighting.
             </h1>
@@ -78,7 +80,7 @@ export default function AboutPage() {
           </div>
 
           {/* Our Story */}
-          <section className="mb-24">
+          <section data-animate className="mb-24">
             <h2 className="text-white font-bold text-3xl mb-8">Our Story</h2>
             <div className="prose prose-invert max-w-none space-y-6 text-secondary leading-relaxed">
               <p>
@@ -94,7 +96,7 @@ export default function AboutPage() {
           </section>
 
           {/* Mission */}
-          <section className="mb-24">
+          <section data-animate className="mb-24">
             <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-8 md:p-12">
               <p className="text-accent text-sm tracking-[0.2em] uppercase mb-4">Our Mission</p>
               <h2 className="text-white font-bold text-3xl mb-6">
@@ -107,7 +109,7 @@ export default function AboutPage() {
           </section>
 
           {/* What We Believe */}
-          <section className="mb-24">
+          <section data-animate className="mb-24">
             <h2 className="text-white font-bold text-3xl mb-12">What We Believe</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {BELIEFS.map((belief) => (
@@ -123,7 +125,7 @@ export default function AboutPage() {
           </section>
 
           {/* Team */}
-          <section className="mb-24">
+          <section data-animate className="mb-24">
             <h2 className="text-white font-bold text-3xl mb-12">The Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {TEAM.map((member) => (

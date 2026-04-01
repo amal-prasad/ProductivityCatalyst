@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CTASection from "@/components/CTASection";
 import VideoBackground from "@/components/VideoBackground";
+import PageAnimations from "@/components/PageAnimations";
 import { servicesData } from "@/lib/servicesData";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -240,6 +241,7 @@ export default async function ServicePage({
   return (
     <>
       <Navbar />
+      <PageAnimations />
       <main className="relative min-h-screen pt-32 pb-0 flex flex-col justify-between">
         <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.8} />
 
@@ -254,7 +256,7 @@ export default async function ServicePage({
           </nav>
 
           {/* Hero */}
-          <span className="block text-accent text-lg font-mono mb-4">
+          <span data-animate className="block text-accent text-lg font-mono mb-4">
             {service.num}
           </span>
           <h1 className="text-white font-bold text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-tight mb-6">
@@ -265,7 +267,7 @@ export default async function ServicePage({
           </p>
 
           {/* What It Is */}
-          <div className="p-8 md:p-12 mt-12 rounded-[2rem] bg-white/[0.02] border border-white/[0.05] backdrop-blur-md shadow-2xl">
+          <div data-animate className="p-8 md:p-12 mt-12 rounded-[2rem] bg-white/[0.02] border border-white/[0.05] backdrop-blur-md shadow-2xl">
             <h2 className="text-white font-semibold text-xl mb-6 tracking-wide">What It Is</h2>
             <p className="text-secondary/90 text-lg leading-relaxed mb-10 border-b border-white/[0.08] pb-10">
               {service.fullDescription}
@@ -285,7 +287,7 @@ export default async function ServicePage({
           </div>
 
           {/* Two Column Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+          <div data-animate className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
             {/* Who It's For */}
             <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-8">
               <h2 className="text-white font-semibold text-xl mb-6 tracking-wide">Who It&apos;s For</h2>
@@ -319,7 +321,7 @@ export default async function ServicePage({
           </div>
 
           {/* Expected Results */}
-          <div className="mt-12">
+          <div data-animate className="mt-12">
             <h2 className="text-white font-semibold text-xl mb-8 tracking-wide">Expected Results</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {details.results.map((result, i) => (
@@ -333,7 +335,7 @@ export default async function ServicePage({
           </div>
 
           {/* Testimonial */}
-          <div className="mt-12 p-8 md:p-12 rounded-2xl bg-accent/5 border border-accent/20">
+          <div data-animate className="mt-12 p-8 md:p-12 rounded-2xl bg-accent/5 border border-accent/20">
             <div className="text-accent text-5xl mb-4">&ldquo;</div>
             <p className="text-white text-lg leading-relaxed mb-6">{testimonial.quote}</p>
             <div>
@@ -343,7 +345,7 @@ export default async function ServicePage({
           </div>
 
           {/* CTA */}
-          <div className="mt-12 text-center">
+          <div data-animate className="mt-12 text-center">
             <h3 className="text-white text-2xl font-bold mb-4">Ready to get started?</h3>
             <p className="text-secondary mb-8">Book a discovery call and let&apos;s discuss how we can help.</p>
             <Link
@@ -355,7 +357,7 @@ export default async function ServicePage({
           </div>
 
           {/* Navigation */}
-          <div className="flex flex-col md:flex-row justify-between items-stretch gap-6 mt-16 mb-12">
+          <div data-animate className="flex flex-col md:flex-row justify-between items-stretch gap-6 mt-16 mb-12">
             {prevService ? (
               <Link
                 href={`/services/${prevService.slug}`}

@@ -7,8 +7,8 @@ import LogoMark from "./LogoMark";
 
 /* ──────────────────────────────────────────────────────────────── */
 
-const MIN_DISPLAY_MS = 7000; // minimum time the loading screen is shown
-const TICK_INTERVAL = 40;    // how often we update progress (~25fps)
+const MIN_DISPLAY_MS = 2500; // minimum time the loading screen is shown
+const TICK_INTERVAL = 30;    // how often we update progress (~33fps)
 
 export default function LoadingScreen() {
   const { isLoading, setTransitionComplete } = useLoading();

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { MOTION } from "@/lib/gsap";
+import { MOTION, IS_MOBILE } from "@/lib/gsap";
 import TextReveal from "./TextReveal";
 
 const CheckIcon = () => (
@@ -54,16 +54,31 @@ export default function ComparisonTable() {
       if (!sectionRef.current) return;
       const rows = sectionRef.current.querySelectorAll(".comparison-row");
       const header = sectionRef.current.querySelector(".comparison-header");
-      
+      const isMobile = IS_MOBILE();
+      const duration = isMobile ? MOTION.snappy : MOTION.standard;
+      const yOffset = isMobile ? 16 : 20;
+
       if (header) {
-        gsap.fromTo(header, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out });
+        gsap.fromTo(header,
+          { opacity: 0, y: yOffset },
+          { opacity: 1, y: 0, duration, ease: MOTION.out,
+            scrollTrigger: { trigger: header, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+          }
+        );
       }
-      
+
       if (rows.length) {
-        gsap.fromTo(rows, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: MOTION.standard, ease: MOTION.out, stagger: 0.08 });
+        rows.forEach((row) => {
+          gsap.fromTo(row,
+            { opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 16 : 0 },
+            { opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
+              scrollTrigger: { trigger: row, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+            }
+          );
+        });
       }
     }, sectionRef);
-    
+
     return () => ctx.revert();
   }, []);
 

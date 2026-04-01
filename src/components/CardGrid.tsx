@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
+import { animateOnScroll, animateEntrance, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -37,12 +37,12 @@ export default function CardGrid() {
       
       if (mq.matches) {
         const cards = sectionRef.current!.querySelectorAll(".grid-card");
-        animateMobileScrollFocus(cards, { scaleMin: 0.94, blurMax: 4 });
-        
-        gsap.fromTo(".section-headline",
+        animateEntrance(cards, { y: 24, duration: MOTION.snappy });
+
+        gsap.fromTo(sectionRef.current!.querySelector(".section-headline"),
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
-            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+            scrollTrigger: { trigger: sectionRef.current!.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
           }
         );
       } else {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MOTION, animateMobileScrollFocus } from "@/lib/gsap";
+import { MOTION, animateEntrance } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import gsap from "gsap";
@@ -44,7 +44,7 @@ export default function HowItWorks() {
       const mq = window.matchMedia("(max-width: 767px)");
       if (mq.matches) {
         const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-        animateMobileScrollFocus(steps, { scaleMin: 0.94, blurMax: 4 });
+        animateEntrance(steps, { y: 24, duration: MOTION.snappy });
       } else {
         const desktopSteps = sectionRef.current.querySelectorAll(".step-row");
         desktopSteps.forEach((row, i) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { animateCounter, animateOnScroll, animateMobileScrollFocus, MOTION } from "@/lib/gsap";
+import { animateCounter, animateOnScroll, animateEntrance, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 
@@ -25,12 +25,12 @@ export default function DynamicMetrics() {
       
       if (mq.matches) {
         const metricsCells = sectionRef.current.querySelectorAll(".metrics-cell");
-        animateMobileScrollFocus(metricsCells, { scaleMin: 0.94, blurMax: 4 });
-        
-        gsap.fromTo(".section-headline",
+        animateEntrance(metricsCells, { y: 24, duration: MOTION.snappy });
+
+        gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
-            scrollTrigger: { trigger: ".section-headline", start: MOTION.triggerStartMobile }
+          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+            scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
           }
         );
         

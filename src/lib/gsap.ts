@@ -235,6 +235,43 @@ export function animateLineDraw(el: HTMLElement) {
 }
 
 /* ─────────────────────────────────────────────────────────
+   Scroll-triggered entrance animation
+   ───────────────────────────────────────────────────────── */
+
+/**
+ * Fade + slide each element up when it enters the viewport.
+ * Each item triggers independently — natural for vertical lists.
+ * Fires once; items remain visible after animating in.
+ */
+export function animateEntrance(
+  items: NodeListOf<Element> | Element[],
+  opts?: { y?: number; duration?: number }
+) {
+  const arr = Array.from(items);
+  if (!arr.length) return;
+
+  const y = opts?.y ?? 30;
+  const duration = opts?.duration ?? MOTION.snappy;
+  const mobile = IS_MOBILE();
+
+  arr.forEach((el) => {
+    gsap.fromTo(el,
+      { opacity: 0, y },
+      {
+        opacity: 1, y: 0,
+        duration,
+        ease: MOTION.out,
+        scrollTrigger: {
+          trigger: el,
+          start: mobile ? MOTION.triggerStartMobile : MOTION.triggerStart,
+          once: true,
+        },
+      }
+    );
+  });
+}
+
+/* ─────────────────────────────────────────────────────────
    Mobile scroll-focus animation
    Each item independently scrubs opacity + scale + blur
    as it passes through the viewport focus band.
