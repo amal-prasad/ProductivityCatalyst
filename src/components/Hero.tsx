@@ -1,62 +1,73 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { MOTION, IS_MOBILE } from "@/lib/gsap";
 import MagneticWrapper from "./MagneticWrapper";
 import { useLoading } from "@/context/LoadingContext";
 
-const ParticleVortex = dynamic(() => import("./ParticleVortex"), { 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP);
+}
+
+const ParticleVortex = dynamic(() => import("./ParticleVortex"), {
   ssr: false,
   loading: () => <div className="absolute inset-0 bg-background" />
 });
 
 export default function Hero() {
   const headlineRef = useRef<HTMLDivElement>(null);
-  const subContentRef = useRef<HTMLDivElement>(null);
   const { isTransitionComplete } = useLoading();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (headlineRef.current && isTransitionComplete) {
-        const isMobile = IS_MOBILE();
-        const mobileStagger = 0.08;
-        const desktopStagger = 0.1;
+  useGSAP(() => {
+    if (!headlineRef.current || !isTransitionComplete) return;
 
-        const heroTl = gsap.timeline({ delay: 0.1 });
+    const isMobile = IS_MOBILE();
+    const mobileStagger = 0.08;
+    const desktopStagger = 0.1;
 
-        if (isMobile) {
-          heroTl
-            .fromTo(".hero-headline",
-              { opacity: 0, y: 16 },
-              { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out })
-            .fromTo(".hero-subtext",
-              { opacity: 0, y: 12 },
-              { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`)
-            .fromTo(".hero-cta-primary",
-              { opacity: 0, y: 8 },
-              { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`);
-        } else {
-          heroTl
-            .fromTo(".hero-headline",
-              { opacity: 0, y: 24 },
-              { opacity: 1, y: 0, duration: MOTION.deliberate, ease: MOTION.smooth })
-            .fromTo(".hero-subtext",
-              { opacity: 0, y: 16 },
-              { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out }, `-=${desktopStagger}`)
-            .fromTo(".hero-cta-primary",
-              { opacity: 0, scale: 0.96, y: 12 },
-              { opacity: 1, scale: 1, y: 0, duration: MOTION.snappy, ease: MOTION.back }, `-=${desktopStagger}`)
-            .fromTo(".hero-scroll-cue",
-              { opacity: 0, x: -8 },
-              { opacity: 1, x: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`);
-        }
-      }
-    });
-    return () => ctx.revert();
-  }, [isTransitionComplete]);
+    const heroTl = gsap.timeline({ delay: 0.1 });
+
+    if (isMobile) {
+      heroTl
+        .fromTo(".hero-headline",
+          { opacity: 0, y: 28 },
+          { opacity: 1, y: 0, duration: MOTION.deliberate, ease: MOTION.smooth })
+        .fromTo(".hero-subtext",
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out }, `-=${mobileStagger}`)
+        .fromTo(".hero-cta-primary",
+          { opacity: 0, scale: 0.94, y: 12 },
+          { opacity: 1, scale: 1, y: 0, duration: MOTION.snappy, ease: MOTION.back }, `-=${mobileStagger}`)
+        .fromTo(".hero-scroll-cue",
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`)
+        .to(".hero-scroll-cue", {
+          opacity: 0.4,
+          yoyo: true,
+          repeat: -1,
+          duration: MOTION.standard,
+          ease: MOTION.inOut,
+        });
+    } else {
+      heroTl
+        .fromTo(".hero-headline",
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: MOTION.deliberate, ease: MOTION.smooth })
+        .fromTo(".hero-subtext",
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out }, `-=${desktopStagger}`)
+        .fromTo(".hero-cta-primary",
+          { opacity: 0, scale: 0.96, y: 12 },
+          { opacity: 1, scale: 1, y: 0, duration: MOTION.snappy, ease: MOTION.back }, `-=${desktopStagger}`)
+        .fromTo(".hero-scroll-cue",
+          { opacity: 0, x: -8 },
+          { opacity: 1, x: 0, duration: MOTION.micro, ease: MOTION.out }, `-=${mobileStagger}`);
+    }
+  }, { dependencies: [isTransitionComplete] });
 
   return (
     <section
@@ -81,9 +92,8 @@ export default function Hero() {
           </h1>
         </div>
 
-
         {/* Sub-copy + CTA */}
-        <div ref={subContentRef} className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[640px]">
+        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[640px]">
           <p className="hero-subtext opacity-0 max-w-sm text-secondary text-[1rem] leading-[1.7]">
             Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
           </p>

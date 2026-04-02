@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { MOTION, animateEntrance } from "@/lib/gsap";
+import { useRef } from "react";
+import { MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
-import gsap from "gsap";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const StarIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="#00e5cc" xmlns="http://www.w3.org/2000/svg">
@@ -50,37 +54,71 @@ const TESTIMONIALS = [
 export default function Testimonials() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
-      
-      const mq = window.matchMedia("(max-width: 767px)");
-      const cards = sectionRef.current.querySelectorAll(".testimonial-card");
-      
-      if (mq.matches) {
-        animateEntrance(cards, { y: 24, duration: MOTION.snappy });
+  useGSAP(() => {
+    if (!sectionRef.current) return;
 
-        const headline = sectionRef.current.querySelector(".section-headline");
-        if (headline) {
-          gsap.fromTo(headline,
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
-              scrollTrigger: { trigger: headline, start: MOTION.triggerStartMobile, once: true }
-            }
-          );
-        }
-      } else {
-        gsap.fromTo(cards,
-          { opacity: 0, y: 32 },
-          { opacity: 1, y: 0,
-            duration: MOTION.standard, ease: MOTION.out, stagger: 0.1,
-            scrollTrigger: { trigger: sectionRef.current, start: MOTION.triggerStart }
+    const mq = window.matchMedia("(max-width: 767px)");
+    const cards = sectionRef.current.querySelectorAll(".testimonial-card");
+
+    if (mq.matches) {
+      const headline = sectionRef.current.querySelector(".section-headline");
+      if (headline) {
+        gsap.fromTo(headline,
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
+            scrollTrigger: { trigger: headline, start: MOTION.triggerStartMobile, once: true }
           }
         );
       }
-    });
-    return () => ctx.revert();
-  }, []);
+
+      Array.from(cards).forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 36, scale: 0.97 },
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: MOTION.standard,
+            ease: MOTION.back,
+            delay: i * 0.1,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStartMobile, once: true },
+          }
+        );
+
+        gsap.fromTo(card.children,
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            delay: i * 0.1 + 0.3,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStartMobile, once: true }
+          }
+        );
+      });
+    } else {
+      gsap.fromTo(cards,
+        { opacity: 0, y: 32 },
+        { opacity: 1, y: 0,
+          duration: MOTION.standard, ease: MOTION.out, stagger: 0.1,
+          scrollTrigger: { trigger: sectionRef.current, start: MOTION.triggerStart, once: true }
+        }
+      );
+
+      Array.from(cards).forEach((card, i) => {
+        gsap.fromTo(card.children,
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            delay: i * 0.1 + 0.3,
+            scrollTrigger: { trigger: sectionRef.current, start: MOTION.triggerStart, once: true }
+          }
+        );
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section

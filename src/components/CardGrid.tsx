@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { animateOnScroll, animateEntrance, MOTION } from "@/lib/gsap";
+import { useRef } from "react";
+import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
-import gsap from "gsap";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const CARDS = [
   {
@@ -29,29 +33,64 @@ const CARDS = [
 export default function CardGrid() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!sectionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const mq = window.matchMedia("(max-width: 767px)");
-      
-      if (mq.matches) {
-        const cards = sectionRef.current!.querySelectorAll(".grid-card");
-        animateEntrance(cards, { y: 24, duration: MOTION.snappy });
+    const mq = window.matchMedia("(max-width: 767px)");
 
-        gsap.fromTo(sectionRef.current!.querySelector(".section-headline"),
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
-            scrollTrigger: { trigger: sectionRef.current!.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
+    if (mq.matches) {
+      gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
+          scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
+        }
+      );
+
+      const cards = Array.from(sectionRef.current.querySelectorAll(".grid-card"));
+      cards.forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 36, scale: 0.97 },
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: MOTION.standard,
+            ease: MOTION.back,
+            delay: i * 0.1,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStartMobile, once: true },
           }
         );
-      } else {
-        animateOnScroll(".section-headline", { y: 30 });
-        animateOnScroll(".grid-card", { y: 50, stagger: 0.15 });
-      }
-    });
-    return () => ctx.revert();
-  }, []);
+
+        gsap.fromTo(card.querySelectorAll("span.uppercase, h3, p, div.flex"),
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            delay: i * 0.1 + 0.3,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStartMobile, once: true }
+          }
+        );
+      });
+    } else {
+      animateOnScroll(".section-headline", { y: 30 });
+      animateOnScroll(".grid-card", { y: 50, stagger: 0.15 });
+
+      const cards = Array.from(sectionRef.current.querySelectorAll(".grid-card"));
+      cards.forEach((card, i) => {
+        gsap.fromTo(card.querySelectorAll("span.uppercase, h3, p, div.flex"),
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            delay: i * 0.15 + 0.3,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStart, once: true }
+          }
+        );
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section

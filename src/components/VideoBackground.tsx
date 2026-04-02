@@ -39,7 +39,7 @@ export default function VideoBackground({
 
   if (isSticky) {
     return (
-      <div className={`absolute inset-0 pointer-events-none select-none z-0 hidden md:block ${className}`}>
+      <div className={`absolute inset-0 pointer-events-none select-none z-0 ${className}`}>
         <div className="sticky top-0 w-full h-[100vh] overflow-hidden">
           {videoContent}
         </div>
@@ -48,7 +48,7 @@ export default function VideoBackground({
   }
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 hidden md:block ${className}`}>
+    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}>
       {videoContent}
     </div>
   );

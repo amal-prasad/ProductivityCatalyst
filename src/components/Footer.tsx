@@ -1,8 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
-import { animateLineDraw, gsap, MOTION, IS_MOBILE } from "@/lib/gsap";
+import { animateLineDraw, gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const SERVICES = [
   { name: "CXO Productivity", href: "/services/cxo-productivity" },
@@ -24,29 +29,26 @@ export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const year = new Date().getFullYear();
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (lineRef.current) {
-        animateLineDraw(lineRef.current);
-      }
+  useGSAP(() => {
+    if (lineRef.current) {
+      animateLineDraw(lineRef.current);
+    }
 
-      if (footerRef.current) {
-        const columns = footerRef.current.querySelectorAll(".footer-col");
-        const isMobile = IS_MOBILE();
-        const duration = isMobile ? MOTION.snappy : MOTION.standard;
+    if (footerRef.current) {
+      const columns = footerRef.current.querySelectorAll(".footer-col");
+      const isMobile = IS_MOBILE();
+      const duration = isMobile ? MOTION.snappy : MOTION.standard;
 
-        columns.forEach((col) => {
-          gsap.fromTo(col,
-            { opacity: 0, y: isMobile ? 16 : 24 },
-            { opacity: 1, y: 0, duration, ease: MOTION.out,
-              scrollTrigger: { trigger: col, start: isMobile ? MOTION.triggerStartMobile : "top 90%", once: true }
-            }
-          );
-        });
-      }
-    });
-    return () => ctx.revert();
-  }, []);
+      columns.forEach((col) => {
+        gsap.fromTo(col,
+          { opacity: 0, y: isMobile ? 16 : 24 },
+          { opacity: 1, y: 0, duration, ease: MOTION.out,
+            scrollTrigger: { trigger: col, start: isMobile ? MOTION.triggerStartMobile : "top 90%", once: true }
+          }
+        );
+      });
+    }
+  }, { scope: footerRef });
 
   return (
     <footer ref={footerRef} className="w-full relative">

@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { animateCounter, animateOnScroll, animateEntrance, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const METRICS = [
   { value: 200, suffix: "+", label: "Enterprise Teams Onboarded" },
@@ -17,63 +23,77 @@ export default function DynamicMetrics() {
   const numberRefs = useRef<HTMLSpanElement[]>([]);
   const labelRefs = useRef<HTMLParagraphElement[]>([]);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
+  useGSAP(() => {
+    if (!sectionRef.current) return;
 
-      const mq = window.matchMedia("(max-width: 767px)");
+    const mq = window.matchMedia("(max-width: 767px)");
+    
+    if (mq.matches) {
+      gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+          scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
+        }
+      );
       
-      if (mq.matches) {
-        const metricsCells = sectionRef.current.querySelectorAll(".metrics-cell");
-        animateEntrance(metricsCells, { y: 24, duration: MOTION.snappy });
-
-        gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
-            scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
-          }
-        );
+      numberRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const metric = METRICS[i];
         
-        numberRefs.current.forEach((el, i) => {
-          if (!el) return;
-          const metric = METRICS[i];
-          animateCounter(el, metric.value, {
-            suffix: metric.suffix,
-            duration: 1.5,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              once: true,
-            },
-          });
-        });
-      } else {
-        animateOnScroll(".section-headline", { y: 30 });
+        gsap.fromTo(el,
+          { opacity: 0, scale: 0.95 },
+          { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } }
+        );
 
-        numberRefs.current.forEach((el, i) => {
-          if (!el) return;
-          const metric = METRICS[i];
-          animateCounter(el, metric.value, {
-            suffix: metric.suffix,
-            duration: 2.2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              once: true,
-            },
-          });
-        });
+        const label = labelRefs.current[i];
+        if (label) {
+          gsap.fromTo(label,
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.2, scrollTrigger: { trigger: el, start: "top 85%", once: true } }
+          );
+        }
 
-        animateOnScroll(".metric-label", {
-          y: 20,
-          stagger: 0.12,
+        animateCounter(el, metric.value, {
+          suffix: metric.suffix,
+          duration: 1.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
         });
-      }
-    });
-    return () => ctx.revert();
-  }, []);
+      });
+    } else {
+      animateOnScroll(".section-headline", { y: 30 });
+
+      numberRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const metric = METRICS[i];
+        
+        gsap.fromTo(el, 
+          { opacity: 0, y: 10 }, 
+          { opacity: 1, y: 0, duration: 1, ease: "power2.out", scrollTrigger: { trigger: el, start: "top 85%", once: true } }
+        );
+
+        animateCounter(el, metric.value, {
+          suffix: metric.suffix,
+          duration: 2.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        });
+      });
+
+      animateOnScroll(".metric-label", {
+        y: 20,
+        stagger: 0.12,
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section

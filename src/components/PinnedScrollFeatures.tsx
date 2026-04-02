@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { animatePinnedScroll, animateEntrance, MOTION } from "@/lib/gsap";
+import { useRef } from "react";
+import { animatePinnedScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
-import gsap from "gsap";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const STATEMENTS = [
   {
@@ -43,26 +47,84 @@ export default function PinnedScrollFeatures() {
   const innerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const container = containerRef.current;
-      const inner = innerRef.current;
-      if (!container || !inner) return;
+  useGSAP(() => {
+    const container = containerRef.current;
+    const inner = innerRef.current;
+    if (!container || !inner) return;
 
-      // Mobile: clean entrance animations per item (no pinning)
-      const mq = window.matchMedia("(max-width: 767px)");
-      if (mq.matches) {
-        const items = container.querySelectorAll(".pinned-item");
-        animateEntrance(items, { y: 24, duration: MOTION.snappy });
-        return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (mq.matches) {
+      const sectionLabel = container.querySelector(".pinned-section-label");
+      if (sectionLabel) {
+        gsap.fromTo(sectionLabel,
+          { opacity: 0, letterSpacing: "0.5em" },
+          {
+            opacity: 1, letterSpacing: "0.2em",
+            duration: MOTION.standard, ease: MOTION.smooth,
+            scrollTrigger: { trigger: sectionLabel, start: "top 90%", once: true },
+          }
+        );
       }
 
-      // Desktop: pinned crossfade
-      const items = itemRefs.current.filter(Boolean);
-      animatePinnedScroll(inner, items, { scrollLength: 400 });
-    });
-    return () => ctx.revert();
-  }, []);
+      const items = Array.from(container.querySelectorAll(".pinned-item"));
+      items.forEach((itemEl) => {
+        const counter  = itemEl.querySelector(".pinned-mobile-counter") as HTMLElement | null;
+        const headline = itemEl.querySelector(".pinned-mobile-headline") as HTMLElement | null;
+        const accent   = itemEl.querySelector(".pinned-accent-text") as HTMLElement | null;
+        const body     = itemEl.querySelector(".pinned-mobile-body") as HTMLElement | null;
+
+        const tl = gsap.timeline({ paused: true });
+
+        if (counter) {
+          tl.fromTo(counter,
+            { scale: 0, opacity: 0, rotationZ: -15 },
+            { scale: 1, opacity: 1, rotationZ: 0, duration: MOTION.snappy, ease: MOTION.elastic },
+            0
+          );
+        }
+
+        if (headline) {
+          tl.fromTo(headline,
+            { clipPath: "inset(0 0 100% 0)", y: 16, opacity: 1 },
+            { clipPath: "inset(0 0 0% 0)", y: 0, duration: MOTION.deliberate, ease: MOTION.smooth },
+            0.1
+          );
+        }
+
+        if (accent) {
+          tl.fromTo(accent,
+            { textShadow: "0 0 0px rgba(0,229,204,0)" },
+            {
+              textShadow: "0 0 30px rgba(0,229,204,1), 0 0 60px rgba(0,229,204,0.5)",
+              duration: 0.35, ease: MOTION.inOut,
+              yoyo: true, repeat: 1,
+            },
+            0.65
+          );
+        }
+
+        if (body) {
+          tl.fromTo(body,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out },
+            0.5
+          );
+        }
+
+        ScrollTrigger.create({
+          trigger: itemEl,
+          start: "top 84%",
+          once: true,
+          onEnter: () => tl.play(),
+        });
+      });
+      return;
+    }
+
+    // Desktop: pinned crossfade
+    const items = itemRefs.current.filter(Boolean);
+    animatePinnedScroll(inner, items, { scrollLength: 400 });
+  }, { scope: containerRef });
 
   return (
     <section
@@ -73,7 +135,7 @@ export default function PinnedScrollFeatures() {
       <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} isSticky={true} />
       {/* Section label */}
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)] pt-[clamp(4rem,8vw,8rem)]">
-        <p className="text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">
+        <p className="pinned-section-label text-[0.75rem] tracking-[0.2em] uppercase text-secondary mb-4">
           Why Productivity Catalyst
         </p>
       </div>
@@ -109,18 +171,26 @@ export default function PinnedScrollFeatures() {
         </div>
       </div>
 
-      {/* Mobile: sequential stack (no pinning) */}
-      <div className="md:hidden flex flex-col gap-16 max-w-[1280px] mx-auto px-6 py-[clamp(3rem,8vw,6rem)]">
+      {/* Mobile: sequential stack with cinematic per-item animations */}
+      <div className="md:hidden flex flex-col gap-0 max-w-[1280px] mx-auto px-6 py-[clamp(3rem,8vw,6rem)]">
         {STATEMENTS.map((s, i) => (
-          <div key={i} className="pinned-item flex flex-col gap-4">
-            <span className="text-[0.7rem] tracking-[0.25em] uppercase text-secondary/60">
+          <div
+            key={i}
+            className={`pinned-item flex flex-col gap-5 py-10 ${
+              i < STATEMENTS.length - 1 ? "border-b border-white/[0.06]" : ""
+            }`}
+          >
+            <span className="pinned-mobile-counter inline-flex items-center gap-2 text-[0.65rem] tracking-[0.3em] uppercase text-accent/70 self-start">
+              <span className="w-4 h-px bg-accent/40 inline-block" />
               {String(i + 1).padStart(2, "0")} / {String(STATEMENTS.length).padStart(2, "0")}
             </span>
-            <h3 className="text-white font-bold text-[clamp(1.5rem,5vw,2.25rem)] leading-[1.1] tracking-[-0.01em]">
+
+            <h3 className="pinned-mobile-headline text-white font-bold text-[clamp(1.6rem,5.5vw,2.5rem)] leading-[1.1] tracking-[-0.02em]">
               {s.headline}{" "}
               <span className="pinned-accent-text">{s.accent}</span>
             </h3>
-            <p className="text-secondary text-[0.95rem] leading-[1.7] max-w-md">
+
+            <p className="pinned-mobile-body text-secondary text-[0.95rem] leading-[1.75]">
               {s.sub}
             </p>
           </div>

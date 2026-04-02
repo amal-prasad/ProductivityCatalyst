@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { gsap, IS_MOBILE, MOTION } from "@/lib/gsap";
+import { useRef } from "react";
+import { gsap, IS_MOBILE, MOTION, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 interface TextRevealProps {
   children: string;
@@ -20,55 +25,53 @@ export default function TextReveal({
 }: TextRevealProps) {
   const containerRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const container = containerRef.current;
-      if (!container) return;
+  useGSAP(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-      const targets = container.querySelectorAll(".text-reveal-word");
-      const isMobile = IS_MOBILE();
+    const targets = gsap.utils.toArray(container.querySelectorAll(".text-reveal-word"));
+    if (!targets.length) return;
+    const isMobile = IS_MOBILE();
 
-      if (isMobile) {
-        gsap.fromTo(
-          targets,
-          { yPercent: 80, opacity: 0 },
-          {
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: MOTION.out,
-            stagger: stagger * 0.7,
-            delay: delay,
-            scrollTrigger: {
-              trigger: container,
-              start: MOTION.triggerStartMobile,
-              once: true,
-            },
-          }
-        );
-      } else {
-        gsap.fromTo(
-          targets,
-          { yPercent: 120, rotationZ: 2, opacity: 0 },
-          {
-            yPercent: 0,
-            rotationZ: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power4.out",
-            stagger: stagger,
-            delay: delay,
-            scrollTrigger: {
-              trigger: container,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
-      }
-    });
-    return () => ctx.revert();
-  }, [delay, stagger]);
+    if (isMobile) {
+      gsap.fromTo(
+        targets,
+        { yPercent: 80, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: MOTION.out,
+          stagger: stagger * 0.7,
+          delay: delay,
+          scrollTrigger: {
+            trigger: container,
+            start: MOTION.triggerStartMobile,
+            once: true,
+          },
+        }
+      );
+    } else {
+      gsap.fromTo(
+        targets,
+        { yPercent: 120, rotationZ: 2, opacity: 0 },
+        {
+          yPercent: 0,
+          rotationZ: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power4.out",
+          stagger: stagger,
+          delay: delay,
+          scrollTrigger: {
+            trigger: container,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    }
+  }, { scope: containerRef, dependencies: [delay, stagger] });
 
   // Split the text into words
   const words = children.split(" ");

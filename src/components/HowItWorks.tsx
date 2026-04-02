@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { MOTION, animateEntrance } from "@/lib/gsap";
+import { useRef } from "react";
+import { MOTION, animateMobileScrollFocus, gsap, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
-import gsap from "gsap";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const STEPS = [
   {
@@ -37,43 +41,64 @@ const STEPS = [
 export default function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
-      
-      const mq = window.matchMedia("(max-width: 767px)");
-      if (mq.matches) {
-        const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-        animateEntrance(steps, { y: 24, duration: MOTION.snappy });
-      } else {
-        const desktopSteps = sectionRef.current.querySelectorAll(".step-row");
-        desktopSteps.forEach((row, i) => {
-          const fromLeft = i % 2 === 0;
-          gsap.fromTo(row,
-            { opacity: 0, x: fromLeft ? -50 : 50 },
-            {
-              opacity: 1, x: 0,
-              duration: MOTION.standard,
-              ease: MOTION.smooth,
-              scrollTrigger: { trigger: row, start: MOTION.triggerStart }
-            }
-          );
-        });
-      }
+  useGSAP(() => {
+    if (!sectionRef.current) return;
 
-      // Animate the "01 → 05" numerals as they scroll in
-      const stepNumbers = sectionRef.current.querySelectorAll(".step-number");
-      stepNumbers.forEach((num) => {
-        gsap.fromTo(num,
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.back,
-            scrollTrigger: { trigger: num, start: "top 85%" }
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (mq.matches) {
+      const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
+      animateMobileScrollFocus(steps, { scaleMin: 0.93, blurMax: 4 });
+
+      steps.forEach((step) => {
+        gsap.fromTo(step.querySelectorAll("span.relative, h3, p"),
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: step, start: "top 85%", once: true }
           }
         );
       });
+    } else {
+      const desktopSteps = sectionRef.current.querySelectorAll(".step-row");
+      desktopSteps.forEach((row, i) => {
+        const fromLeft = i % 2 === 0;
+        gsap.fromTo(row,
+          { opacity: 0, x: fromLeft ? -50 : 50 },
+          {
+            opacity: 1, x: 0,
+            duration: MOTION.standard,
+            ease: MOTION.smooth,
+            scrollTrigger: { trigger: row, start: MOTION.triggerStart }
+          }
+        );
+
+        gsap.fromTo(row.querySelectorAll(".flex-col > span, .flex-col > h3, .flex-col > p"),
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1, y: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: 0.08,
+            delay: 0.3,
+            scrollTrigger: { trigger: row, start: MOTION.triggerStart, once: true }
+          }
+        );
+      });
+    }
+
+    const stepNumbers = sectionRef.current.querySelectorAll(".step-number");
+    stepNumbers.forEach((num) => {
+      gsap.fromTo(num,
+        { opacity: 0, y: 8 },
+        { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.back,
+          scrollTrigger: { trigger: num, start: "top 85%" }
+        }
+      );
     });
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -82,7 +107,7 @@ export default function HowItWorks() {
       className="relative w-full border-t border-white/[0.08]"
     >
       <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} isSticky={true} />
-      
+
       {/* Common Header */}
       <div className="relative z-10 w-full pt-[clamp(4rem,8vh,8rem)] pb-[clamp(2rem,6vh,6rem)] flex flex-col items-center">
         <div className="w-full max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">

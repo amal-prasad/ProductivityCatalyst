@@ -1,49 +1,55 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Link from "next/link";
-import { gsap, MOTION } from "@/lib/gsap";
+import { gsap, MOTION, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
 import MagneticWrapper from "./MagneticWrapper";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
+
 export default function CTASection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const line1Ref = useRef<HTMLHeadingElement>(null);
   const line2Ref = useRef<HTMLHeadingElement>(null);
   const btnRef = useRef<HTMLAnchorElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const mq = window.matchMedia("(max-width: 767px)");
-      const startTrigger = mq.matches ? "top 80%" : "top 75%";
-      const yOffset = mq.matches ? 16 : 30;
-      const duration = mq.matches ? MOTION.snappy : MOTION.standard;
+  useGSAP(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const startTrigger = mq.matches ? "top 80%" : "top 75%";
+    const yOffset = mq.matches ? 16 : 30;
+    const duration = mq.matches ? MOTION.snappy : MOTION.standard;
 
-      const ctaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#contact",
-          start: startTrigger,
-        }
-      });
+    const ctaTl = gsap.timeline({ paused: true });
 
-      if (line1Ref.current && line2Ref.current && btnRef.current) {
-        ctaTl
-          .fromTo(line1Ref.current,
-            { opacity: 0, y: yOffset },
-            { opacity: 1, y: 0, duration: duration, ease: MOTION.out })
-          .fromTo(line2Ref.current,
-            { opacity: 0, y: yOffset * 0.5 },
-            { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15")
-          .fromTo(btnRef.current,
-            { opacity: 0, y: yOffset * 0.6 },
-            { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.1");
-      }
+    if (line1Ref.current && line2Ref.current && btnRef.current) {
+      ctaTl
+        .fromTo(line1Ref.current,
+          { opacity: 0, y: yOffset },
+          { opacity: 1, y: 0, duration: duration, ease: MOTION.out })
+        .fromTo(line2Ref.current,
+          { opacity: 0, y: yOffset * 0.5 },
+          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15")
+        .fromTo(btnRef.current,
+          { opacity: 0, y: yOffset * 0.6 },
+          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.1");
+    }
+
+    ScrollTrigger.create({
+      trigger: "#contact",
+      start: startTrigger,
+      onEnter: () => ctaTl.play(),
     });
-    return () => ctx.revert();
-  }, []);
+  }, { scope: sectionRef });
+
   return (
     <section
       id="contact"
+      ref={sectionRef}
       className="relative w-full border-t border-white/[0.08]"
       style={{ padding: "clamp(6rem, 10vw, 10rem) 0" }}
     >

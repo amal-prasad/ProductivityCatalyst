@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { MOTION, IS_MOBILE } from "@/lib/gsap";
+import { useRef } from "react";
+import { gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import TextReveal from "./TextReveal";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const CheckIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -49,38 +53,34 @@ const COMPARISON_DATA = [
 export default function ComparisonTable() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (!sectionRef.current) return;
-      const rows = sectionRef.current.querySelectorAll(".comparison-row");
-      const header = sectionRef.current.querySelector(".comparison-header");
-      const isMobile = IS_MOBILE();
-      const duration = isMobile ? MOTION.snappy : MOTION.standard;
-      const yOffset = isMobile ? 16 : 20;
+  useGSAP(() => {
+    if (!sectionRef.current) return;
+    const rows = sectionRef.current.querySelectorAll(".comparison-row");
+    const header = sectionRef.current.querySelector(".comparison-header");
+    const isMobile = IS_MOBILE();
+    const duration = isMobile ? MOTION.snappy : MOTION.standard;
+    const yOffset = isMobile ? 16 : 20;
 
-      if (header) {
-        gsap.fromTo(header,
-          { opacity: 0, y: yOffset },
-          { opacity: 1, y: 0, duration, ease: MOTION.out,
-            scrollTrigger: { trigger: header, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+    if (header) {
+      gsap.fromTo(header,
+        { opacity: 0, y: yOffset },
+        { opacity: 1, y: 0, duration, ease: MOTION.out,
+          scrollTrigger: { trigger: header, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+        }
+      );
+    }
+
+    if (rows.length) {
+      rows.forEach((row) => {
+        gsap.fromTo(row,
+          { opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 16 : 0 },
+          { opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
+            scrollTrigger: { trigger: row, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
           }
         );
-      }
-
-      if (rows.length) {
-        rows.forEach((row) => {
-          gsap.fromTo(row,
-            { opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 16 : 0 },
-            { opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
-              scrollTrigger: { trigger: row, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
-            }
-          );
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section ref={sectionRef} className="relative w-full py-[clamp(4rem,10vw,10rem)] bg-[#0a0a0a]">

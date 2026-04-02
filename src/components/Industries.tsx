@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { animateOnScroll, MOTION } from "@/lib/gsap";
+import { useRef } from "react";
+import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 import VideoBackground from "./VideoBackground";
-import gsap from "gsap";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const INDUSTRIES = [
   "IT Companies",
@@ -21,30 +25,28 @@ const INDUSTRIES = [
 export default function Industries() {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const mq = window.matchMedia("(max-width: 767px)");
-      
-      if (mq.matches) {
-        gsap.fromTo(sectionRef.current!.querySelector(".section-headline"),
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
-            scrollTrigger: { trigger: sectionRef.current!.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
-          }
-        );
+  useGSAP(() => {
+    if (!sectionRef.current) return;
+    const mq = window.matchMedia("(max-width: 767px)");
 
-        gsap.fromTo(sectionRef.current!.querySelector(".marquee-track"),
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
-            scrollTrigger: { trigger: sectionRef.current!.querySelector(".marquee-track"), start: MOTION.triggerStartMobile, once: true }
-          }
-        );
-      } else {
-        animateOnScroll(".section-headline", { y: 30 });
-      }
-    });
-    return () => ctx.revert();
-  }, []);
+    if (mq.matches) {
+      gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+          scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
+        }
+      );
+
+      gsap.fromTo(sectionRef.current.querySelector(".marquee-track"),
+        { opacity: 0, y: 16 },
+        { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+          scrollTrigger: { trigger: sectionRef.current.querySelector(".marquee-track"), start: MOTION.triggerStartMobile, once: true }
+        }
+      );
+    } else {
+      animateOnScroll(".section-headline", { y: 30 });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -53,7 +55,7 @@ export default function Industries() {
       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
     >
       <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
-      
+
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         <div className="mb-12 section-headline">

@@ -14,30 +14,30 @@ if (typeof window !== "undefined") {
 
 export const MOTION = {
   // Durations
-  instant:    0.1,   // state flips, focus rings
-  micro:      0.2,   // hover, icon bounce
-  snappy:     0.3,   // card reveals, button presses
-  standard:   0.5,   // section entrances, nav load
+  instant: 0.1,   // state flips, focus rings
+  micro: 0.2,   // hover, icon bounce
+  snappy: 0.3,   // card reveals, button presses
+  standard: 0.5,   // section entrances, nav load
   deliberate: 0.75,  // hero sequence, pinned panels
-  cinematic:  1.2,   // page-load curtain, full-bleed reveals
+  cinematic: 1.2,   // page-load curtain, full-bleed reveals
 
   // Eases
-  out:        "power2.out",
-  inOut:      "power2.inOut",
-  back:       "back.out(1.4)",    // overshoot for cards/badges
-  elastic:    "elastic.out(1, 0.4)", // icon pop
-  smooth:     "expo.out",         // premium scroll scrub
+  out: "power2.out",
+  inOut: "power2.inOut",
+  back: "back.out(1.4)",    // overshoot for cards/badges
+  elastic: "elastic.out(1, 0.4)", // icon pop
+  smooth: "expo.out",         // premium scroll scrub
 
   // Scroll trigger defaults
-  triggerStart:        "top 82%",   // desktop
-  triggerStartMobile:  "top 88%",   // mobile — fires earlier
-  focusBand:           "top 65%",   // center-focus band for mobile cards
+  triggerStart: "top 82%",   // desktop
+  triggerStartMobile: "top 88%",   // mobile — fires earlier
+  focusBand: "top 65%",   // center-focus band for mobile cards
 };
 
 // Device detection — set once, use everywhere
-export const IS_MOBILE   = () => typeof window !== 'undefined' && window.innerWidth < 768;
-export const IS_REDUCED  = () => typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-export const IS_LOW_END  = () => typeof navigator !== 'undefined' && navigator.hardwareConcurrency <= 4;
+export const IS_MOBILE = () => typeof window !== 'undefined' && window.innerWidth < 768;
+export const IS_REDUCED = () => typeof window !== 'undefined' && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+export const IS_LOW_END = () => typeof navigator !== 'undefined' && navigator.hardwareConcurrency <= 4;
 
 // Blur allowed only if device is capable and user hasn't opted out
 export const CAN_BLUR = () => !IS_REDUCED() && !IS_LOW_END();
@@ -238,32 +238,54 @@ export function animateLineDraw(el: HTMLElement) {
    Scroll-triggered entrance animation
    ───────────────────────────────────────────────────────── */
 
-/**
- * Fade + slide each element up when it enters the viewport.
- * Each item triggers independently — natural for vertical lists.
- * Fires once; items remain visible after animating in.
- */
+// Ensure ScrollTrigger is registered in this utility file
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export function animateEntrance(
-  items: NodeListOf<Element> | Element[],
+  items: NodeListOf<Element> | Element[] | null | undefined,
   opts?: { y?: number; duration?: number }
 ) {
+  if (!items) return;
+
   const arr = Array.from(items);
   if (!arr.length) return;
 
   const y = opts?.y ?? 30;
-  const duration = opts?.duration ?? MOTION.snappy;
-  const mobile = IS_MOBILE();
+  const duration = opts?.duration ?? MOTION?.snappy ?? 0.4;
+  const mobile = typeof IS_MOBILE === "function" ? IS_MOBILE() : false;
 
   arr.forEach((el) => {
+    // 1. THE ULTIMATE GUARD:
+    // Check if it exists AND is physically attached to the DOM right now.
+    if (!el || !(el instanceof Element) || !el.isConnected) return;
+
+    // 2. PREVENT STRICT MODE DUPLICATES:
+    // Safely clear out any old ScrollTriggers attached to this specific element FIRST
+    ScrollTrigger.getAll().forEach(st => {
+      if (st.trigger === el) {
+        st.kill();
+      }
+    });
+
+    // Then kill the tweens
+    gsap.killTweensOf(el);
+
+    // Re-check connection immediately before animating — React 19 Strict Mode
+    // can unmount/remount between the guard above and this call.
+    if (!el.isConnected) return;
+
     gsap.fromTo(el,
       { opacity: 0, y },
       {
-        opacity: 1, y: 0,
+        opacity: 1,
+        y: 0,
         duration,
-        ease: MOTION.out,
+        ease: MOTION?.out || "power2.out",
         scrollTrigger: {
           trigger: el,
-          start: mobile ? MOTION.triggerStartMobile : MOTION.triggerStart,
+          start: mobile ? (MOTION?.triggerStartMobile || "top 85%") : (MOTION?.triggerStart || "top 80%"),
           once: true,
         },
       }
@@ -273,21 +295,12 @@ export function animateEntrance(
 
 /* ─────────────────────────────────────────────────────────
    Mobile scroll-focus animation
-   Each item independently scrubs opacity + scale + blur
-   as it passes through the viewport focus band.
    ───────────────────────────────────────────────────────── */
 
 /**
  * Attaches per-element scrub-based ScrollTriggers that animate
  * opacity (0→1→0), scale (0.95→1→0.95), and optionally blur
  * as each item scrolls through a "focus band" in the viewport.
- *
- * Uses `start: "top 85%"` / `end: "top 15%"` as a forgiving band
- * so the last item in a list doesn't need extra bottom padding
- * to reach full visibility.
- *
- * Respects prefers-reduced-motion and low-end device heuristic —
- * falls back to opacity-only on constrained devices.
  */
 export function animateMobileScrollFocus(
   items: NodeListOf<Element> | Element[],
@@ -295,10 +308,22 @@ export function animateMobileScrollFocus(
 ) {
   if (!IS_MOBILE()) return; // Desktop ignores this completely
 
-  const scaleMin  = opts?.scaleMin ?? 0.93;
-  const blurMax   = CAN_BLUR() ? (opts?.blurMax ?? 6) : 0;
+  const scaleMin = opts?.scaleMin ?? 0.93;
+  const blurMax = CAN_BLUR() ? (opts?.blurMax ?? 6) : 0;
 
   items.forEach((el) => {
+    // 1. GUARD
+    if (!el || !(el instanceof Element) || !el.isConnected) return;
+
+    // 2. PREVENT STRICT MODE DUPLICATES:
+    ScrollTrigger.getAll().forEach(st => {
+      if (st.trigger === el) {
+        st.kill();
+      }
+    });
+
+    gsap.killTweensOf(el);
+
     // Initial state
     gsap.set(el, {
       opacity: 0.35,
@@ -309,14 +334,14 @@ export function animateMobileScrollFocus(
     ScrollTrigger.create({
       trigger: el,
       start: "top 85%",      // begins entering viewport
-      end:   "top 25%",      // fully in focus zone
+      end: "top 25%",      // fully in focus zone
       scrub: 0.6,            // slight lag = premium feel
       onUpdate(self) {
         const p = self.progress; // 0 → 1
         gsap.set(el, {
-          opacity:  gsap.utils.interpolate(0.35, 1, p),
-          scale:    gsap.utils.interpolate(scaleMin, 1, p),
-          filter:   blurMax > 0
+          opacity: gsap.utils.interpolate(0.35, 1, p),
+          scale: gsap.utils.interpolate(scaleMin, 1, p),
+          filter: blurMax > 0
             ? `blur(${gsap.utils.interpolate(blurMax, 0, p)}px)`
             : "none",
         });
