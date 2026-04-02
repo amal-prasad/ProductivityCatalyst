@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { animateCounter, animateOnScroll, animateEntrance, MOTION } from "@/lib/gsap";
+import { animateCounter, animateOnScroll, MOTION } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -122,11 +122,6 @@ export default function DynamicMetrics() {
               className={`metrics-cell flex flex-col gap-3 py-10 px-6 md:px-8 ${
                 i < METRICS.length - 1 ? "border-r border-white/[0.06]" : ""
               }`}
-              style={{
-                borderRight: i % 2 === 0 && i < METRICS.length - 1
-                  ? undefined
-                  : undefined,
-              }}
             >
               <span
                 ref={(el) => {

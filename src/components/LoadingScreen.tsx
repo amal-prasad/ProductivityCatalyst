@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useLoading } from "@/context/LoadingContext";
+import { ScrollTrigger } from "@/lib/gsap";
 
 import LogoMark from "./LogoMark";
 
@@ -17,11 +18,16 @@ export default function LoadingScreen() {
   const [progress, setProgress] = useState(0);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  // Track when the component first mounted
-  const mountTimeRef = useRef<number | null>(null);
-  if (mountTimeRef.current === null) {
-    mountTimeRef.current = Date.now();
-  }
+  // Track when the component first mounted (lazy initialiser avoids impure render call)
+  const mountTimeRef = useRef<number>(0);
+  const mountInitialised = useRef(false);
+
+  useEffect(() => {
+    if (!mountInitialised.current) {
+      mountTimeRef.current = Date.now();
+      mountInitialised.current = true;
+    }
+  }, []);
   // Track whether loading has resolved (from context)
   const loadResolvedRef = useRef(false);
 
@@ -35,7 +41,8 @@ export default function LoadingScreen() {
   // Animated progress counter
   useEffect(() => {
     const id = setInterval(() => {
-      const elapsed = Date.now() - (mountTimeRef.current ?? Date.now());
+      if (!mountInitialised.current) return; // wait for mount timestamp
+      const elapsed = Date.now() - mountTimeRef.current;
       const loadDone = loadResolvedRef.current;
 
       if (loadDone && elapsed >= MIN_DISPLAY_MS) {
@@ -65,10 +72,14 @@ export default function LoadingScreen() {
       ).matches;
 
       if (prefersReducedMotion) {
-        setShouldRender(false);
-        setTransitionComplete(true);
+        // Defer state updates to avoid synchronous setState inside effect body
+        requestAnimationFrame(() => {
+          setShouldRender(false);
+          setTransitionComplete(true);
+          ScrollTrigger.refresh();
+        });
       } else {
-        setIsFadingOut(true);
+        requestAnimationFrame(() => setIsFadingOut(true));
       }
     }
   }, [progress, setTransitionComplete]);
@@ -89,6 +100,11 @@ export default function LoadingScreen() {
     if (isFadingOut) {
       setShouldRender(false);
       setTransitionComplete(true);
+      // Recalculate all ScrollTrigger positions now that the loading overlay is gone
+      // and the page layout has stabilized
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
     }
   }, [isFadingOut, setTransitionComplete]);
 

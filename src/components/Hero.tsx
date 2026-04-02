@@ -81,12 +81,12 @@ export default function Hero() {
       <div className="relative z-10 max-w-[1280px] mx-auto w-full px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         {/* Headline — fully left aligned, clamp keeps it in bounds */}
-        <div ref={headlineRef} className="hero-headline flex flex-col gap-0 opacity-0">
-          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)] whitespace-nowrap">
+        <div ref={headlineRef} className="hero-headline flex flex-col gap-0" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
+          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
             <span className="inline-block">LESS</span>{" "}
             <span className="inline-block">CHAOS.</span>
           </h1>
-          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)] whitespace-nowrap">
+          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
             <span className="inline-block">MORE</span>{" "}
             <span className="inline-block">GROWTH.</span>
           </h1>
@@ -94,13 +94,14 @@ export default function Hero() {
 
         {/* Sub-copy + CTA */}
         <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[640px]">
-          <p className="hero-subtext opacity-0 max-w-sm text-secondary text-[1rem] leading-[1.7]">
+          <p className="hero-subtext max-w-sm text-secondary text-[1rem] leading-[1.7]" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
             Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
           </p>
           <MagneticWrapper strength={30} elasticity={0.3}>
             <Link
               href="#contact"
-              className="hero-cta-primary opacity-0 btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem]"
+              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem]"
+              style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}
             >
               Book structured call →
             </Link>
@@ -109,7 +110,7 @@ export default function Hero() {
       </div>
 
       {/* Scroll cue */}
-      <div className="hero-scroll-cue opacity-0 absolute bottom-8 left-1/2 -translate-x-1/2 text-[0.65rem] tracking-[0.2em] uppercase text-white/30 flex flex-col items-center gap-3">
+      <div className="hero-scroll-cue absolute bottom-8 left-1/2 -translate-x-1/2 text-[0.65rem] tracking-[0.2em] uppercase text-white/30 flex flex-col items-center gap-3" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
         <span>Scroll</span>
         <span className="h-8 w-px bg-white/20" />
       </div>
