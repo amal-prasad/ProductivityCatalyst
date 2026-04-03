@@ -6,12 +6,20 @@ export default function ScrollProgress() {
   const progressRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let ticking = false;
+
     const updateProgress = () => {
-      if (!progressRef.current) return;
-      const scrollTop = window.scrollY;
-      const docHeight = document.body.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      progressRef.current.style.width = `${Math.min(progress, 100)}%`;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (!progressRef.current) return;
+          const scrollTop = window.scrollY;
+          const docHeight = document.body.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          progressRef.current.style.width = `${Math.min(progress, 100)}%`;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", updateProgress, { passive: true });

@@ -13,10 +13,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
 }
 
-const ParticleVortex = dynamic(() => import("./ParticleVortex"), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 bg-background" />
-});
+import ParticleVortex from "./ParticleVortex";
 
 export default function Hero() {
   const headlineRef = useRef<HTMLDivElement>(null);

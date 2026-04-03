@@ -78,13 +78,20 @@ export default function ParticleVortex() {
     // ── Mouse Parallax ────────────────────────────────────
     const mouse = { x: 0, y: 0 };
     const targetRotation = { x: 0, y: 0 };
+    let ticking = false;
 
     const onMouseMove = (e: MouseEvent) => {
-      // Normalise to -0.5 → 0.5
-      mouse.x = (e.clientX / window.innerWidth) - 0.5;
-      mouse.y = (e.clientY / window.innerHeight) - 0.5;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          // Normalise to -0.5 → 0.5
+          mouse.x = (e.clientX / window.innerWidth) - 0.5;
+          mouse.y = (e.clientY / window.innerHeight) - 0.5;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
 
     // ── Resize ────────────────────────────────────────────
     const onResize = () => {
@@ -146,7 +153,8 @@ export default function ParticleVortex() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0"
+      style={{ width: "100%", height: "100%" }}
       aria-hidden="true"
     />
   );
