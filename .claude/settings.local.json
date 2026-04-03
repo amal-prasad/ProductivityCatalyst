@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx claude:*)",
+      "Bash(npm run:*)",
+      "Bash(npx eslint:*)",
+      "Bash(claude doctor:*)",
+      "Read(//c/Users/bened/.claude/**)",
+      "Bash(ls -la ~/.claude/projects/D--ProductivityCatalyst/*.json)",
+      "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.04.jpeg\" D:/ProductivityCatalyst/public/images/clients/snp-solutions.jpeg)",
+      "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.59.jpeg\" D:/ProductivityCatalyst/public/images/clients/rs-group.jpeg)"
+    ]
+  }
+}

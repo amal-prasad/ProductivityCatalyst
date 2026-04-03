@@ -1,18 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-import { MOTION, IS_MOBILE } from "@/lib/gsap";
+import { gsap, useGSAP, MOTION, IS_MOBILE } from "@/lib/gsap";
 import MagneticWrapper from "./MagneticWrapper";
 import { useLoading } from "@/context/LoadingContext";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP);
-}
-
+import { scrollToContact } from "@/lib/scrollToContact";
 import ParticleVortex from "./ParticleVortex";
 
 export default function Hero() {
@@ -95,13 +87,13 @@ export default function Hero() {
             Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
           </p>
           <MagneticWrapper strength={30} elasticity={0.3}>
-            <Link
-              href="#contact"
-              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem]"
+            <button
+              onClick={scrollToContact}
+              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem] cursor-pointer"
               style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}
             >
-              Book structured call →
-            </Link>
+              Book a Call →
+            </button>
           </MagneticWrapper>
         </div>
       </div>

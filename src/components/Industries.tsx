@@ -1,13 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { MOTION, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const INDUSTRIES = [
   "IT Companies",
@@ -44,7 +39,15 @@ export default function Industries() {
         }
       );
     } else {
-      animateOnScroll(".section-headline", { y: 30 });
+      const headline = sectionRef.current.querySelector(".section-headline");
+      if (headline) {
+        gsap.fromTo(headline,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: headline, start: MOTION.triggerStart, once: true }
+          }
+        );
+      }
     }
   }, { scope: sectionRef });
 

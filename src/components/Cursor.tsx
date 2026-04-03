@@ -21,7 +21,7 @@ export default function Cursor() {
       yTo(e.clientY);
     };
 
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
 
     // Add hover effects to links and buttons
     const handleMouseOver = (e: MouseEvent) => {
@@ -31,8 +31,8 @@ export default function Cursor() {
         gsap.to(cursor, {
           width: 40,
           height: 40,
-          backgroundColor: "#00e5cc", // Accent color
-          mixBlendMode: "normal", // Might need to reset mix-blend-mode if it looks bad with difference
+          backgroundColor: "#00e5cc",
+          mixBlendMode: "normal",
           duration: 0.15,
           ease: "power2.out",
         });
@@ -54,8 +54,8 @@ export default function Cursor() {
       }
     };
 
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("mouseout", handleMouseOut);
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    window.addEventListener("mouseout", handleMouseOut, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);

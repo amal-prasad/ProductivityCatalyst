@@ -1,14 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { MOTION, animateMobileScrollFocus, gsap, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { MOTION, animateMobileScrollFocus, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const STEPS = [
   {
@@ -71,7 +66,7 @@ export default function HowItWorks() {
             opacity: 1, x: 0,
             duration: MOTION.standard,
             ease: MOTION.smooth,
-            scrollTrigger: { trigger: row, start: MOTION.triggerStart }
+            scrollTrigger: { trigger: row, start: MOTION.triggerStart, once: true }
           }
         );
 
@@ -94,7 +89,7 @@ export default function HowItWorks() {
       gsap.fromTo(num,
         { opacity: 0, y: 8 },
         { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.back,
-          scrollTrigger: { trigger: num, start: "top 85%" }
+          scrollTrigger: { trigger: num, start: "top 85%", once: true }
         }
       );
     });

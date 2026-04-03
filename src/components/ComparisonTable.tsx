@@ -24,11 +24,6 @@ const XIcon = () => (
 
 const COMPARISON_DATA = [
   {
-    feature: "Time to First Insight",
-    catalyst: "48 hours",
-    traditional: "3-6 months",
-  },
-  {
     feature: "Cross-Team Visibility",
     catalyst: "Real-time dashboards",
     traditional: "Manual status reports",
@@ -64,7 +59,8 @@ export default function ComparisonTable() {
     if (header) {
       gsap.fromTo(header,
         { opacity: 0, y: yOffset },
-        { opacity: 1, y: 0, duration, ease: MOTION.out,
+        {
+          opacity: 1, y: 0, duration, ease: MOTION.out,
           scrollTrigger: { trigger: header, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
         }
       );
@@ -74,7 +70,8 @@ export default function ComparisonTable() {
       rows.forEach((row) => {
         gsap.fromTo(row,
           { opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 16 : 0 },
-          { opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
+          {
+            opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
             scrollTrigger: { trigger: row, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
           }
         );

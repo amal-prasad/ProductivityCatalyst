@@ -23,7 +23,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
       const timer = setTimeout(() => {
         console.warn("Loading state timed out, forcing load complete to unblock UI.");
         setLoading(false);
-      }, 2500);
+      }, 6000);
       return () => clearTimeout(timer);
     }
   }, [isLoading]);

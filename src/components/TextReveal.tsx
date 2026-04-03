@@ -1,12 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, IS_MOBILE, MOTION, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
+import { gsap, IS_MOBILE, MOTION, useGSAP } from "@/lib/gsap";
 
 interface TextRevealProps {
   children: string;

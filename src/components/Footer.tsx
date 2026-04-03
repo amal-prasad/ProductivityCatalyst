@@ -2,12 +2,8 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { animateLineDraw, gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
+import { animateLineDraw, gsap, MOTION, IS_MOBILE, useGSAP } from "@/lib/gsap";
+import { scrollToContact } from "@/lib/scrollToContact";
 
 const SERVICES = [
   { name: "CXO Productivity", href: "/services/cxo-productivity" },
@@ -141,12 +137,12 @@ export default function Footer() {
               <p>info@productivitycatalyst.com</p>
               <p>+91 92321 36211</p>
             </div>
-            <Link
-              href="/#contact"
-              className="inline-block mt-6 text-[0.75rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-6 py-3 hover:bg-accent hover:border-accent transition-colors duration-300"
+            <button
+              onClick={scrollToContact}
+              className="inline-block mt-6 text-[0.75rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-6 py-3 hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
             >
-              Book a Discovery Call →
-            </Link>
+              Book a Call →
+            </button>
           </div>
         </div>
 

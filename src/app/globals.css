@@ -256,6 +256,9 @@ body {
 
 .grid-card {
   background: rgba(255, 255, 255, 0.02);
+}
+
+.grid-card:hover {
   will-change: transform;
 }
 
@@ -548,6 +551,29 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
+    animation: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Client Logo Marquee — dual-row infinite scroll
+   ───────────────────────────────────────────── */
+
+@keyframes client-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.client-marquee-track {
+  animation: client-marquee 30s linear infinite;
+}
+
+.client-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-marquee-track {
     animation: none;
   }
 }

@@ -1,8 +1,9 @@
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 
   // Recalculate all trigger positions after fonts/images finish loading
   window.addEventListener("load", () => ScrollTrigger.refresh());
@@ -238,11 +239,6 @@ export function animateLineDraw(el: HTMLElement) {
    Scroll-triggered entrance animation
    ───────────────────────────────────────────────────────── */
 
-// Ensure ScrollTrigger is registered in this utility file
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 export function animateEntrance(
   items: NodeListOf<Element> | Element[] | null | undefined,
   opts?: { y?: number; duration?: number }
@@ -361,4 +357,4 @@ export function animateMobileScrollFocus(
   });
 }
 
-export { gsap, ScrollTrigger };
+export { gsap, ScrollTrigger, useGSAP };

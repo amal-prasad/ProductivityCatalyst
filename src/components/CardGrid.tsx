@@ -1,13 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { MOTION, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const CARDS = [
   {
@@ -41,7 +36,8 @@ export default function CardGrid() {
     if (mq.matches) {
       gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
         { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
+        {
+          opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
           scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
         }
       );
@@ -72,11 +68,29 @@ export default function CardGrid() {
         );
       });
     } else {
-      animateOnScroll(".section-headline", { y: 30 });
-      animateOnScroll(".grid-card", { y: 50, stagger: 0.15 });
+      const headline = sectionRef.current.querySelector(".section-headline");
+      if (headline) {
+        gsap.fromTo(headline,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+            scrollTrigger: { trigger: headline, start: MOTION.triggerStart, once: true }
+          }
+        );
+      }
 
       const cards = Array.from(sectionRef.current.querySelectorAll(".grid-card"));
       cards.forEach((card, i) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1, y: 0,
+            duration: MOTION.standard,
+            ease: MOTION.out,
+            delay: i * 0.15,
+            scrollTrigger: { trigger: card, start: MOTION.triggerStart, once: true }
+          }
+        );
+
         gsap.fromTo(card.querySelectorAll("span.uppercase, h3, p, div.flex"),
           { opacity: 0, y: 15 },
           {
@@ -98,7 +112,7 @@ export default function CardGrid() {
       ref={sectionRef}
       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
     >
-      <VideoBackground src="/videos/bg3.mp4" overlayOpacity={0.85} />
+      <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.85} />
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 
         {/* Section label + headline */}

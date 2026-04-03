@@ -1,13 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { animatePinnedScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { animatePinnedScroll, MOTION, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const STATEMENTS = [
   {

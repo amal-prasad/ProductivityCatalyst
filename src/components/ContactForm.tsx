@@ -242,7 +242,7 @@ export default function ContactForm() {
                     Sending...
                   </span>
                 ) : (
-                  "Book a Discovery Call →"
+                  "Book a Call →"
                 )}
               </button>
 

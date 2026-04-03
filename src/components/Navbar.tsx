@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import LogoMark from "./LogoMark";
 import { gsap, MOTION } from "@/lib/gsap";
+import { scrollToContact } from "@/lib/scrollToContact";
+import ServicesView from "./ServicesView";
 
 const NAV_LINKS = [
-  { name: "Features", href: "#features" },
+  { name: "Services", href: "#services" },
   { name: "How It Works", href: "#how-it-works" },
-  { name: "Industries", href: "#industries" },
 ];
 
 const MenuIcon = () => (
@@ -28,6 +29,7 @@ const CloseIcon = () => (
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const headerRef = useRef<HTMLElement>(null);
@@ -36,7 +38,7 @@ export default function Navbar() {
   useEffect(() => {
     // True first load check: use sessionStorage to survive soft reloads while blocking across SPA navigations
     const sessionAnimated = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("navAnimated") : null;
-    
+
     if (hasAnimated.current || sessionAnimated) {
       // Already animated in this session — instantly show everything
       if (headerRef.current) {
@@ -45,7 +47,7 @@ export default function Navbar() {
       }
       return;
     }
-    
+
     hasAnimated.current = true;
     if (typeof sessionStorage !== "undefined") {
       sessionStorage.setItem("navAnimated", "true");
@@ -89,7 +91,8 @@ export default function Navbar() {
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 50);
+          const isScrolled = window.scrollY > 50;
+          setScrolled((prev) => prev === isScrolled ? prev : isScrolled);
           ticking = false;
         });
         ticking = true;
@@ -125,15 +128,22 @@ export default function Navbar() {
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
-        }`}
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
+          }`}
       >
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">
           {/* Logo */}
           <Link
             href="/"
-            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0 flex items-center gap-3"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+              setIsOpen(false);
+              setIsServicesOpen(false);
+            }}
+            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0 flex items-center gap-3 cursor-pointer"
           >
             <LogoMark size={32} />
             <span>Productivity Catalyst</span>
@@ -142,15 +152,21 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => {
+              const isServicesLink = link.name === "Services";
               const sectionId = link.href.replace("#", "");
-              const isActive = activeSection === sectionId;
+              const isActive = activeSection === sectionId || (isServicesLink && isServicesOpen);
               return (
                 <Link
                   key={link.name}
-                  href={link.href}
-                  className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${
-                    isActive ? "text-accent" : "text-white/80 hover:text-white"
-                  }`}
+                  href={isServicesLink ? "#" : link.href}
+                  onClick={(e) => {
+                    if (isServicesLink) {
+                      e.preventDefault();
+                      setIsServicesOpen(true);
+                    }
+                  }}
+                  className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${isActive ? "text-accent" : "text-white/80 hover:text-white"
+                    }`}
                 >
                   {link.name}
                   {isActive && (
@@ -159,12 +175,13 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            <Link
-              href="#contact"
-              className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 opacity-0"
+            <button
+              onClick={scrollToContact}
+              style={{ opacity: 0 }}
+              className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
             >
-              Book a Discovery Call →
-            </Link>
+              Book a Call →
+            </button>
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -180,36 +197,44 @@ export default function Navbar() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-background z-40 flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${
-          isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
-        }`}
+        className={`fixed inset-0 bg-background z-40 flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
+          }`}
       >
         <nav className="flex flex-col items-center gap-8">
           {NAV_LINKS.map((link) => {
+            const isServicesLink = link.name === "Services";
             const sectionId = link.href.replace("#", "");
-            const isActive = activeSection === sectionId;
+            const isActive = activeSection === sectionId || (isServicesLink && isServicesOpen);
             return (
               <Link
                 key={link.name}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={`text-2xl font-bold tracking-[0.15em] uppercase transition-colors ${
-                  isActive ? "text-accent" : "text-white hover:text-accent"
-                }`}
+                href={isServicesLink ? "#" : link.href}
+                onClick={(e) => {
+                  if (isServicesLink) {
+                    e.preventDefault();
+                    setIsServicesOpen(true);
+                    setIsOpen(false);
+                  } else {
+                    setIsOpen(false);
+                  }
+                }}
+                className={`text-2xl font-bold tracking-[0.15em] uppercase transition-colors ${isActive ? "text-accent" : "text-white hover:text-accent"
+                  }`}
               >
                 {link.name}
               </Link>
             );
           })}
-          <Link
-            href="#contact"
-            onClick={() => setIsOpen(false)}
-            className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
+          <button
+            onClick={() => { setIsOpen(false); scrollToContact(); }}
+            className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
           >
-            Book a Discovery Call →
-          </Link>
+            Book a Call →
+          </button>
         </nav>
       </div>
+
+      <ServicesView isOpen={isServicesOpen} onClose={() => setIsServicesOpen(false)} />
     </>
   );
 }

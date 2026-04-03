@@ -1,20 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { animateOnScroll, MOTION } from "@/lib/gsap";
+import { animateOnScroll, MOTION, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import { servicesData } from "@/lib/servicesData";
 import Link from "next/link";
-
-// 1. Import GSAP, ScrollTrigger, and the official React hook
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-
-// 2. Explicitly register plugins outside the component to prevent 'undefined' errors
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const ANGLE_STEP = 360 / servicesData.length;
 

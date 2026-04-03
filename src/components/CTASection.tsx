@@ -1,22 +1,14 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
-import { gsap, MOTION, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { gsap, MOTION, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
-import MagneticWrapper from "./MagneticWrapper";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 export default function CTASection() {
   const sectionRef = useRef<HTMLElement>(null);
   const line1Ref = useRef<HTMLHeadingElement>(null);
   const line2Ref = useRef<HTMLHeadingElement>(null);
-  const btnRef = useRef<HTMLAnchorElement>(null);
 
   useGSAP(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -26,21 +18,18 @@ export default function CTASection() {
 
     const ctaTl = gsap.timeline({ paused: true });
 
-    if (line1Ref.current && line2Ref.current && btnRef.current) {
+    if (line1Ref.current && line2Ref.current) {
       ctaTl
         .fromTo(line1Ref.current,
           { opacity: 0, y: yOffset },
           { opacity: 1, y: 0, duration: duration, ease: MOTION.out })
         .fromTo(line2Ref.current,
           { opacity: 0, y: yOffset * 0.5 },
-          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15")
-        .fromTo(btnRef.current,
-          { opacity: 0, y: yOffset * 0.6 },
-          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.1");
+          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15");
     }
 
     ScrollTrigger.create({
-      trigger: "#contact",
+      trigger: sectionRef.current,
       start: startTrigger,
       onEnter: () => ctaTl.play(),
     });
@@ -48,7 +37,6 @@ export default function CTASection() {
 
   return (
     <section
-      id="contact"
       ref={sectionRef}
       className="relative w-full border-t border-white/[0.08]"
       style={{ padding: "clamp(6rem, 10vw, 10rem) 0" }}
@@ -69,15 +57,6 @@ export default function CTASection() {
           <TextReveal delay={0.2}>Not Firefighting.</TextReveal>
         </h2>
 
-        <MagneticWrapper strength={40} elasticity={0.4}>
-          <Link
-            ref={btnRef}
-            href="#contact"
-            className="inline-block text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-10 py-4 hover:bg-accent hover:border-accent transition-colors duration-300"
-          >
-            Book a Discovery Call →
-          </Link>
-        </MagneticWrapper>
 
       </div>
     </section>

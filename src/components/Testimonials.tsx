@@ -1,14 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { MOTION, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
 import TextReveal from "./TextReveal";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const StarIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="#00e5cc" xmlns="http://www.w3.org/2000/svg">

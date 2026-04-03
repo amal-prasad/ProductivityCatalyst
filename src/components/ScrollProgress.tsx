@@ -32,7 +32,7 @@ export default function ScrollProgress() {
     <div className="fixed top-0 left-0 w-full h-[3px] z-[9999] bg-white/[0.05]">
       <div
         ref={progressRef}
-        className="h-full bg-accent transition-[width] duration-100 ease-out"
+        className="h-full bg-accent"
         style={{ width: "0%" }}
       />
     </div>

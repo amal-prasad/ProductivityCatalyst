@@ -1,15 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { animateCounter, animateOnScroll, MOTION } from "@/lib/gsap";
+import { animateCounter, animateOnScroll, MOTION, gsap, useGSAP } from "@/lib/gsap";
 import VideoBackground from "./VideoBackground";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const METRICS = [
   { value: 200, suffix: "+", label: "Enterprise Teams Onboarded" },
