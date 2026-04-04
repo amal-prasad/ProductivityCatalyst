@@ -101,7 +101,7 @@ export default function HowItWorks() {
       ref={sectionRef}
       className="relative w-full border-t border-white/[0.08]"
     >
-      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} isSticky={true} />
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} isSticky={true} />
 
       {/* Common Header */}
       <div className="relative z-10 w-full pt-[clamp(4rem,8vh,8rem)] pb-[clamp(2rem,6vh,6rem)] flex flex-col items-center">

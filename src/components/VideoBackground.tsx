@@ -59,7 +59,7 @@ export default function VideoBackground({
           <source src={src} type={src.endsWith(".webm") ? "video/webm" : "video/mp4"} />
         </video>
       )}
-      <div className="absolute inset-0 bg-black z-0" style={{ opacity: overlayOpacity > 0.6 ? 0.6 : overlayOpacity }} />
+      <div className="absolute inset-0 bg-black z-0" style={{ opacity: overlayOpacity }} />
     </>
   );
 

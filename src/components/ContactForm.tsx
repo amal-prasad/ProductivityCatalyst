@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { servicesData } from "@/lib/servicesData";
-import { animateOnScroll, MOTION } from "@/lib/gsap";
-import gsap from "gsap";
+import { gsap, animateOnScroll, MOTION } from "@/lib/gsap";
 
 export default function ContactForm() {
   const sectionRef = useRef<HTMLElement>(null);

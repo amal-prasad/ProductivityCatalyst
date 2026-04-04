@@ -30,6 +30,7 @@ const CloseIcon = () => (
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [servicesKey, setServicesKey] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const headerRef = useRef<HTMLElement>(null);
@@ -163,6 +164,7 @@ export default function Navbar() {
                     if (isServicesLink) {
                       e.preventDefault();
                       setIsServicesOpen(true);
+                      setServicesKey((prev) => prev + 1);
                     }
                   }}
                   className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${isActive ? "text-accent" : "text-white/80 hover:text-white"
@@ -213,6 +215,7 @@ export default function Navbar() {
                   if (isServicesLink) {
                     e.preventDefault();
                     setIsServicesOpen(true);
+                    setServicesKey((prev) => prev + 1);
                     setIsOpen(false);
                   } else {
                     setIsOpen(false);
@@ -234,7 +237,7 @@ export default function Navbar() {
         </nav>
       </div>
 
-      <ServicesView isOpen={isServicesOpen} onClose={() => setIsServicesOpen(false)} />
+      <ServicesView key={servicesKey} isOpen={isServicesOpen} onClose={() => setIsServicesOpen(false)} />
     </>
   );
 }

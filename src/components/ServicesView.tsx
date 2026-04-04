@@ -13,10 +13,9 @@ export default function ServicesView({
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Reset index when opened and manage body scroll
+  // Manage body scroll
   useEffect(() => {
     if (isOpen) {
-      setCurrentIndex(0);
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";

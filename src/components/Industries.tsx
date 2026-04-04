@@ -57,7 +57,7 @@ export default function Industries() {
       ref={sectionRef}
       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
     >
-      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
+      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} />
 
       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
 

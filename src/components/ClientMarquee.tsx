@@ -5,7 +5,7 @@ import Image from "next/image";
 import { gsap, useGSAP, MOTION } from "@/lib/gsap";
 
 const CLIENTS = [
-  { name: "RS Group", logo: "/rs-group-logo.jpeg" },
+  { name: "RS Group", logo: "/images/clients/rs-group-logo.jpeg" },
   { name: "SNP Solutions", logo: "/images/clients/snp-solutions.jpeg" },
 ];
 

@@ -1,13 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
-import { useGSAP } from "@gsap/react";
+import { gsap, MOTION, IS_MOBILE, useGSAP } from "@/lib/gsap";
 import TextReveal from "./TextReveal";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
 
 const CheckIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

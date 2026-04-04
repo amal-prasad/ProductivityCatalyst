@@ -74,10 +74,10 @@ export default function Hero() {
           <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
             <span className="inline-block">LESS</span>{" "}
             <span className="inline-block">CHAOS.</span>
-          </h1>
-          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
-            <span className="inline-block">MORE</span>{" "}
-            <span className="inline-block">GROWTH.</span>
+            <span className="block">
+              <span className="inline-block">MORE</span>{" "}
+              <span className="inline-block">GROWTH.</span>
+            </span>
           </h1>
         </div>
 
