@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
-import Cursor from "@/components/Cursor";
 import { LoadingProvider } from "@/context/LoadingContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollProgress from "@/components/ScrollProgress";
@@ -93,7 +92,6 @@ export default function RootLayout({
           <ScrollProgress />
           <ScrollToTop />
           <SmoothScroll>
-            <Cursor />
             {children}
           </SmoothScroll>
         </LoadingProvider>

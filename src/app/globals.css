@@ -30,15 +30,6 @@ body {
   opacity: 0;
 }
 
-@media (pointer: fine) {
-
-  body,
-  a,
-  button {
-    cursor: none;
-  }
-}
-
 /* Custom Cursor */
 #cursor {
   position: fixed;

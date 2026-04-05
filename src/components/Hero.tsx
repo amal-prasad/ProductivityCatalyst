@@ -80,14 +80,14 @@ export default function Hero() {
         </div>
 
         {/* Sub-copy + CTA */}
-        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[640px]">
-          <p className="hero-subtext max-w-sm text-secondary text-[1rem] leading-[1.7]" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
+        <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 max-w-[700px]">
+          <p className="hero-subtext max-w-md text-white/90 text-[1.125rem] leading-[1.6]" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
             Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
           </p>
           <MagneticWrapper strength={30} elasticity={0.3}>
             <button
               onClick={scrollToContact}
-              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem] cursor-pointer"
+              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white px-8 py-[0.75rem] cursor-pointer border border-accent/40 bg-accent/10 backdrop-blur-md shadow-[0_0_15px_rgba(0,229,204,0.15)] hover:bg-accent/20 hover:border-accent/60 hover:shadow-[0_0_20px_rgba(0,229,204,0.3)] duration-300"
               style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}
             >
               Book a Call →

@@ -1,0 +1,1415 @@
+diff --git a/src/app/globals.css b/src/app/globals.css
+index 6ef30d6..f2c58a8 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -256,6 +256,9 @@ body {
+ 
+ .grid-card {
+   background: rgba(255, 255, 255, 0.02);
++}
++
++.grid-card:hover {
+   will-change: transform;
+ }
+ 
+@@ -550,4 +553,27 @@ body {
+   .marquee-track {
+     animation: none;
+   }
++}
++
++/* ─────────────────────────────────────────────
++   Client Logo Marquee — dual-row infinite scroll
++   ───────────────────────────────────────────── */
++
++@keyframes client-marquee {
++  from { transform: translateX(0); }
++  to   { transform: translateX(-50%); }
++}
++
++.client-marquee-track {
++  animation: client-marquee 30s linear infinite;
++}
++
++.client-marquee-track:hover {
++  animation-play-state: paused;
++}
++
++@media (prefers-reduced-motion: reduce) {
++  .client-marquee-track {
++    animation: none;
++  }
+ }
+\ No newline at end of file
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index da0cfea..c106d3d 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -1,13 +1,12 @@
+ import Navbar from "@/components/Navbar";
+ import Hero from "@/components/Hero";
+ import PinnedScrollFeatures from "@/components/PinnedScrollFeatures";
+-import Features from "@/components/Features";
+-import DynamicMetrics from "@/components/DynamicMetrics";
+ import HowItWorks from "@/components/HowItWorks";
+ import CardGrid from "@/components/CardGrid";
+ import Industries from "@/components/Industries";
+ import ComparisonTable from "@/components/ComparisonTable";
+-import Testimonials from "@/components/Testimonials";
++// import Testimonials from "@/components/Testimonials";
++import ClientMarquee from "@/components/ClientMarquee";
+ import CTASection from "@/components/CTASection";
+ import ContactForm from "@/components/ContactForm";
+ import Footer from "@/components/Footer";
+@@ -19,17 +18,18 @@ export default function Home() {
+       <main>
+         <Hero />
+         <PinnedScrollFeatures />
+-        <Features />
+-        <DynamicMetrics />
++        {/*<Features />*/}
++        {/* <DynamicMetrics /> */}
+         <HowItWorks />
+         <CardGrid />
+         <Industries />
+         <ComparisonTable />
+-        <Testimonials />
++        {/* <Testimonials /> */}
++        <ClientMarquee />
+         <CTASection />
+         <ContactForm />
++        <Footer />
+       </main>
+-      <Footer />
+     </>
+   );
+ }
+diff --git a/src/components/CTASection.tsx b/src/components/CTASection.tsx
+index 0086500..5351907 100644
+--- a/src/components/CTASection.tsx
++++ b/src/components/CTASection.tsx
+@@ -1,22 +1,14 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import Link from "next/link";
+-import { gsap, MOTION, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { gsap, MOTION, ScrollTrigger, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ import TextReveal from "./TextReveal";
+-import MagneticWrapper from "./MagneticWrapper";
+-
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+ 
+ export default function CTASection() {
+   const sectionRef = useRef<HTMLElement>(null);
+   const line1Ref = useRef<HTMLHeadingElement>(null);
+   const line2Ref = useRef<HTMLHeadingElement>(null);
+-  const btnRef = useRef<HTMLAnchorElement>(null);
+ 
+   useGSAP(() => {
+     const mq = window.matchMedia("(max-width: 767px)");
+@@ -26,21 +18,18 @@ export default function CTASection() {
+ 
+     const ctaTl = gsap.timeline({ paused: true });
+ 
+-    if (line1Ref.current && line2Ref.current && btnRef.current) {
++    if (line1Ref.current && line2Ref.current) {
+       ctaTl
+         .fromTo(line1Ref.current,
+           { opacity: 0, y: yOffset },
+           { opacity: 1, y: 0, duration: duration, ease: MOTION.out })
+         .fromTo(line2Ref.current,
+           { opacity: 0, y: yOffset * 0.5 },
+-          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15")
+-        .fromTo(btnRef.current,
+-          { opacity: 0, y: yOffset * 0.6 },
+-          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.1");
++          { opacity: 1, y: 0, duration: duration * 0.8, ease: MOTION.out }, "-=0.15");
+     }
+ 
+     ScrollTrigger.create({
+-      trigger: "#contact",
++      trigger: sectionRef.current,
+       start: startTrigger,
+       onEnter: () => ctaTl.play(),
+     });
+@@ -48,7 +37,6 @@ export default function CTASection() {
+ 
+   return (
+     <section
+-      id="contact"
+       ref={sectionRef}
+       className="relative w-full border-t border-white/[0.08]"
+       style={{ padding: "clamp(6rem, 10vw, 10rem) 0" }}
+@@ -69,15 +57,6 @@ export default function CTASection() {
+           <TextReveal delay={0.2}>Not Firefighting.</TextReveal>
+         </h2>
+ 
+-        <MagneticWrapper strength={40} elasticity={0.4}>
+-          <Link
+-            ref={btnRef}
+-            href="#contact"
+-            className="inline-block text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-10 py-4 hover:bg-accent hover:border-accent transition-colors duration-300"
+-          >
+-            Book a Discovery Call →
+-          </Link>
+-        </MagneticWrapper>
+ 
+       </div>
+     </section>
+diff --git a/src/components/CardGrid.tsx b/src/components/CardGrid.tsx
+index 8556527..f717d43 100644
+--- a/src/components/CardGrid.tsx
++++ b/src/components/CardGrid.tsx
+@@ -1,14 +1,9 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { MOTION, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const CARDS = [
+   {
+     tag: "Use Case",
+@@ -41,7 +36,8 @@ export default function CardGrid() {
+     if (mq.matches) {
+       gsap.fromTo(sectionRef.current.querySelector(".section-headline"),
+         { opacity: 0, y: 24 },
+-        { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
++        {
++          opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.smooth,
+           scrollTrigger: { trigger: sectionRef.current.querySelector(".section-headline"), start: MOTION.triggerStartMobile, once: true }
+         }
+       );
+@@ -72,11 +68,29 @@ export default function CardGrid() {
+         );
+       });
+     } else {
+-      animateOnScroll(".section-headline", { y: 30 });
+-      animateOnScroll(".grid-card", { y: 50, stagger: 0.15 });
++      const headline = sectionRef.current.querySelector(".section-headline");
++      if (headline) {
++        gsap.fromTo(headline,
++          { opacity: 0, y: 30 },
++          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
++            scrollTrigger: { trigger: headline, start: MOTION.triggerStart, once: true }
++          }
++        );
++      }
+ 
+       const cards = Array.from(sectionRef.current.querySelectorAll(".grid-card"));
+       cards.forEach((card, i) => {
++        gsap.fromTo(card,
++          { opacity: 0, y: 50 },
++          {
++            opacity: 1, y: 0,
++            duration: MOTION.standard,
++            ease: MOTION.out,
++            delay: i * 0.15,
++            scrollTrigger: { trigger: card, start: MOTION.triggerStart, once: true }
++          }
++        );
++
+         gsap.fromTo(card.querySelectorAll("span.uppercase, h3, p, div.flex"),
+           { opacity: 0, y: 15 },
+           {
+@@ -98,7 +112,7 @@ export default function CardGrid() {
+       ref={sectionRef}
+       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08]"
+     >
+-      <VideoBackground src="/videos/bg3.mp4" overlayOpacity={0.85} />
++      <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.85} />
+       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+ 
+         {/* Section label + headline */}
+diff --git a/src/components/ClientMarquee.tsx b/src/components/ClientMarquee.tsx
+new file mode 100644
+index 0000000..f3798db
+--- /dev/null
++++ b/src/components/ClientMarquee.tsx
+@@ -0,0 +1,123 @@
++"use client";
++
++import { useRef } from "react";
++import Image from "next/image";
++import { gsap, useGSAP, MOTION } from "@/lib/gsap";
++
++const CLIENTS = [
++  { name: "RS Group", logo: "/images/clients/rs-group-logo.jpeg" },
++  { name: "SNP Solutions", logo: "/images/clients/snp-solutions.jpeg" },
++];
++
++/** Separator diamond between client logos */
++function Separator() {
++  return (
++    <span className="shrink-0 w-1.5 h-1.5 rotate-45 bg-accent/40 mx-8 md:mx-14" />
++  );
++}
++
++function ClientLogo({ name, logo }: { name: string; logo: string }) {
++  return (
++    <>
++      <div className="shrink-0 flex items-center justify-center h-20 md:h-28 px-6 md:px-10">
++        <Image
++          src={logo}
++          alt={name}
++          width={300}
++          height={120}
++          className="h-16 md:h-24 w-auto object-contain transition-transform duration-300 hover:scale-105"
++          draggable={false}
++          priority
++        />
++      </div>
++      <Separator />
++    </>
++  );
++}
++
++export default function ClientMarquee() {
++  const sectionRef = useRef<HTMLElement>(null);
++
++  useGSAP(
++    () => {
++      if (!sectionRef.current) return;
++
++      const mq = window.matchMedia("(max-width: 767px)");
++
++      gsap.fromTo(
++        sectionRef.current.querySelector(".client-marquee-label"),
++        { opacity: 0, y: 16 },
++        {
++          opacity: 1,
++          y: 0,
++          duration: MOTION.standard,
++          ease: MOTION.out,
++          scrollTrigger: {
++            trigger: sectionRef.current,
++            start: mq.matches ? MOTION.triggerStartMobile : MOTION.triggerStart,
++            once: true,
++          },
++        }
++      );
++
++      gsap.fromTo(
++        sectionRef.current.querySelector(".client-marquee-container"),
++        { opacity: 0 },
++        {
++          opacity: 1,
++          duration: MOTION.deliberate,
++          ease: MOTION.out,
++          delay: 0.15,
++          scrollTrigger: {
++            trigger: sectionRef.current,
++            start: mq.matches ? MOTION.triggerStartMobile : MOTION.triggerStart,
++            once: true,
++          },
++        }
++      );
++    },
++    { scope: sectionRef }
++  );
++
++  // Repeat enough times so the track is wide enough for seamless looping
++  const repeated = Array.from({ length: 8 }, () => CLIENTS).flat();
++  // The CSS animation translates -50%, so we need two identical halves
++  const items = [...repeated, ...repeated];
++
++  return (
++    <section
++      ref={sectionRef}
++      className="relative w-full py-12 md:py-16 border-t border-white/[0.08] overflow-hidden"
++    >
++      {/* Label */}
++      <p className="client-marquee-label text-center text-[0.7rem] tracking-[0.25em] uppercase text-secondary mb-8 md:mb-10">
++        Trusted by Industry Leaders
++      </p>
++
++      {/* Marquee container */}
++      <div className="client-marquee-container relative">
++        {/* Edge fade masks */}
++        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 z-10 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
++        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 z-10 bg-gradient-to-l from-[#0a0a0a] to-transparent" />
++
++        {/* Single-row track */}
++        <div className="group relative w-full overflow-hidden">
++          <div className="client-marquee-track flex items-center w-max py-2">
++            {items.map((client, idx) => (
++              <ClientLogo
++                key={`${client.name}-${idx}`}
++                name={client.name}
++                logo={client.logo}
++              />
++            ))}
++          </div>
++        </div>
++      </div>
++
++      {/* Thin accent line */}
++      <div className="mt-10 md:mt-14 mx-auto max-w-[1280px] px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
++        <div className="h-px bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
++      </div>
++    </section>
++  );
++}
+diff --git a/src/components/ComparisonTable.tsx b/src/components/ComparisonTable.tsx
+index 939beab..6a4e108 100644
+--- a/src/components/ComparisonTable.tsx
++++ b/src/components/ComparisonTable.tsx
+@@ -1,14 +1,9 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { gsap, MOTION, IS_MOBILE, useGSAP } from "@/lib/gsap";
+ import TextReveal from "./TextReveal";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const CheckIcon = () => (
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e5cc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+     <polyline points="20 6 9 17 4 12" />
+@@ -23,11 +18,6 @@ const XIcon = () => (
+ );
+ 
+ const COMPARISON_DATA = [
+-  {
+-    feature: "Time to First Insight",
+-    catalyst: "48 hours",
+-    traditional: "3-6 months",
+-  },
+   {
+     feature: "Cross-Team Visibility",
+     catalyst: "Real-time dashboards",
+@@ -64,7 +54,8 @@ export default function ComparisonTable() {
+     if (header) {
+       gsap.fromTo(header,
+         { opacity: 0, y: yOffset },
+-        { opacity: 1, y: 0, duration, ease: MOTION.out,
++        {
++          opacity: 1, y: 0, duration, ease: MOTION.out,
+           scrollTrigger: { trigger: header, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+         }
+       );
+@@ -74,7 +65,8 @@ export default function ComparisonTable() {
+       rows.forEach((row) => {
+         gsap.fromTo(row,
+           { opacity: 0, x: isMobile ? 0 : -20, y: isMobile ? 16 : 0 },
+-          { opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
++          {
++            opacity: 1, x: 0, y: 0, duration, ease: MOTION.out,
+             scrollTrigger: { trigger: row, start: isMobile ? MOTION.triggerStartMobile : "top 85%", once: true }
+           }
+         );
+diff --git a/src/components/ContactForm.tsx b/src/components/ContactForm.tsx
+index 25103bc..832124a 100644
+--- a/src/components/ContactForm.tsx
++++ b/src/components/ContactForm.tsx
+@@ -2,8 +2,7 @@
+ 
+ import { useState, useRef, useEffect } from "react";
+ import { servicesData } from "@/lib/servicesData";
+-import { animateOnScroll, MOTION } from "@/lib/gsap";
+-import gsap from "gsap";
++import { gsap, animateOnScroll, MOTION } from "@/lib/gsap";
+ 
+ export default function ContactForm() {
+   const sectionRef = useRef<HTMLElement>(null);
+@@ -242,7 +241,7 @@ export default function ContactForm() {
+                     Sending...
+                   </span>
+                 ) : (
+-                  "Book a Discovery Call →"
++                  "Book a Call →"
+                 )}
+               </button>
+ 
+diff --git a/src/components/Cursor.tsx b/src/components/Cursor.tsx
+index f1bb044..b48579f 100644
+--- a/src/components/Cursor.tsx
++++ b/src/components/Cursor.tsx
+@@ -21,7 +21,7 @@ export default function Cursor() {
+       yTo(e.clientY);
+     };
+ 
+-    window.addEventListener("mousemove", onMouseMove);
++    window.addEventListener("mousemove", onMouseMove, { passive: true });
+ 
+     // Add hover effects to links and buttons
+     const handleMouseOver = (e: MouseEvent) => {
+@@ -31,8 +31,8 @@ export default function Cursor() {
+         gsap.to(cursor, {
+           width: 40,
+           height: 40,
+-          backgroundColor: "#00e5cc", // Accent color
+-          mixBlendMode: "normal", // Might need to reset mix-blend-mode if it looks bad with difference
++          backgroundColor: "#00e5cc",
++          mixBlendMode: "normal",
+           duration: 0.15,
+           ease: "power2.out",
+         });
+@@ -54,8 +54,8 @@ export default function Cursor() {
+       }
+     };
+ 
+-    window.addEventListener("mouseover", handleMouseOver);
+-    window.addEventListener("mouseout", handleMouseOut);
++    window.addEventListener("mouseover", handleMouseOver, { passive: true });
++    window.addEventListener("mouseout", handleMouseOut, { passive: true });
+ 
+     return () => {
+       window.removeEventListener("mousemove", onMouseMove);
+diff --git a/src/components/DynamicMetrics.tsx b/src/components/DynamicMetrics.tsx
+index 8475116..bc28cd0 100644
+--- a/src/components/DynamicMetrics.tsx
++++ b/src/components/DynamicMetrics.tsx
+@@ -1,15 +1,8 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { animateCounter, animateOnScroll, MOTION } from "@/lib/gsap";
++import { animateCounter, animateOnScroll, MOTION, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+-import gsap from "gsap";
+-import { ScrollTrigger } from "gsap/ScrollTrigger";
+-import { useGSAP } from "@gsap/react";
+-
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+ 
+ const METRICS = [
+   { value: 200, suffix: "+", label: "Enterprise Teams Onboarded" },
+diff --git a/src/components/Features.tsx b/src/components/Features.tsx
+index 3b743db..86a35c1 100644
+--- a/src/components/Features.tsx
++++ b/src/components/Features.tsx
+@@ -1,21 +1,11 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { animateOnScroll, MOTION } from "@/lib/gsap";
++import { animateOnScroll, MOTION, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ import { servicesData } from "@/lib/servicesData";
+ import Link from "next/link";
+ 
+-// 1. Import GSAP, ScrollTrigger, and the official React hook
+-import gsap from "gsap";
+-import { ScrollTrigger } from "gsap/ScrollTrigger";
+-import { useGSAP } from "@gsap/react";
+-
+-// 2. Explicitly register plugins outside the component to prevent 'undefined' errors
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const ANGLE_STEP = 360 / servicesData.length;
+ 
+ export default function Features() {
+@@ -148,7 +138,7 @@ export default function Features() {
+       ref={sectionRef}
+       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
+     >
+-      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
++      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} />
+       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+ 
+         {/* Section label + headline */}
+diff --git a/src/components/Footer.tsx b/src/components/Footer.tsx
+index 9b670dc..2fd5a20 100644
+--- a/src/components/Footer.tsx
++++ b/src/components/Footer.tsx
+@@ -2,12 +2,8 @@
+ 
+ import { useRef } from "react";
+ import Link from "next/link";
+-import { animateLineDraw, gsap, MOTION, IS_MOBILE, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
+-
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
++import { animateLineDraw, gsap, MOTION, IS_MOBILE, useGSAP } from "@/lib/gsap";
++import { scrollToContact } from "@/lib/scrollToContact";
+ 
+ const SERVICES = [
+   { name: "CXO Productivity", href: "/services/cxo-productivity" },
+@@ -71,7 +67,7 @@ export default function Footer() {
+               Productivity Catalyst
+             </span>
+             <p className="text-[#666666] text-xs leading-relaxed mb-6">
+-              Less Chaos. More Growth. Business consulting, automation & AI solutions for SMEs.
++              Simplifying Businesses. Business consulting, automation & AI solutions for SMEs.
+             </p>
+             <div className="flex gap-4">
+               <a
+@@ -141,12 +137,12 @@ export default function Footer() {
+               <p>info@productivitycatalyst.com</p>
+               <p>+91 92321 36211</p>
+             </div>
+-            <Link
+-              href="/#contact"
+-              className="inline-block mt-6 text-[0.75rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-6 py-3 hover:bg-accent hover:border-accent transition-colors duration-300"
++            <button
++              onClick={scrollToContact}
++              className="inline-block mt-6 text-[0.75rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-6 py-3 hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
+             >
+-              Book a Discovery Call →
+-            </Link>
++              Book a Call →
++            </button>
+           </div>
+         </div>
+ 
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index ac91850..40360b4 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,22 +1,11 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import gsap from "gsap";
+-import { useGSAP } from "@gsap/react";
+-import dynamic from "next/dynamic";
+-import Link from "next/link";
+-import { MOTION, IS_MOBILE } from "@/lib/gsap";
++import { gsap, useGSAP, MOTION, IS_MOBILE } from "@/lib/gsap";
+ import MagneticWrapper from "./MagneticWrapper";
+ import { useLoading } from "@/context/LoadingContext";
+-
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(useGSAP);
+-}
+-
+-const ParticleVortex = dynamic(() => import("./ParticleVortex"), {
+-  ssr: false,
+-  loading: () => <div className="absolute inset-0 bg-background" />
+-});
++import { scrollToContact } from "@/lib/scrollToContact";
++import ParticleVortex from "./ParticleVortex";
+ 
+ export default function Hero() {
+   const headlineRef = useRef<HTMLDivElement>(null);
+@@ -83,12 +72,10 @@ export default function Hero() {
+         {/* Headline — fully left aligned, clamp keeps it in bounds */}
+         <div ref={headlineRef} className="hero-headline flex flex-col gap-0" style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}>
+           <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
+-            <span className="inline-block">LESS</span>{" "}
+-            <span className="inline-block">CHAOS.</span>
+-          </h1>
+-          <h1 className="text-white font-bold leading-[0.95] tracking-[-0.02em] text-[clamp(2.5rem,6.5vw,6rem)]">
+-            <span className="inline-block">MORE</span>{" "}
+-            <span className="inline-block">GROWTH.</span>
++            <span className="inline-block text-accent">SIMPLIFYING</span>
++            <span className="block">
++              <span className="inline-block">BUSINESSES</span>
++            </span>
+           </h1>
+         </div>
+ 
+@@ -98,13 +85,13 @@ export default function Hero() {
+             Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
+           </p>
+           <MagneticWrapper strength={30} elasticity={0.3}>
+-            <Link
+-              href="#contact"
+-              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem]"
++            <button
++              onClick={scrollToContact}
++              className="hero-cta-primary btn-primary inline-block shrink-0 text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-8 py-[0.75rem] cursor-pointer"
+               style={{ visibility: isTransitionComplete ? "visible" : "hidden" }}
+             >
+-              Book structured call →
+-            </Link>
++              Book a Call →
++            </button>
+           </MagneticWrapper>
+         </div>
+       </div>
+diff --git a/src/components/HowItWorks.tsx b/src/components/HowItWorks.tsx
+index 5a13dd1..443020f 100644
+--- a/src/components/HowItWorks.tsx
++++ b/src/components/HowItWorks.tsx
+@@ -1,15 +1,10 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { MOTION, animateMobileScrollFocus, gsap, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { MOTION, animateMobileScrollFocus, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ import TextReveal from "./TextReveal";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const STEPS = [
+   {
+     num: "01",
+@@ -71,7 +66,7 @@ export default function HowItWorks() {
+             opacity: 1, x: 0,
+             duration: MOTION.standard,
+             ease: MOTION.smooth,
+-            scrollTrigger: { trigger: row, start: MOTION.triggerStart }
++            scrollTrigger: { trigger: row, start: MOTION.triggerStart, once: true }
+           }
+         );
+ 
+@@ -94,7 +89,7 @@ export default function HowItWorks() {
+       gsap.fromTo(num,
+         { opacity: 0, y: 8 },
+         { opacity: 1, y: 0, duration: MOTION.micro, ease: MOTION.back,
+-          scrollTrigger: { trigger: num, start: "top 85%" }
++          scrollTrigger: { trigger: num, start: "top 85%", once: true }
+         }
+       );
+     });
+@@ -106,7 +101,7 @@ export default function HowItWorks() {
+       ref={sectionRef}
+       className="relative w-full border-t border-white/[0.08]"
+     >
+-      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} isSticky={true} />
++      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} isSticky={true} />
+ 
+       {/* Common Header */}
+       <div className="relative z-10 w-full pt-[clamp(4rem,8vh,8rem)] pb-[clamp(2rem,6vh,6rem)] flex flex-col items-center">
+diff --git a/src/components/Industries.tsx b/src/components/Industries.tsx
+index 4f987e1..24e4a17 100644
+--- a/src/components/Industries.tsx
++++ b/src/components/Industries.tsx
+@@ -1,14 +1,9 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { animateOnScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { MOTION, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const INDUSTRIES = [
+   "IT Companies",
+   "Merchant Banks",
+@@ -44,7 +39,15 @@ export default function Industries() {
+         }
+       );
+     } else {
+-      animateOnScroll(".section-headline", { y: 30 });
++      const headline = sectionRef.current.querySelector(".section-headline");
++      if (headline) {
++        gsap.fromTo(headline,
++          { opacity: 0, y: 30 },
++          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
++            scrollTrigger: { trigger: headline, start: MOTION.triggerStart, once: true }
++          }
++        );
++      }
+     }
+   }, { scope: sectionRef });
+ 
+@@ -54,7 +57,7 @@ export default function Industries() {
+       ref={sectionRef}
+       className="relative w-full py-[clamp(4rem,10vw,10rem)] border-t border-white/[0.08] overflow-hidden"
+     >
+-      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.6} />
++      <VideoBackground src="/videos/bg1.mp4" overlayOpacity={0.85} />
+ 
+       <div className="relative z-10 max-w-[1280px] mx-auto px-6 md:px-[clamp(1.5rem,5vw,5rem)]">
+ 
+diff --git a/src/components/Navbar.tsx b/src/components/Navbar.tsx
+index e70901f..3062c8b 100644
+--- a/src/components/Navbar.tsx
++++ b/src/components/Navbar.tsx
+@@ -4,11 +4,12 @@ import { useState, useEffect, useRef } from "react";
+ import Link from "next/link";
+ import LogoMark from "./LogoMark";
+ import { gsap, MOTION } from "@/lib/gsap";
++import { scrollToContact } from "@/lib/scrollToContact";
++import ServicesView from "./ServicesView";
+ 
+ const NAV_LINKS = [
+-  { name: "Features", href: "#features" },
++  { name: "Services", href: "#services" },
+   { name: "How It Works", href: "#how-it-works" },
+-  { name: "Industries", href: "#industries" },
+ ];
+ 
+ const MenuIcon = () => (
+@@ -28,6 +29,8 @@ const CloseIcon = () => (
+ 
+ export default function Navbar() {
+   const [isOpen, setIsOpen] = useState(false);
++  const [isServicesOpen, setIsServicesOpen] = useState(false);
++  const [servicesKey, setServicesKey] = useState(0);
+   const [scrolled, setScrolled] = useState(false);
+   const [activeSection, setActiveSection] = useState<string>("");
+   const headerRef = useRef<HTMLElement>(null);
+@@ -36,7 +39,7 @@ export default function Navbar() {
+   useEffect(() => {
+     // True first load check: use sessionStorage to survive soft reloads while blocking across SPA navigations
+     const sessionAnimated = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("navAnimated") : null;
+-    
++
+     if (hasAnimated.current || sessionAnimated) {
+       // Already animated in this session — instantly show everything
+       if (headerRef.current) {
+@@ -45,7 +48,7 @@ export default function Navbar() {
+       }
+       return;
+     }
+-    
++
+     hasAnimated.current = true;
+     if (typeof sessionStorage !== "undefined") {
+       sessionStorage.setItem("navAnimated", "true");
+@@ -85,8 +88,16 @@ export default function Navbar() {
+ 
+   // Scroll detection for background opacity
+   useEffect(() => {
++    let ticking = false;
+     const handleScroll = () => {
+-      setScrolled(window.scrollY > 50);
++      if (!ticking) {
++        requestAnimationFrame(() => {
++          const isScrolled = window.scrollY > 50;
++          setScrolled((prev) => prev === isScrolled ? prev : isScrolled);
++          ticking = false;
++        });
++        ticking = true;
++      }
+     };
+     window.addEventListener("scroll", handleScroll, { passive: true });
+     return () => window.removeEventListener("scroll", handleScroll);
+@@ -118,15 +129,22 @@ export default function Navbar() {
+     <>
+       <header
+         ref={headerRef}
+-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+-          scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
+-        }`}
++        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
++          }`}
+       >
+         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">
+           {/* Logo */}
+           <Link
+             href="/"
+-            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0 flex items-center gap-3"
++            onClick={(e) => {
++              if (window.location.pathname === "/") {
++                e.preventDefault();
++                window.scrollTo({ top: 0, behavior: "smooth" });
++              }
++              setIsOpen(false);
++              setIsServicesOpen(false);
++            }}
++            className="nav-anim-target text-white font-bold text-xl tracking-tight relative z-50 opacity-0 flex items-center gap-3 cursor-pointer"
+           >
+             <LogoMark size={32} />
+             <span>Productivity Catalyst</span>
+@@ -135,15 +153,22 @@ export default function Navbar() {
+           {/* Desktop Nav */}
+           <nav className="hidden md:flex items-center gap-8">
+             {NAV_LINKS.map((link) => {
++              const isServicesLink = link.name === "Services";
+               const sectionId = link.href.replace("#", "");
+-              const isActive = activeSection === sectionId;
++              const isActive = activeSection === sectionId || (isServicesLink && isServicesOpen);
+               return (
+                 <Link
+                   key={link.name}
+-                  href={link.href}
+-                  className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${
+-                    isActive ? "text-accent" : "text-white/80 hover:text-white"
+-                  }`}
++                  href={isServicesLink ? "#" : link.href}
++                  onClick={(e) => {
++                    if (isServicesLink) {
++                      e.preventDefault();
++                      setIsServicesOpen(true);
++                      setServicesKey((prev) => prev + 1);
++                    }
++                  }}
++                  className={`relative nav-anim-target text-[0.75rem] font-medium tracking-[0.15em] uppercase transition-all duration-300 opacity-0 ${isActive ? "text-accent" : "text-white/80 hover:text-white"
++                    }`}
+                 >
+                   {link.name}
+                   {isActive && (
+@@ -152,12 +177,13 @@ export default function Navbar() {
+                 </Link>
+               );
+             })}
+-            <Link
+-              href="#contact"
+-              className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 opacity-0"
++            <button
++              onClick={scrollToContact}
++              style={{ opacity: 0 }}
++              className="nav-anim-target text-[0.875rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
+             >
+-              Book a Discovery Call →
+-            </Link>
++              Book a Call →
++            </button>
+           </nav>
+ 
+           {/* Mobile Menu Toggle */}
+@@ -173,36 +199,45 @@ export default function Navbar() {
+ 
+       {/* Mobile Menu Overlay */}
+       <div
+-        className={`fixed inset-0 bg-background z-40 flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${
+-          isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
+-        }`}
++        className={`fixed inset-0 bg-background z-40 flex flex-col items-center justify-center transition-all duration-500 ease-in-out md:hidden ${isOpen ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
++          }`}
+       >
+         <nav className="flex flex-col items-center gap-8">
+           {NAV_LINKS.map((link) => {
++            const isServicesLink = link.name === "Services";
+             const sectionId = link.href.replace("#", "");
+-            const isActive = activeSection === sectionId;
++            const isActive = activeSection === sectionId || (isServicesLink && isServicesOpen);
+             return (
+               <Link
+                 key={link.name}
+-                href={link.href}
+-                onClick={() => setIsOpen(false)}
+-                className={`text-2xl font-bold tracking-[0.15em] uppercase transition-colors ${
+-                  isActive ? "text-accent" : "text-white hover:text-accent"
+-                }`}
++                href={isServicesLink ? "#" : link.href}
++                onClick={(e) => {
++                  if (isServicesLink) {
++                    e.preventDefault();
++                    setIsServicesOpen(true);
++                    setServicesKey((prev) => prev + 1);
++                    setIsOpen(false);
++                  } else {
++                    setIsOpen(false);
++                  }
++                }}
++                className={`text-2xl font-bold tracking-[0.15em] uppercase transition-colors ${isActive ? "text-accent" : "text-white hover:text-accent"
++                  }`}
+               >
+                 {link.name}
+               </Link>
+             );
+           })}
+-          <Link
+-            href="#contact"
+-            onClick={() => setIsOpen(false)}
+-            className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300"
++          <button
++            onClick={() => { setIsOpen(false); scrollToContact(); }}
++            className="mt-4 text-[0.875rem] font-bold tracking-[0.1em] uppercase text-white border border-white px-[2rem] py-[0.75rem] hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
+           >
+-            Book a Discovery Call →
+-          </Link>
++            Book a Call →
++          </button>
+         </nav>
+       </div>
++
++      <ServicesView key={servicesKey} isOpen={isServicesOpen} onClose={() => setIsServicesOpen(false)} />
+     </>
+   );
+ }
+diff --git a/src/components/ParticleVortex.tsx b/src/components/ParticleVortex.tsx
+index 243a42f..8d2b177 100644
+--- a/src/components/ParticleVortex.tsx
++++ b/src/components/ParticleVortex.tsx
+@@ -78,13 +78,20 @@ export default function ParticleVortex() {
+     // ── Mouse Parallax ────────────────────────────────────
+     const mouse = { x: 0, y: 0 };
+     const targetRotation = { x: 0, y: 0 };
++    let ticking = false;
+ 
+     const onMouseMove = (e: MouseEvent) => {
+-      // Normalise to -0.5 → 0.5
+-      mouse.x = (e.clientX / window.innerWidth) - 0.5;
+-      mouse.y = (e.clientY / window.innerHeight) - 0.5;
++      if (!ticking) {
++        requestAnimationFrame(() => {
++          // Normalise to -0.5 → 0.5
++          mouse.x = (e.clientX / window.innerWidth) - 0.5;
++          mouse.y = (e.clientY / window.innerHeight) - 0.5;
++          ticking = false;
++        });
++        ticking = true;
++      }
+     };
+-    window.addEventListener("mousemove", onMouseMove);
++    window.addEventListener("mousemove", onMouseMove, { passive: true });
+ 
+     // ── Resize ────────────────────────────────────────────
+     const onResize = () => {
+@@ -146,7 +153,8 @@ export default function ParticleVortex() {
+   return (
+     <canvas
+       ref={canvasRef}
+-      className="absolute inset-0 w-full h-full pointer-events-none"
++      className="absolute inset-0 w-full h-full pointer-events-none z-0"
++      style={{ width: "100%", height: "100%" }}
+       aria-hidden="true"
+     />
+   );
+diff --git a/src/components/PinnedScrollFeatures.tsx b/src/components/PinnedScrollFeatures.tsx
+index d5ebaf8..dd42f28 100644
+--- a/src/components/PinnedScrollFeatures.tsx
++++ b/src/components/PinnedScrollFeatures.tsx
+@@ -1,14 +1,9 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { animatePinnedScroll, MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { animatePinnedScroll, MOTION, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const STATEMENTS = [
+   {
+     headline: "CXO-Focused.",
+diff --git a/src/components/ScrollProgress.tsx b/src/components/ScrollProgress.tsx
+index 82122c9..cfc5331 100644
+--- a/src/components/ScrollProgress.tsx
++++ b/src/components/ScrollProgress.tsx
+@@ -6,12 +6,20 @@ export default function ScrollProgress() {
+   const progressRef = useRef<HTMLDivElement>(null);
+ 
+   useEffect(() => {
++    let ticking = false;
++
+     const updateProgress = () => {
+-      if (!progressRef.current) return;
+-      const scrollTop = window.scrollY;
+-      const docHeight = document.body.scrollHeight - window.innerHeight;
+-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+-      progressRef.current.style.width = `${Math.min(progress, 100)}%`;
++      if (!ticking) {
++        requestAnimationFrame(() => {
++          if (!progressRef.current) return;
++          const scrollTop = window.scrollY;
++          const docHeight = document.body.scrollHeight - window.innerHeight;
++          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
++          progressRef.current.style.width = `${Math.min(progress, 100)}%`;
++          ticking = false;
++        });
++        ticking = true;
++      }
+     };
+ 
+     window.addEventListener("scroll", updateProgress, { passive: true });
+@@ -24,7 +32,7 @@ export default function ScrollProgress() {
+     <div className="fixed top-0 left-0 w-full h-[3px] z-[9999] bg-white/[0.05]">
+       <div
+         ref={progressRef}
+-        className="h-full bg-accent transition-[width] duration-100 ease-out"
++        className="h-full bg-accent"
+         style={{ width: "0%" }}
+       />
+     </div>
+diff --git a/src/components/ServicesView.tsx b/src/components/ServicesView.tsx
+new file mode 100644
+index 0000000..33660c0
+--- /dev/null
++++ b/src/components/ServicesView.tsx
+@@ -0,0 +1,143 @@
++"use client";
++
++import { useState, useEffect } from "react";
++import { servicesData } from "@/lib/servicesData";
++import VideoBackground from "./VideoBackground";
++
++export default function ServicesView({
++  isOpen,
++  onClose,
++}: {
++  isOpen: boolean;
++  onClose: () => void;
++}) {
++  const [currentIndex, setCurrentIndex] = useState(0);
++
++  // Manage body scroll
++  useEffect(() => {
++    if (isOpen) {
++      document.body.style.overflow = "hidden";
++    } else {
++      document.body.style.overflow = "";
++    }
++  }, [isOpen]);
++
++  const handleNext = () => {
++    if (currentIndex < servicesData.length - 1) {
++      setCurrentIndex((prev) => prev + 1);
++    }
++  };
++
++  const handlePrev = () => {
++    if (currentIndex > 0) {
++      setCurrentIndex((prev) => prev - 1);
++    }
++  };
++
++  return (
++    <div
++      className={`fixed inset-0 z-[100] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
++        isOpen ? "translate-x-0" : "translate-x-full"
++      }`}
++    >
++      {/* Background Video */}
++      <VideoBackground src="/videos/bg2.mp4" overlayOpacity={0.65} className="!z-0" />
++
++      {/* Close Button */}
++      <button
++        onClick={onClose}
++        className="absolute top-6 right-6 md:top-8 md:right-12 z-50 p-3 rounded-full bg-black/20 hover:bg-white/10 border border-white/10 backdrop-blur-md transition-colors cursor-pointer text-white/80 hover:text-white group"
++        aria-label="Close services"
++      >
++        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
++          <line x1="18" y1="6" x2="6" y2="18" className="transition-transform group-hover:rotate-90 origin-center duration-300"></line>
++          <line x1="6" y1="6" x2="18" y2="18" className="transition-transform group-hover:rotate-90 origin-center duration-300"></line>
++        </svg>
++      </button>
++
++      {/* Navigation Arrows */}
++      <div className="absolute inset-y-0 left-0 w-16 md:w-24 lg:w-32 z-40 flex items-center justify-center pointer-events-none">
++        <button
++          onClick={handlePrev}
++          disabled={currentIndex === 0}
++          className={`pointer-events-auto p-3 rounded-full bg-black/20 hover:bg-white/10 border border-white/10 backdrop-blur-md transition-all duration-300 cursor-pointer text-white/80 hover:text-white ${
++            currentIndex === 0 ? "opacity-0 pointer-events-none -translate-x-4" : "opacity-100 translate-x-0"
++          }`}
++          aria-label="Previous service"
++        >
++          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
++            <polyline points="15 18 9 12 15 6"></polyline>
++          </svg>
++        </button>
++      </div>
++
++      <div className="absolute inset-y-0 right-0 w-16 md:w-24 lg:w-32 z-40 flex items-center justify-center pointer-events-none">
++        <button
++          onClick={handleNext}
++          disabled={currentIndex === servicesData.length - 1}
++          className={`pointer-events-auto p-3 rounded-full bg-black/20 hover:bg-white/10 border border-white/10 backdrop-blur-md transition-all duration-300 cursor-pointer text-white/80 hover:text-white ${
++            currentIndex === servicesData.length - 1 ? "opacity-0 pointer-events-none translate-x-4" : "opacity-100 translate-x-0"
++          }`}
++          aria-label="Next service"
++        >
++          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square">
++            <polyline points="9 18 15 12 9 6"></polyline>
++          </svg>
++        </button>
++      </div>
++
++      {/* Carousel Track */}
++      <div className="w-full h-full overflow-hidden flex items-center relative z-10">
++        <div
++          className="flex w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
++          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
++        >
++          {servicesData.map((service, index) => (
++            <div key={service.id} className="w-full h-full shrink-0 flex items-center justify-center px-16 md:px-24 lg:px-32 relative">
++              
++              {/* Glassmorphic Panel */}
++              <div 
++                className="w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-black/30 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 shadow-[0_16px_64px_rgba(0,0,0,0.6)] flex flex-col items-start text-left transform-gpu [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/10 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-white/20"
++                style={{
++                  opacity: currentIndex === index ? 1 : 0.3,
++                  transform: currentIndex === index ? 'scale(1)' : 'scale(0.9)',
++                  transition: 'opacity 700ms cubic-bezier(0.22,1,0.36,1), transform 700ms cubic-bezier(0.22,1,0.36,1)'
++                }}
++              >
++                <div className="text-accent font-mono text-[0.75rem] md:text-[0.875rem] tracking-[0.2em] mb-6 uppercase flex items-center gap-4">
++                  <span className="w-8 h-px bg-accent/50"></span>
++                  Panel {service.num}
++                </div>
++                
++                <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
++                  {service.title}
++                </h2>
++                
++                <p className="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl font-light">
++                  {service.shortBody}
++                </p>
++
++                <div className="h-px w-full bg-gradient-to-r from-accent/50 to-transparent mb-10"></div>
++
++                <p className="text-base md:text-lg text-white/70 mb-12 max-w-3xl leading-relaxed">
++                  {service.fullDescription}
++                </p>
++
++                <ul className="space-y-4 w-full text-white/80">
++                  {service.bulletPoints.map((point, i) => (
++                    <li key={i} className="flex items-start gap-4 group">
++                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent shrink-0 mt-0.5 transition-transform group-hover:translate-x-1 duration-300">
++                        <polyline points="20 6 9 17 4 12"></polyline>
++                      </svg>
++                      <span className="text-sm md:text-base leading-relaxed tracking-wide font-medium">{point}</span>
++                    </li>
++                  ))}
++                </ul>
++              </div>
++            </div>
++          ))}
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/SmoothScroll.tsx b/src/components/SmoothScroll.tsx
+index 39e47e5..0097312 100644
+--- a/src/components/SmoothScroll.tsx
++++ b/src/components/SmoothScroll.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { useEffect } from "react";
+ import Lenis from "lenis";
++import { gsap, ScrollTrigger } from "@/lib/gsap";
+ 
+ export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+   useEffect(() => {
+@@ -13,14 +14,18 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
+       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+     });
+ 
+-    function raf(time: number) {
+-      lenis.raf(time);
+-      requestAnimationFrame(raf);
+-    }
++    lenis.on('scroll', ScrollTrigger.update);
+ 
+-    requestAnimationFrame(raf);
++    // Store the callback reference so we can remove the exact same function on cleanup
++    const onTick = (time: number) => {
++      lenis.raf(time * 1000);
++    };
++
++    gsap.ticker.add(onTick);
++    gsap.ticker.lagSmoothing(0);
+ 
+     return () => {
++      gsap.ticker.remove(onTick);
+       lenis.destroy();
+     };
+   }, []);
+diff --git a/src/components/Testimonials.tsx b/src/components/Testimonials.tsx
+index ace34b6..8c6c0a9 100644
+--- a/src/components/Testimonials.tsx
++++ b/src/components/Testimonials.tsx
+@@ -1,15 +1,10 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { MOTION, gsap, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
++import { MOTION, gsap, useGSAP } from "@/lib/gsap";
+ import VideoBackground from "./VideoBackground";
+ import TextReveal from "./TextReveal";
+ 
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
+-
+ const StarIcon = () => (
+   <svg width="16" height="16" viewBox="0 0 24 24" fill="#00e5cc" xmlns="http://www.w3.org/2000/svg">
+     <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+diff --git a/src/components/TextReveal.tsx b/src/components/TextReveal.tsx
+index 7629a93..02e6350 100644
+--- a/src/components/TextReveal.tsx
++++ b/src/components/TextReveal.tsx
+@@ -1,12 +1,7 @@
+ "use client";
+ 
+ import { useRef } from "react";
+-import { gsap, IS_MOBILE, MOTION, ScrollTrigger } from "@/lib/gsap";
+-import { useGSAP } from "@gsap/react";
+-
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+-}
++import { gsap, IS_MOBILE, MOTION, useGSAP } from "@/lib/gsap";
+ 
+ interface TextRevealProps {
+   children: string;
+diff --git a/src/components/VideoBackground.tsx b/src/components/VideoBackground.tsx
+index b36f5f3..2a0bdbb 100644
+--- a/src/components/VideoBackground.tsx
++++ b/src/components/VideoBackground.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import React, { useRef, useEffect } from "react";
++import React, { useRef, useEffect, useState } from "react";
+ 
+ export default function VideoBackground({
+   src,
+@@ -14,32 +14,58 @@ export default function VideoBackground({
+   isSticky?: boolean;
+ }) {
+   const videoRef = useRef<HTMLVideoElement>(null);
++  const containerRef = useRef<HTMLDivElement>(null);
++  const [isVisible, setIsVisible] = useState(false);
+ 
++  // Lazy-load: only start playing when the section enters the viewport
+   useEffect(() => {
+-    if (videoRef.current) {
++    const container = containerRef.current;
++    if (!container) return;
++
++    const observer = new IntersectionObserver(
++      ([entry]) => {
++        if (entry.isIntersecting) {
++          setIsVisible(true);
++          observer.disconnect();
++        }
++      },
++      { rootMargin: "200px 0px" } // start loading 200px before visible
++    );
++
++    observer.observe(container);
++    return () => observer.disconnect();
++  }, []);
++
++  // Set playback rate once visible and loaded
++  useEffect(() => {
++    if (isVisible && videoRef.current) {
+       videoRef.current.playbackRate = 0.8;
+     }
+-  }, []);
++  }, [isVisible]);
+ 
+   const videoContent = (
+     <>
+-      <video
+-        ref={videoRef}
+-        autoPlay
+-        loop
+-        muted
+-        playsInline
+-        className="absolute inset-0 w-full h-full object-cover"
+-      >
+-        <source src={src} type={src.endsWith(".webm") ? "video/webm" : "video/mp4"} />
+-      </video>
+-      <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity > 0.6 ? 0.6 : overlayOpacity }} />
++      {isVisible && (
++        <video
++          ref={videoRef}
++          autoPlay
++          loop
++          muted
++          playsInline
++          preload="metadata"
++          poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%230a0a0a'/%3E%3C/svg%3E"
++          className="absolute inset-0 w-full h-full object-cover z-0"
++        >
++          <source src={src} type={src.endsWith(".webm") ? "video/webm" : "video/mp4"} />
++        </video>
++      )}
++      <div className="absolute inset-0 bg-black z-0" style={{ opacity: overlayOpacity }} />
+     </>
+   );
+ 
+   if (isSticky) {
+     return (
+-      <div className={`absolute inset-0 pointer-events-none select-none z-0 ${className}`}>
++      <div ref={containerRef} className={`absolute inset-0 pointer-events-none select-none z-0 ${className}`}>
+         <div className="sticky top-0 w-full h-[100vh] overflow-hidden">
+           {videoContent}
+         </div>
+@@ -48,7 +74,7 @@ export default function VideoBackground({
+   }
+ 
+   return (
+-    <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}>
++    <div ref={containerRef} className={`absolute inset-0 overflow-hidden pointer-events-none select-none z-0 ${className}`}>
+       {videoContent}
+     </div>
+   );
+diff --git a/src/context/LoadingContext.tsx b/src/context/LoadingContext.tsx
+index 0a8dd24..5ab3046 100644
+--- a/src/context/LoadingContext.tsx
++++ b/src/context/LoadingContext.tsx
+@@ -23,7 +23,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
+       const timer = setTimeout(() => {
+         console.warn("Loading state timed out, forcing load complete to unblock UI.");
+         setLoading(false);
+-      }, 2500);
++      }, 6000);
+       return () => clearTimeout(timer);
+     }
+   }, [isLoading]);
+diff --git a/src/lib/gsap.ts b/src/lib/gsap.ts
+index 94cdbfc..009950d 100644
+--- a/src/lib/gsap.ts
++++ b/src/lib/gsap.ts
+@@ -1,8 +1,9 @@
+ import gsap from "gsap";
+ import ScrollTrigger from "gsap/ScrollTrigger";
++import { useGSAP } from "@gsap/react";
+ 
+ if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger);
++  gsap.registerPlugin(ScrollTrigger, useGSAP);
+ 
+   // Recalculate all trigger positions after fonts/images finish loading
+   window.addEventListener("load", () => ScrollTrigger.refresh());
+@@ -238,11 +239,6 @@ export function animateLineDraw(el: HTMLElement) {
+    Scroll-triggered entrance animation
+    ───────────────────────────────────────────────────────── */
+ 
+-// Ensure ScrollTrigger is registered in this utility file
+-if (typeof window !== "undefined") {
+-  gsap.registerPlugin(ScrollTrigger);
+-}
+-
+ export function animateEntrance(
+   items: NodeListOf<Element> | Element[] | null | undefined,
+   opts?: { y?: number; duration?: number }
+@@ -361,4 +357,4 @@ export function animateMobileScrollFocus(
+   });
+ }
+ 
+-export { gsap, ScrollTrigger };
+\ No newline at end of file
++export { gsap, ScrollTrigger, useGSAP };
+\ No newline at end of file
+diff --git a/src/lib/scrollToContact.ts b/src/lib/scrollToContact.ts
+new file mode 100644
+index 0000000..3b94dec
+--- /dev/null
++++ b/src/lib/scrollToContact.ts
+@@ -0,0 +1,10 @@
++/**
++ * Scrolls to the #contact section.
++ * Works with Lenis smooth scroll by using scrollIntoView — Lenis intercepts
++ * native scrollIntoView calls and applies its own smooth easing.
++ */
++export function scrollToContact() {
++  const target = document.getElementById("contact");
++  if (!target) return;
++  target.scrollIntoView({ behavior: "smooth", block: "start" });
++}

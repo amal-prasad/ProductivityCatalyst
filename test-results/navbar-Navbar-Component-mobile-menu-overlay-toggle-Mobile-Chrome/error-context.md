@@ -1,0 +1,477 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "Productivity Catalyst" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img [ref=e6]
+        - generic [ref=e12]: Productivity Catalyst
+      - button "Toggle menu" [active] [ref=e13]:
+        - img [ref=e14]
+  - navigation [ref=e18]:
+    - link "Services" [ref=e19] [cursor=pointer]:
+      - /url: "#"
+    - link "How It Works" [ref=e20] [cursor=pointer]:
+      - /url: "#how-it-works"
+    - button "Book a Call →" [ref=e21] [cursor=pointer]
+  - generic [ref=e22]:
+    - button "Close services" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+    - generic:
+      - button "Previous service" [disabled]:
+        - img
+    - button "Next service" [ref=e27] [cursor=pointer]:
+      - img [ref=e28]
+    - generic [ref=e31]:
+      - generic [ref=e33]:
+        - generic [ref=e34]: Panel 01
+        - heading "CXO Productivity Enhancement" [level=2] [ref=e36]
+        - paragraph [ref=e37]: Reclaim time from transactional work and focus on strategy.
+        - paragraph [ref=e38]: Help founders & senior leaders reclaim time from transactional work — so they focus on strategy, growth, and high-impact decisions.
+        - list [ref=e39]:
+          - listitem [ref=e40]:
+            - img [ref=e41]
+            - generic [ref=e43]: CXO time audit & priority reset
+          - listitem [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e47]: Delegation & workflow redesign
+          - listitem [ref=e48]:
+            - img [ref=e49]
+            - generic [ref=e51]: Operating rhythm & governance setup
+      - generic [ref=e53]:
+        - generic [ref=e54]: Panel 02
+        - heading "Business Improvement Assessment" [level=2] [ref=e56]
+        - paragraph [ref=e57]: Audit operations to find and fix bottlenecks effectively.
+        - paragraph [ref=e58]: A structured review of your operations to find where time, money and effort are being lost — delivered as a clear, actionable improvement roadmap.
+        - list [ref=e59]:
+          - listitem [ref=e60]:
+            - img [ref=e61]
+            - generic [ref=e63]: End-to-end workflow audit
+          - listitem [ref=e64]:
+            - img [ref=e65]
+            - generic [ref=e67]: Bottleneck & waste analysis
+          - listitem [ref=e68]:
+            - img [ref=e69]
+            - generic [ref=e71]: Prioritised improvement roadmap
+      - generic [ref=e73]:
+        - generic [ref=e74]: Panel 03
+        - heading "Automation & Workflow Solutions" [level=2] [ref=e76]
+        - paragraph [ref=e77]: Eliminate repetitive manual tasks and reduce errors.
+        - paragraph [ref=e78]: Eliminate repetitive manual tasks using smart automation tools — reducing errors, cutting costs, and freeing your team for higher-value work.
+        - list [ref=e79]:
+          - listitem [ref=e80]:
+            - img [ref=e81]
+            - generic [ref=e83]: Process mapping & automation design
+          - listitem [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e87]: ERP / CRM integration
+          - listitem [ref=e88]:
+            - img [ref=e89]
+            - generic [ref=e91]: 30-day post-go-live support
+      - generic [ref=e93]:
+        - generic [ref=e94]: Panel 04
+        - heading "AI-Enabled Business Insights" [level=2] [ref=e96]
+        - paragraph [ref=e97]: Turn scattered data into clear dashboards and alerts.
+        - paragraph [ref=e98]: Harness the power of AI to turn scattered data into clear dashboards, automated reports and intelligent alerts — enabling faster, fact-based decisions.
+        - list [ref=e99]:
+          - listitem [ref=e100]:
+            - img [ref=e101]
+            - generic [ref=e103]: Data consolidation & pipelines
+          - listitem [ref=e104]:
+            - img [ref=e105]
+            - generic [ref=e107]: AI-powered dashboards & reporting
+          - listitem [ref=e108]:
+            - img [ref=e109]
+            - generic [ref=e111]: KPI alerts & anomaly detection
+      - generic [ref=e113]:
+        - generic [ref=e114]: Panel 05
+        - heading "Project & Delivery Management" [level=2] [ref=e116]
+        - paragraph [ref=e117]: Bring structure and accountability to key initiatives.
+        - paragraph [ref=e118]: Drawing on rich experience in project & delivery management, we bring structure and accountability to your key initiatives — on time, within scope.
+        - list [ref=e119]:
+          - listitem [ref=e120]:
+            - img [ref=e121]
+            - generic [ref=e123]: Project scoping & planning
+          - listitem [ref=e124]:
+            - img [ref=e125]
+            - generic [ref=e127]: Milestone tracking & risk management
+          - listitem [ref=e128]:
+            - img [ref=e129]
+            - generic [ref=e131]: Stakeholder reporting & governance
+      - generic [ref=e133]:
+        - generic [ref=e134]: Panel 06
+        - heading "Team Building & People Development" [level=2] [ref=e136]
+        - paragraph [ref=e137]: Build high-performing teams through role clarity.
+        - paragraph [ref=e138]: Build high-performing teams through role clarity, structured onboarding, and capability development tailored to the realities of growing SMEs.
+        - list [ref=e139]:
+          - listitem [ref=e140]:
+            - img [ref=e141]
+            - generic [ref=e143]: Role design & team structuring
+          - listitem [ref=e144]:
+            - img [ref=e145]
+            - generic [ref=e147]: Onboarding & performance frameworks
+          - listitem [ref=e148]:
+            - img [ref=e149]
+            - generic [ref=e151]: Coaching & capability workshops
+      - generic [ref=e153]:
+        - generic [ref=e154]: Panel 07
+        - heading "Smart Customer Engagement" [level=2] [ref=e156]
+        - paragraph [ref=e157]: Respond faster and serve better with AI-assisted tools.
+        - paragraph [ref=e158]: AI-assisted tools to respond faster, serve better, and stay connected with customers — improving satisfaction without adding headcount.
+        - list [ref=e159]:
+          - listitem [ref=e160]:
+            - img [ref=e161]
+            - generic [ref=e163]: Automated enquiry & lead handling
+          - listitem [ref=e164]:
+            - img [ref=e165]
+            - generic [ref=e167]: WhatsApp / web / email automation
+          - listitem [ref=e168]:
+            - img [ref=e169]
+            - generic [ref=e171]: Engagement tracking dashboard
+      - generic [ref=e173]:
+        - generic [ref=e174]: Panel 08
+        - heading "Custom Solutions" [level=2] [ref=e176]
+        - paragraph [ref=e177]: Design custom solutions combining automation and tech.
+        - paragraph [ref=e178]: If your challenge doesn't fit a standard offering, we design a tailored solution — combining consulting expertise, automation, and smart technology.
+        - list [ref=e179]:
+          - listitem [ref=e180]:
+            - img [ref=e181]
+            - generic [ref=e183]: Discovery & scoping workshop
+          - listitem [ref=e184]:
+            - img [ref=e185]
+            - generic [ref=e187]: Prototype / proof of concept
+          - listitem [ref=e188]:
+            - img [ref=e189]
+            - generic [ref=e191]: Full deployment & handover
+  - main [ref=e192]:
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - heading "SIMPLIFYING BUSINESSES" [level=1] [ref=e196]:
+          - generic [ref=e197]: SIMPLIFYING
+          - generic [ref=e199]: BUSINESSES
+        - generic [ref=e200]:
+          - paragraph [ref=e201]: Business Consulting, Automation & AI-Enabled Solutions for SMEs. Break free from day-to-day firefighting.
+          - button "Book a Call →" [ref=e203] [cursor=pointer]
+      - generic [ref=e205]: Scroll
+    - generic [ref=e207]:
+      - paragraph [ref=e209]: Why Productivity Catalyst
+      - generic [ref=e210]:
+        - generic [ref=e211]:
+          - generic: 01 / 06
+          - heading "CXO-Focused. Cut through noise." [level=3] [ref=e212]
+          - paragraph [ref=e213]: Help senior leaders cut through operational noise and focus energy on growth and strategy.
+        - generic [ref=e214]:
+          - generic: 02 / 06
+          - heading "Automation-First. Save time, cut costs." [level=3] [ref=e215]
+          - paragraph [ref=e216]: Identify and automate the right processes — saving time, reducing errors, and cutting costs.
+        - generic [ref=e217]:
+          - generic: 03 / 06
+          - heading "AI Where It Counts. Not a buzzword." [level=3] [ref=e218]
+          - paragraph [ref=e219]: Apply AI-enabled tools where they genuinely add value as a reliable business lever.
+        - generic [ref=e220]:
+          - generic: 04 / 06
+          - heading "Delivery Experience. Get things done." [level=3] [ref=e221]
+          - paragraph [ref=e222]: Backed by rich experience in project and delivery management — we know how to execute.
+        - generic [ref=e223]:
+          - generic: 05 / 06
+          - heading "SME-First. Free of enterprise bloat." [level=3] [ref=e224]
+          - paragraph [ref=e225]: Built specifically for growing businesses — practical, affordable, and highly effective.
+        - generic [ref=e226]:
+          - generic: 06 / 06
+          - heading "Fast Results. Paced for speed." [level=3] [ref=e227]
+          - paragraph [ref=e228]: Engagements structured for speed. Most clients see tangible outcomes within 4–8 weeks.
+    - generic [ref=e229]:
+      - generic [ref=e232]:
+        - paragraph [ref=e233]: How It Works
+        - heading "Five Steps. To Lasting Impact." [level=2] [ref=e234]:
+          - generic [ref=e235]:
+            - generic [ref=e237]: Five
+            - generic [ref=e239]: Steps.
+          - generic [ref=e240]:
+            - generic [ref=e242]: To
+            - generic [ref=e244]: Lasting
+            - generic [ref=e246]: Impact.
+      - generic [ref=e247]:
+        - generic [ref=e248]:
+          - generic: "01"
+          - generic [ref=e249]: "01"
+          - generic [ref=e250]:
+            - heading "Discover" [level=3] [ref=e251]
+            - paragraph [ref=e252]: Listen deeply to understand your business, challenges, and goals.
+        - generic [ref=e253]:
+          - generic: "02"
+          - generic [ref=e254]: "02"
+          - generic [ref=e255]:
+            - heading "Diagnose" [level=3] [ref=e256]
+            - paragraph [ref=e257]: Audit your processes and data to identify the highest-value opportunities.
+        - generic [ref=e258]:
+          - generic: "03"
+          - generic [ref=e259]: "03"
+          - generic [ref=e260]:
+            - heading "Design" [level=3] [ref=e261]
+            - paragraph [ref=e262]: Propose a solution tailored to your budget, timeline, and team.
+        - generic [ref=e263]:
+          - generic: "04"
+          - generic [ref=e264]: "04"
+          - generic [ref=e265]:
+            - heading "Deploy" [level=3] [ref=e266]
+            - paragraph [ref=e267]: Build, test, and go live — with your team involved every step.
+        - generic [ref=e268]:
+          - generic: "05"
+          - generic [ref=e269]: "05"
+          - generic [ref=e270]:
+            - heading "Drive" [level=3] [ref=e271]
+            - paragraph [ref=e272]: Measure results, iterate, and ensure adoption for lasting impact.
+    - generic [ref=e274]:
+      - generic [ref=e275]:
+        - paragraph [ref=e276]: Use Cases
+        - heading "Tailored for Your Industry." [level=2] [ref=e277]
+      - generic [ref=e278]:
+        - generic [ref=e279]:
+          - generic [ref=e280]: Use Case
+          - heading "IT & Software Teams" [level=3] [ref=e281]
+          - paragraph [ref=e282]: Track sprints, blockers, and cross-squad dependencies in real time. Dev, QA, DevOps, and Product — finally on the same page.
+          - generic [ref=e283]:
+            - generic [ref=e284]: Engineering
+            - generic [ref=e285]: →
+        - generic [ref=e286]:
+          - generic [ref=e287]: Use Case
+          - heading "Banking & Financial Services" [level=3] [ref=e288]
+          - paragraph [ref=e289]: Compliance, risk, trading, and operations aligned on a single dashboard. Built for the complexity of tier-1 institutions.
+          - generic [ref=e290]:
+            - generic [ref=e291]: Finance
+            - generic [ref=e292]: →
+        - generic [ref=e293]:
+          - generic [ref=e294]: Use Case
+          - heading "Consulting & Professional Services" [level=3] [ref=e295]
+          - paragraph [ref=e296]: Client project visibility across practice areas and geographies. Know which teams are blocked before your clients do.
+          - generic [ref=e297]:
+            - generic [ref=e298]: Consulting
+            - generic [ref=e299]: →
+    - generic [ref=e301]:
+      - generic [ref=e302]:
+        - paragraph [ref=e303]: Industries
+        - heading "Built for Complexity. Proven in the Field." [level=2] [ref=e304]:
+          - text: Built for Complexity.
+          - text: Proven in the Field.
+      - generic [ref=e306]:
+        - generic [ref=e307]: IT Companies
+        - generic [ref=e308]: Merchant Banks
+        - generic [ref=e309]: Investment Banks
+        - generic [ref=e310]: Consulting Firms
+        - generic [ref=e311]: Insurance Groups
+        - generic [ref=e312]: Healthcare IT
+        - generic [ref=e313]: Government Agencies
+        - generic [ref=e314]: Logistics & Supply Chain
+        - generic [ref=e315]: Fintech Scale-ups
+        - generic [ref=e316]: Global Law Firms
+        - generic [ref=e317]: IT Companies
+        - generic [ref=e318]: Merchant Banks
+        - generic [ref=e319]: Investment Banks
+        - generic [ref=e320]: Consulting Firms
+        - generic [ref=e321]: Insurance Groups
+        - generic [ref=e322]: Healthcare IT
+        - generic [ref=e323]: Government Agencies
+        - generic [ref=e324]: Logistics & Supply Chain
+        - generic [ref=e325]: Fintech Scale-ups
+        - generic [ref=e326]: Global Law Firms
+    - generic [ref=e328]:
+      - generic [ref=e329]:
+        - paragraph [ref=e330]: Why Choose Us
+        - heading "The Productivity Catalyst Difference." [level=2] [ref=e331]:
+          - generic [ref=e332]:
+            - generic [ref=e334]: The
+            - generic [ref=e336]: Productivity
+            - generic [ref=e338]: Catalyst
+            - generic [ref=e340]: Difference.
+      - generic [ref=e341]:
+        - generic [ref=e342]:
+          - paragraph [ref=e345]: Productivity Catalyst
+          - paragraph [ref=e347]: Traditional Approach
+        - generic [ref=e348]:
+          - paragraph [ref=e350]: Cross-Team Visibility
+          - generic [ref=e351]:
+            - img [ref=e352]
+            - paragraph [ref=e354]: Real-time dashboards
+          - generic [ref=e355]:
+            - img [ref=e356]
+            - paragraph [ref=e359]: Manual status reports
+        - generic [ref=e360]:
+          - paragraph [ref=e362]: Implementation Support
+          - generic [ref=e363]:
+            - img [ref=e364]
+            - paragraph [ref=e366]: Dedicated consultant
+          - generic [ref=e367]:
+            - img [ref=e368]
+            - paragraph [ref=e371]: Self-service documentation
+        - generic [ref=e372]:
+          - paragraph [ref=e374]: Custom Workflow Matching
+          - generic [ref=e375]:
+            - img [ref=e376]
+            - paragraph [ref=e378]: Tailored to your org
+          - generic [ref=e379]:
+            - img [ref=e380]
+            - paragraph [ref=e383]: Generic templates
+        - generic [ref=e384]:
+          - paragraph [ref=e386]: Ongoing Optimization
+          - generic [ref=e387]:
+            - img [ref=e388]
+            - paragraph [ref=e390]: Quarterly reviews included
+          - generic [ref=e391]:
+            - img [ref=e392]
+            - paragraph [ref=e395]: One-time setup
+    - generic [ref=e396]:
+      - paragraph [ref=e397]: Trusted by Industry Leaders
+      - generic [ref=e400]:
+        - img "RS Group" [ref=e402]
+        - img "SNP Solutions" [ref=e405]
+        - img "RS Group" [ref=e408]
+        - img "SNP Solutions" [ref=e411]
+        - img "RS Group" [ref=e414]
+        - img "SNP Solutions" [ref=e417]
+        - img "RS Group" [ref=e420]
+        - img "SNP Solutions" [ref=e423]
+        - img "RS Group" [ref=e426]
+        - img "SNP Solutions" [ref=e429]
+        - img "RS Group" [ref=e432]
+        - img "SNP Solutions" [ref=e435]
+        - img "RS Group" [ref=e438]
+        - img "SNP Solutions" [ref=e441]
+        - img "RS Group" [ref=e444]
+        - img "SNP Solutions" [ref=e447]
+        - img "RS Group" [ref=e450]
+        - img "SNP Solutions" [ref=e453]
+        - img "RS Group" [ref=e456]
+        - img "SNP Solutions" [ref=e459]
+        - img "RS Group" [ref=e462]
+        - img "SNP Solutions" [ref=e465]
+        - img "RS Group" [ref=e468]
+        - img "SNP Solutions" [ref=e471]
+        - img "RS Group" [ref=e474]
+        - img "SNP Solutions" [ref=e477]
+        - img "RS Group" [ref=e480]
+        - img "SNP Solutions" [ref=e483]
+        - img "RS Group" [ref=e486]
+        - img "SNP Solutions" [ref=e489]
+        - img "RS Group" [ref=e492]
+        - img "SNP Solutions" [ref=e495]
+    - generic [ref=e500]:
+      - heading "Focus on Growth." [level=2] [ref=e501]:
+        - generic [ref=e502]:
+          - generic [ref=e504]: Focus
+          - generic [ref=e506]: "on"
+          - generic [ref=e508]: Growth.
+      - heading "Not Firefighting." [level=2] [ref=e509]:
+        - generic [ref=e510]:
+          - generic [ref=e512]: Not
+          - generic [ref=e514]: Firefighting.
+    - generic [ref=e517]:
+      - generic [ref=e518]:
+        - paragraph [ref=e519]: Let's Connect
+        - heading "Book a Discovery Call" [level=2] [ref=e520]
+        - paragraph [ref=e521]: Tell us about your challenges. We'll help you find the right solution.
+      - generic [ref=e523]:
+        - generic [ref=e524]:
+          - generic [ref=e525]:
+            - generic [ref=e526]: Full Name *
+            - textbox "Full Name *" [ref=e527]:
+              - /placeholder: Jane Smith
+          - generic [ref=e528]:
+            - generic [ref=e529]: Company Name *
+            - textbox "Company Name *" [ref=e530]:
+              - /placeholder: Acme Corp
+        - generic [ref=e531]:
+          - generic [ref=e532]:
+            - generic [ref=e533]: Work Email *
+            - textbox "Work Email *" [ref=e534]:
+              - /placeholder: jane@acmecorp.com
+          - generic [ref=e535]:
+            - generic [ref=e536]: Phone (optional)
+            - textbox "Phone (optional)" [ref=e537]:
+              - /placeholder: +1 555 123 4567
+        - generic [ref=e538]:
+          - generic [ref=e539]: What are you looking for? *
+          - combobox "What are you looking for? *" [ref=e540] [cursor=pointer]:
+            - option "Select an option" [disabled] [selected]
+            - option "CXO Productivity Enhancement"
+            - option "Business Improvement Assessment"
+            - option "Automation & Workflow Solutions"
+            - option "AI-Enabled Business Insights"
+            - option "Project & Delivery Management"
+            - option "Team Building & People Development"
+            - option "Smart Customer Engagement"
+            - option "Custom Solutions"
+            - option "General Inquiry"
+        - generic [ref=e541]:
+          - generic [ref=e542]: Tell us about your challenges *
+          - textbox "Tell us about your challenges *" [ref=e543]:
+            - /placeholder: What specific problems are you trying to solve?
+        - button "Book a Call →" [ref=e544]
+        - paragraph [ref=e545]: We typically respond within 24 hours. Your information is kept confidential.
+    - generic [ref=e548]:
+      - generic [ref=e549]:
+        - generic [ref=e550]:
+          - generic [ref=e551]: Productivity Catalyst
+          - paragraph [ref=e552]: Simplifying Businesses. Business consulting, automation & AI solutions for SMEs.
+          - generic [ref=e553]:
+            - link "LinkedIn" [ref=e554] [cursor=pointer]:
+              - /url: https://linkedin.com
+              - img [ref=e555]
+            - link "Twitter" [ref=e557] [cursor=pointer]:
+              - /url: https://twitter.com
+              - img [ref=e558]
+        - generic [ref=e560]:
+          - heading "Navigation" [level=4] [ref=e561]
+          - navigation [ref=e562]:
+            - link "Home" [ref=e563] [cursor=pointer]:
+              - /url: /
+            - link "Services" [ref=e564] [cursor=pointer]:
+              - /url: /#features
+            - link "How It Works" [ref=e565] [cursor=pointer]:
+              - /url: /#how-it-works
+            - link "About" [ref=e566] [cursor=pointer]:
+              - /url: /about
+        - generic [ref=e567]:
+          - heading "Services" [level=4] [ref=e568]
+          - navigation [ref=e569]:
+            - link "CXO Productivity" [ref=e570] [cursor=pointer]:
+              - /url: /services/cxo-productivity
+            - link "Business Assessment" [ref=e571] [cursor=pointer]:
+              - /url: /services/business-assessment
+            - link "Workflow Solutions" [ref=e572] [cursor=pointer]:
+              - /url: /services/workflow-solutions
+            - link "Business Insights" [ref=e573] [cursor=pointer]:
+              - /url: /services/business-insights
+            - link "Project Delivery" [ref=e574] [cursor=pointer]:
+              - /url: /services/project-delivery
+            - link "Team Building" [ref=e575] [cursor=pointer]:
+              - /url: /services/team-building
+            - link "Smart Engagement" [ref=e576] [cursor=pointer]:
+              - /url: /services/smart-engagement
+            - link "Custom Solutions" [ref=e577] [cursor=pointer]:
+              - /url: /services/custom-solutions
+        - generic [ref=e578]:
+          - heading "Contact" [level=4] [ref=e579]
+          - generic [ref=e580]:
+            - paragraph [ref=e581]: info@productivitycatalyst.com
+            - paragraph [ref=e582]: +91 92321 36211
+          - button "Book a Call →" [ref=e583] [cursor=pointer]
+      - generic [ref=e584]:
+        - generic [ref=e585]: © 2026 Productivity Catalyst. All rights reserved.
+        - generic [ref=e586]:
+          - link "Privacy Policy" [ref=e587] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms of Service" [ref=e588] [cursor=pointer]:
+            - /url: /terms
+          - button "Back to top" [ref=e589]: Back to Top ↑
+  - button "Open Next.js Dev Tools" [ref=e595] [cursor=pointer]:
+    - generic [ref=e598]:
+      - text: Compiling
+      - generic [ref=e599]:
+        - generic [ref=e600]: .
+        - generic [ref=e601]: .
+        - generic [ref=e602]: .
+  - alert [ref=e603]
+```
