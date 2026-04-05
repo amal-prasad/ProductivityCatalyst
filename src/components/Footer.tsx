@@ -67,7 +67,7 @@ export default function Footer() {
               Productivity Catalyst
             </span>
             <p className="text-[#666666] text-xs leading-relaxed mb-6">
-              Less Chaos. More Growth. Business consulting, automation & AI solutions for SMEs.
+              Simplifying Businesses. Business consulting, automation & AI solutions for SMEs.
             </p>
             <div className="flex gap-4">
               <a
