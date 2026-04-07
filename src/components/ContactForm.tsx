@@ -21,18 +21,20 @@ export default function ContactForm() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const mq = window.matchMedia("(max-width: 767px)");
-      
+
       if (mq.matches) {
         gsap.fromTo(".contact-section .section-headline",
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
+          {
+            opacity: 1, y: 0, duration: MOTION.standard, ease: MOTION.out,
             scrollTrigger: { trigger: ".contact-section .section-headline", start: MOTION.triggerStartMobile }
           }
         );
-        
+
         gsap.fromTo(".contact-form-container",
           { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
+          {
+            opacity: 1, y: 0, duration: MOTION.snappy, ease: MOTION.out,
             scrollTrigger: { trigger: ".contact-form-container", start: MOTION.triggerStartMobile }
           }
         );
@@ -65,13 +67,32 @@ export default function ContactForm() {
 
     setIsSubmitting(true);
 
-    const mailtoLink = `mailto:info@productivitycatalyst.com?subject=Discovery Call Request - ${encodeURIComponent(formState.name)} from ${encodeURIComponent(formState.company)}&body=${encodeURIComponent(
-      `Name: ${formState.name}\nCompany: ${formState.company}\nEmail: ${formState.email}\nPhone: ${formState.phone || "Not provided"}\n\nInterested in: ${formState.service}\n\nMessage:\n${formState.message}`
-    )}`;
+    try {
+      const emailjs = (await import("@emailjs/browser")).default;
 
-    window.location.href = mailtoLink;
-    setIsSubmitting(false);
-    setIsSuccess(true);
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          to_email: "info@productivitycatalyst.com",
+          from_name: formState.name,
+          company: formState.company,
+          from_email: formState.email,
+          phone: formState.phone || "Not provided",
+          service: formState.service,
+          message: formState.message,
+          reply_to: formState.email,
+        },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
+
+      setIsSubmitting(false);
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Failed to send email", error);
+      alert("Something went wrong while sending the message. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -196,9 +217,8 @@ export default function ContactForm() {
                   name="service"
                   value={formState.service}
                   onChange={handleChange}
-                  className={`w-full bg-white/[0.03] border ${errors.service ? "border-red-500" : "border-white/[0.08]"} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors appearance-none cursor-pointer ${
-                    !formState.service ? "text-white/30" : ""
-                  }`}
+                  className={`w-full bg-white/[0.03] border ${errors.service ? "border-red-500" : "border-white/[0.08]"} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent transition-colors appearance-none cursor-pointer ${!formState.service ? "text-white/30" : ""
+                    }`}
                 >
                   <option value="" disabled>Select an option</option>
                   {servicesData.map((s) => (

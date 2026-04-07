@@ -38,7 +38,8 @@ export default function Footer() {
       columns.forEach((col) => {
         gsap.fromTo(col,
           { opacity: 0, y: isMobile ? 16 : 24 },
-          { opacity: 1, y: 0, duration, ease: MOTION.out,
+          {
+            opacity: 1, y: 0, duration, ease: MOTION.out,
             scrollTrigger: { trigger: col, start: isMobile ? MOTION.triggerStartMobile : "top 90%", once: true }
           }
         );
@@ -61,39 +62,7 @@ export default function Footer() {
 
         {/* 4-column footer grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 pb-8 border-b border-white/[0.08]">
-          {/* Column 1: Logo & tagline */}
-          <div className="footer-col md:col-span-1">
-            <span className="text-white font-bold tracking-tight text-sm block mb-4">
-              Productivity Catalyst
-            </span>
-            <p className="text-[#666666] text-xs leading-relaxed mb-6">
-              Simplifying Businesses. Business consulting, automation & AI solutions for SMEs.
-            </p>
-            <div className="flex gap-4">
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#666666] hover:text-accent transition-colors"
-                aria-label="LinkedIn"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                </svg>
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#666666] hover:text-accent transition-colors"
-                aria-label="Twitter"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
+
 
           {/* Column 2: Navigation */}
           <div className="footer-col">
@@ -131,18 +100,47 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Contact */}
-          <div className="footer-col">
-            <h4 className="text-white text-xs font-semibold tracking-[0.1em] uppercase mb-4">Contact</h4>
-            <div className="flex flex-col gap-3 text-sm text-[#666666]">
-              <p>info@productivitycatalyst.com</p>
-              <p>+91 92321 36211</p>
+          <div className="footer-col md:col-span-2 bg-white/[0.02] border border-white/[0.08] hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-500 rounded-2xl p-8 relative overflow-hidden flex flex-col sm:flex-row gap-8 justify-between items-start sm:items-center group shadow-lg">
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            
+            <div className="relative z-10 w-full">
+              <h4 className="text-white text-xs font-semibold tracking-[0.1em] uppercase mb-4">Contact Us</h4>
+              <p className="text-[#a0a0a0] text-sm mb-6 max-w-[280px] leading-relaxed">
+                Ready to transform your business? Reach out to discuss how we can help you achieve your goals.
+              </p>
+              <div className="flex flex-col gap-4 text-sm text-[#666666]">
+                <a href="mailto:info@productivitycatalyst.com" className="flex items-center gap-3 hover:text-white transition-colors group/link cursor-pointer w-fit">
+                  <span className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-accent group-hover/link:bg-accent/10 transition-colors shrink-0">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </span>
+                  <span className="truncate">info@productivitycatalyst.com</span>
+                </a>
+                <a href="tel:+919232136211" className="flex items-center gap-3 hover:text-white transition-colors group/link cursor-pointer w-fit">
+                  <span className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-accent group-hover/link:bg-accent/10 transition-colors shrink-0">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </span>
+                  <span>+91 92321 36211</span>
+                </a>
+              </div>
             </div>
-            <button
-              onClick={scrollToContact}
-              className="inline-block mt-6 text-[0.75rem] font-medium tracking-[0.1em] uppercase text-white border border-white px-6 py-3 hover:bg-accent hover:border-accent transition-colors duration-300 cursor-pointer"
-            >
-              Book a Call →
-            </button>
+            
+            <div className="relative z-10 shrink-0 mt-4 sm:mt-0 w-full sm:w-auto">
+              <button
+                onClick={scrollToContact}
+                className="group/btn w-full sm:w-auto relative overflow-hidden flex items-center justify-center gap-3 text-[0.75rem] font-bold tracking-[0.1em] uppercase text-black bg-accent px-8 py-5 rounded-xl hover:shadow-[0_0_20px_rgba(0,229,204,0.4)] transition-all duration-300 cursor-pointer"
+              >
+                <span className="relative z-10">Book a Call</span>
+                <svg className="w-4 h-4 relative z-10 transform group-hover/btn:translate-x-1 transition-transform inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
+              </button>
+            </div>
           </div>
         </div>
 
