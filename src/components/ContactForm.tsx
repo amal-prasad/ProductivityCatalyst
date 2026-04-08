@@ -74,7 +74,7 @@ export default function ContactForm() {
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         {
-          to_email: "info@productivitycatalyst.com",
+          to_email: "benedictwelkin1998@outlook.com",
           from_name: formState.name,
           company: formState.company,
           from_email: formState.email,
