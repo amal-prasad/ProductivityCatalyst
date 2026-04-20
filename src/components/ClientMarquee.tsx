@@ -7,6 +7,7 @@ import { gsap, useGSAP, MOTION } from "@/lib/gsap";
 const CLIENTS = [
   { name: "RS Group", logo: "/images/clients/rs-group-logo.jpeg" },
   { name: "SNP Solutions", logo: "/images/clients/snp-solutions.jpeg" },
+  { name: "Client Image", logo: "/images/clients/images.jpg" },
 ];
 
 /** Separator diamond between client logos */

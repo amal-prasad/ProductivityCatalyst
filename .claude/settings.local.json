@@ -8,7 +8,9 @@
       "Read(//c/Users/bened/.claude/**)",
       "Bash(ls -la ~/.claude/projects/D--ProductivityCatalyst/*.json)",
       "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.04.jpeg\" D:/ProductivityCatalyst/public/images/clients/snp-solutions.jpeg)",
-      "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.59.jpeg\" D:/ProductivityCatalyst/public/images/clients/rs-group.jpeg)"
+      "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.59.jpeg\" D:/ProductivityCatalyst/public/images/clients/rs-group.jpeg)",
+      "Bash(grep -h \"import\" /d/ProductivityCatalyst/src/app/*.tsx)",
+      "Bash(grep -h \"import\" /d/ProductivityCatalyst/src/lib/*.ts)"
     ]
   }
 }
