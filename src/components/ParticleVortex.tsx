@@ -105,7 +105,8 @@ export default function ParticleVortex() {
     ro.observe(canvas);
 
     // ── Animation Loop ────────────────────────────────────
-    let rafId: number;
+    let rafId = 0;
+    let running = false;
     const clock = new THREE.Clock();
     let framesRendered = 0;
 
@@ -132,11 +133,44 @@ export default function ParticleVortex() {
         setLoading(false);
       }
     };
-    animate();
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      // Reset clock so the first frame after a pause doesn't get a huge delta
+      clock.getDelta();
+      animate();
+    };
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(rafId);
+    };
+
+    start();
+
+    // Pause rendering when the hero scrolls out of view — 3k particles at 60fps
+    // otherwise keeps burning main-thread budget for the rest of the page.
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) start();
+        else stop();
+      },
+      { threshold: 0 }
+    );
+    visibilityObserver.observe(canvas);
+
+    const onDocVisibility = () => {
+      if (document.hidden) stop();
+      else if (visibilityObserver && canvas.getBoundingClientRect().bottom > 0) start();
+    };
+    document.addEventListener("visibilitychange", onDocVisibility);
 
     // ── Cleanup ───────────────────────────────────────────
     return () => {
-      cancelAnimationFrame(rafId);
+      stop();
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", onDocVisibility);
       ro.disconnect();
       window.removeEventListener("mousemove", onMouseMove);
       geometry.dispose();

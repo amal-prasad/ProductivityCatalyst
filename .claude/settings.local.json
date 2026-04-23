@@ -10,7 +10,9 @@
       "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.04.jpeg\" D:/ProductivityCatalyst/public/images/clients/snp-solutions.jpeg)",
       "Bash(cp \"D:/Downloads/WhatsApp Image 2026-04-03 at 15.01.59.jpeg\" D:/ProductivityCatalyst/public/images/clients/rs-group.jpeg)",
       "Bash(grep -h \"import\" /d/ProductivityCatalyst/src/app/*.tsx)",
-      "Bash(grep -h \"import\" /d/ProductivityCatalyst/src/lib/*.ts)"
+      "Bash(grep -h \"import\" /d/ProductivityCatalyst/src/lib/*.ts)",
+      "Bash(grep -E \"src[/\\\\\\\\\\\\\\\\]\")",
+      "Bash(grep -B1 \"ProductivityCatalyst\\\\\\\\\\\\\\\\src\\\\\\\\\\\\\\\\\")"
     ]
   }
 }

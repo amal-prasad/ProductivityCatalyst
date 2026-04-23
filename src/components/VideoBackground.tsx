@@ -15,9 +15,11 @@ export default function VideoBackground({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Lazy-load: only start playing when the section enters the viewport
+  // Lazy-load: only mount the <video> once the section enters the viewport,
+  // and pause/resume playback as it scrolls in and out so multiple off-screen
+  // decoders don't all run at once.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -25,8 +27,12 @@ export default function VideoBackground({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
+          setIsMounted(true);
+          const v = videoRef.current;
+          if (v && v.paused) v.play().catch(() => {});
+        } else {
+          const v = videoRef.current;
+          if (v && !v.paused) v.pause();
         }
       },
       { rootMargin: "200px 0px" } // start loading 200px before visible
@@ -38,14 +44,14 @@ export default function VideoBackground({
 
   // Set playback rate once visible and loaded
   useEffect(() => {
-    if (isVisible && videoRef.current) {
+    if (isMounted && videoRef.current) {
       videoRef.current.playbackRate = 0.8;
     }
-  }, [isVisible]);
+  }, [isMounted]);
 
   const videoContent = (
     <>
-      {isVisible && (
+      {isMounted && (
         <video
           ref={videoRef}
           autoPlay

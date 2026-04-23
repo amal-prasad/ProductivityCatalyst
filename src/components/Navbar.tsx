@@ -129,7 +129,15 @@ export default function Navbar() {
     <>
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-[#0a0a0a]/95 backdrop-blur-lg border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/[0.08]"
+        style={{
+          // Promote the navbar to its own compositor layer so the backdrop-filter
+          // only re-rasters the navbar strip, not the full viewport, on scroll.
+          transform: "translateZ(0)",
+          willChange: "background-color",
+          isolation: "isolate",
+          contain: "layout paint",
+        }}
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-colors duration-300 ${scrolled ? "bg-[#0a0a0a]/95 border-b border-white/[0.12]" : "bg-[#0a0a0a]/85 border-b border-white/[0.08]"
           }`}
       >
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">

@@ -42,7 +42,7 @@ export default function HowItWorks() {
     const mq = window.matchMedia("(max-width: 767px)");
     if (mq.matches) {
       const steps = sectionRef.current.querySelectorAll(".mobile-step-row");
-      animateMobileScrollFocus(steps, { scaleMin: 0.93, blurMax: 4 });
+      animateMobileScrollFocus(steps, { scaleMin: 0.94 });
 
       steps.forEach((step) => {
         gsap.fromTo(step.querySelectorAll("span.relative, h3, p"),

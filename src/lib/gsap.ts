@@ -136,15 +136,18 @@ export function animatePinnedScroll(
     },
   });
 
-  // Set initial state: first item visible, others hidden
+  // Set initial state: first item visible, others hidden.
+  // Animated `filter: blur()` on scroll-scrub is extremely expensive (full layer
+  // re-raster every frame), so the crossfade uses opacity + scale only.
   items.forEach((item, i) => {
     gsap.set(item, {
       opacity: i === 0 ? 1 : 0,
       scale: i === 0 ? 1 : 0.92,
-      filter: i === 0 ? "blur(0px)" : "blur(8px)",
       position: "absolute",
       inset: 0,
       display: "flex",
+      willChange: "opacity, transform",
+      force3D: true,
     });
   });
 
@@ -154,15 +157,14 @@ export function animatePinnedScroll(
     tl.to(items[i], {
       opacity: 0,
       scale: 1.05,
-      filter: "blur(8px)",
       duration: 1,
       ease: "power2.inOut",
     });
     // Fade in next (overlapping)
     tl.fromTo(
       items[i + 1],
-      { opacity: 0, scale: 0.92, filter: "blur(8px)" },
-      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1, ease: "power2.inOut" },
+      { opacity: 0, scale: 0.92 },
+      { opacity: 1, scale: 1, duration: 1, ease: "power2.inOut" },
       "<0.3" // slight overlap for smooth crossfade
     );
     // Pause on the new item for a beat
@@ -294,65 +296,42 @@ export function animateEntrance(
    ───────────────────────────────────────────────────────── */
 
 /**
- * Attaches per-element scrub-based ScrollTriggers that animate
- * opacity (0→1→0), scale (0.95→1→0.95), and optionally blur
- * as each item scrolls through a "focus band" in the viewport.
+ * Attaches a one-shot entrance animation per element: opacity 0.35→1 and
+ * a gentle scale up as each item crosses into the viewport.
+ *
+ * Intentionally not scrubbed: scrub-driven animations run a tween on every
+ * scroll frame, and on mobile the combined cost across 5+ items (especially
+ * anything touching `filter`) is the single biggest source of scroll jank.
  */
 export function animateMobileScrollFocus(
   items: NodeListOf<Element> | Element[],
-  opts?: { scaleMin?: number; blurMax?: number }
+  opts?: { scaleMin?: number }
 ) {
   if (!IS_MOBILE()) return; // Desktop ignores this completely
 
-  const scaleMin = opts?.scaleMin ?? 0.93;
-  const blurMax = CAN_BLUR() ? (opts?.blurMax ?? 6) : 0;
+  const scaleMin = opts?.scaleMin ?? 0.94;
 
   items.forEach((el) => {
-    // 1. GUARD
     if (!el || !(el instanceof Element) || !el.isConnected) return;
 
-    // 2. PREVENT STRICT MODE DUPLICATES:
+    // Prevent Strict Mode duplicates
     ScrollTrigger.getAll().forEach(st => {
-      if (st.trigger === el) {
-        st.kill();
-      }
+      if (st.trigger === el) st.kill();
     });
-
     gsap.killTweensOf(el);
 
-    // Initial state
-    gsap.set(el, {
-      opacity: 0.35,
-      scale: scaleMin,
-      filter: blurMax > 0 ? `blur(${blurMax}px)` : "none",
-    });
+    gsap.set(el, { opacity: 0.45, scale: scaleMin, force3D: true });
 
-    ScrollTrigger.create({
-      trigger: el,
-      start: "top 85%",      // begins entering viewport
-      end: "top 25%",      // fully in focus zone
-      scrub: 0.6,            // slight lag = premium feel
-      onUpdate(self) {
-        const p = self.progress; // 0 → 1
-        gsap.set(el, {
-          opacity: gsap.utils.interpolate(0.35, 1, p),
-          scale: gsap.utils.interpolate(scaleMin, 1, p),
-          filter: blurMax > 0
-            ? `blur(${gsap.utils.interpolate(blurMax, 0, p)}px)`
-            : "none",
-        });
+    gsap.to(el, {
+      opacity: 1,
+      scale: 1,
+      duration: MOTION.standard,
+      ease: MOTION.out,
+      scrollTrigger: {
+        trigger: el,
+        start: "top 80%",
+        once: true,
       },
-      onLeave() {
-        // Element scrolled past — fade it back slightly
-        gsap.to(el, {
-          opacity: 0.5, scale: 0.96,
-          duration: MOTION.micro, ease: MOTION.out
-        });
-      },
-      onEnterBack() {
-        // Re-entering from below — reset scrub
-        gsap.set(el, { opacity: 0.35, scale: scaleMin });
-      }
     });
   });
 }
